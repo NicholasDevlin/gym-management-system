@@ -1,0 +1,12 @@
+.content {
+  height: 95%;
+  background-color: #000;
+}
+
+.parent {
+  height: 100vh;
+}
+
+.footer {
+  height: 5%;
+}
