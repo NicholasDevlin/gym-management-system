@@ -15,7 +15,7 @@
 
 body {
   background: var(--color-two);
-  font-family: "Varela Round", sans-serif;
+  /* font-family: "Varela Round", sans-serif; */
 }
 
 .card {
@@ -43,6 +43,7 @@ body {
     margin: 20px 0px;
     width: 33.3333%;
     padding: 50px 20px;
+
     @media (max-width: 768px) {
       margin: 10px 20px;
       width: calc(100% - 40px);
