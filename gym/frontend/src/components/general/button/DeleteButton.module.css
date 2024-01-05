@@ -1,0 +1,128 @@
+/* styles.module.css */
+
+:root {
+  --transition-duration: 0.8s;
+  --transition-easing: cubic-bezier(0.230, 1.000, 0.320, 1.000);
+  --bounce-easing: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  --closed-width: 200px;
+  --closed-height: 80px;
+  --opened-width: 400px;
+  --opened-height: 160px;
+}
+
+.btn {
+  display: block;
+  position: relative;
+  width: var(--closed-width);
+  height: var(--closed-height);
+  transition: width var(--transition-duration) var(--transition-easing),
+    height var(--transition-duration) var(--transition-easing),
+    transform var(--transition-duration) var(--bounce-easing);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  text-align: center;
+}
+
+.btnFront {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: var(--closed-height);
+  background-color: #721b29;
+  cursor: pointer;
+  backface-visibility: hidden;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease,
+    line-height var(--transition-duration) var(--transition-easing);
+}
+
+.btnFront:hover {
+  background-color: lighten(#721b29, 10%);
+}
+
+.btnIsOpen .btnFront {
+  pointer-events: none;
+  line-height: var(--opened-height);
+}
+
+.btnBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #222220;
+  transform: translateZ(-2px) rotateX(180deg);
+  overflow: hidden;
+  transition: box-shadow var(--transition-duration) ease;
+}
+
+.btnIsOpen {
+  width: var(--opened-width);
+  height: var(--opened-height);
+}
+
+.btnBack p {
+  margin-top: 27px;
+  margin-bottom: 25px;
+}
+
+.btnBack Button {
+  padding: 12px 20px;
+  width: 30%;
+  margin: 0 5px;
+  border: 0;
+  border-radius: 2px;
+  font-size: 1em;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  transition: background 0.15s ease;
+}
+
+.btnBack Button:focus {
+  outline: 0;
+}
+
+.yes {
+  background-color: #043353;
+}
+
+.yes:hover {
+  background-color: #d8cdb9 !important;
+  color: #043353 !important;
+}
+
+.no {
+  color: #043353 !important;
+  background-color: #d8cdb9;
+}
+
+.no:hover {
+  background-color: #043353 !important;
+  color: #d8cdb9 !important;
+}
+
+.btn .btnIsOpen .btnBack {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+[data-direction="left"] .btnBack,
+[data-direction="right"] .btnBack {
+  transform: translateZ(-2px) rotateY(180deg);
+}
+
+[data-direction="top"].btnIsOpen {
+  transform: rotateX(180deg);
+}
+
+[data-direction="right"].btnIsOpen {
+  transform: rotateY(180deg);
+}
+
+[data-direction="bottom"].btnIsOpen {
+  transform: rotateX(-180deg);
+}
+
+[data-direction="left"].btnIsOpen {
+  transform: rotateY(-180deg);
+}

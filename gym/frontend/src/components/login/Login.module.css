@@ -1,6 +1,6 @@
 :root {
   --bgColor: white;
-  --inputColor: black;
+  --inputColor: #222220;
   --outlineColor: dodgerblue;
   --beamColor: yellow;
   --spacer: 1rem;
@@ -59,7 +59,7 @@ button {
   }
 
   &[id="password"] {
-    color: black;
+    color: black !important;
   }
 }
 
@@ -85,10 +85,9 @@ button {
 }
 
 .inputPassword {
-  color: #000;
 
   .showPassword & {
-    color: #000;
+    color: #000 !important;
   }
 }
 

@@ -3,8 +3,8 @@
 :root {
   --color-one: #1F2124;
   --color-two: #383A3F;
-  --color-three: #F68657;
-  --color-four: #F6B352;
+  --color-three: #C28c2e;
+  --color-four: #d8cdb9;
 }
 
 *,
@@ -27,7 +27,7 @@ body {
 
   padding: 20px;
   text-align: center;
-  color: white;
+  color: #d8cdb9;
   float: left;
 
   @media (max-width: 768px) {
@@ -87,7 +87,7 @@ body {
   .btn {
     display: block;
     background: var(--color-four);
-    color: white;
+    color: #721b29 !important;
     padding: 15px 20px;
     margin: 20px 0;
     border-radius: 5px;
@@ -96,7 +96,8 @@ body {
     text-decoration: none;
 
     &:hover {
-      background: var(--color-three);
+      background: #721b29;
+      color: var(--color-three) !important;
     }
   }
 }

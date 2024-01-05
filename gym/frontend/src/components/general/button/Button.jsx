@@ -12,7 +12,7 @@ function Button({ text, bgColor }) {
 Button.defaultProps = {
   text: "submit",
   // bgColor: "#252B48"
-  bgColor: "#FCFCFD"
+  bgColor: "#d8cdb9"
 }
 
 export default Button

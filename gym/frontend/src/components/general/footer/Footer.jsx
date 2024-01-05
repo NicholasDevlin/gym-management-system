@@ -3,7 +3,7 @@ import Styles from './Footer.module.css'
 function Footer() {
   return (
     <footer className={Styles.footer}>
-      <p>&copy;{new Date().getFullYear()} shychopath</p>
+      <p>Copyright {new Date().getFullYear()} &copy; shychopath</p>
     </footer>
   );
 }
