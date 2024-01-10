@@ -45,7 +45,7 @@ form {
 
 label,
 input,
-button {
+.button {
   font-size: 1.5rem;
   color: var(--inputColor);
 
@@ -63,7 +63,7 @@ button {
   }
 }
 
-button {
+.button {
   border: none;
 }
 
@@ -85,10 +85,14 @@ button {
 }
 
 .inputPassword {
-
   .showPassword & {
     color: #000 !important;
   }
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
 }
 
 input {

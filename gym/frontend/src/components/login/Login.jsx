@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Styles from './Login.module.css'
+import GoogleLoginButton from './LoginGoogle.jsx';
 
 function Login() {
+  const handleGoogleLoginFailure = (error) => {
+    console.error('Google login failed:', error);
+  };
   useEffect(() => {
     const root = document.getElementById('container');
     const eye = document.getElementById('eyeball');
@@ -72,9 +76,12 @@ function Login() {
             <div id="beam"></div>
           </div>
         </div>
-        <button type="submit" id="submit">
-          Sign in
-        </button>
+        <div className={Styles.row}>
+          <GoogleLoginButton className={Styles.button} onFailure={handleGoogleLoginFailure} />
+          <button className={Styles.button} type="submit" id="submit">
+            Sign in
+          </button>
+        </div>
       </form>
     </div>
   );
