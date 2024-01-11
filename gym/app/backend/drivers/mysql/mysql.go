@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"gym/app/migrations"
+	"gym/app/backend/migrations"
 
 	"os"
 	"strconv"

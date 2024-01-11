@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gym/app/config"
-	"gym/app/drivers/mysql"
-	"gym/app/routes"
+	"gym/app/backend/config"
+	"gym/app/backend/drivers/mysql"
+	"gym/app/backend/routes"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

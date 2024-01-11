@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gym/app/drivers/mysql"
+	"gym/app/backend/drivers/mysql"
 	"os"
 	"strconv"
 
