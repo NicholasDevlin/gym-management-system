@@ -13,7 +13,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CreateToken(userId string, role string, creatorId uint) (string, error) {
+func CreateToken(userId uint, role string, creatorId uint) (string, error) {
 	godotenv.Load()
 	claims := jwt.MapClaims{}
 	claims["id"] = userId

@@ -9,15 +9,15 @@ import (
 
 type IUserRepository interface {
 	RegisterUser(data user.UserDto) (user.UserDto, error)
-	LoginUser(data user.User) (user.UserDto, error)
-	GetAllUser(nameFilter string, page, pageSize int) ([]user.UserDto, int, error)
-	CountUsersByRole(roleId uint) (int, error)
-	GetUser(id string) (user.UserDto, error)
-	//getRoleName(roleID uint) string
-	UpdateUser(id string, input user.UserDto) (user.UserDto, error)
-	DeleteUser(id string) (user.UserDto, error)
-	FindByEmail(email string) (user.UserDto, error)
-	CreateUser(user user.UserDto) (user.UserDto, error)
+	// LoginUser(data user.User) (user.UserDto, error)
+	// GetAllUser(nameFilter string, page, pageSize int) ([]user.UserDto, int, error)
+	// CountUsersByRole(roleId uint) (int, error)
+	// GetUser(id string) (user.UserDto, error)
+	// //getRoleName(roleID uint) string
+	// UpdateUser(id string, input user.UserDto) (user.UserDto, error)
+	// DeleteUser(id string) (user.UserDto, error)
+	// FindByEmail(email string) (user.UserDto, error)
+	// CreateUser(user user.UserDto) (user.UserDto, error)
 	//SaveOTP(otp *models.OTP) (*models.OTP, error)
 }
 
