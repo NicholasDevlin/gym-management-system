@@ -10,15 +10,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UserHandler struct {
+
+type UserController struct {
 	userService services.IUserService
 }
 
-func NewUserHandler(userService services.IUserService) *UserHandler {
-	return &UserHandler{userService}
+func NewUserController(userService services.IUserService) *UserController {
+	return &UserController{userService}
 }
 
-func (u *UserHandler) RegisterUsers(e echo.Context) error {
+func (u *UserController) RegisterUsers(e echo.Context) error {
 	var input user.UserReq
 	e.Bind(&input)
 
@@ -27,7 +28,7 @@ func (u *UserHandler) RegisterUsers(e echo.Context) error {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 	var role string
-	token, err := middleware.CreateToken(res.Id, role, 0)
+	token, err := middleware.CreateToken(res.Id, res.DisplayName, role)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, errors.ERR_TOKEN)
 	}

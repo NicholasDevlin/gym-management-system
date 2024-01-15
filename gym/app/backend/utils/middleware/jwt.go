@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -13,17 +12,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CreateToken(userId uint, role string, creatorId uint) (string, error) {
+func CreateToken(userId uint, name, role string) (string, error) {
 	godotenv.Load()
 	claims := jwt.MapClaims{}
 	claims["id"] = userId
 	claims["role_id"] = role
-	claims["creator_id"] = creatorId
-	// claims["name"] = name
+	claims["name"] = name
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	claims["role"] = role
 
-	fmt.Println("Token Claims:", claims)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
@@ -46,15 +43,15 @@ func SetTokenCookie(e echo.Context, token string) {
 	e.SetCookie(cookie)
 }
 
-func ExtractToken(e echo.Context) (uint, string, uint, error) {
+func ExtractToken(e echo.Context) (uint, string, error) {
 	user, ok := e.Get("user").(*jwt.Token)
 	if !ok {
-		return 0, "", 0, errors.New("invalid token")
+		return 0, "", errors.New("invalid token")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, "", 0, errors.New("invalid token claims")
+		return 0, "", errors.New("invalid token claims")
 	}
 
 	// exp, ok := claims["exp"].(float64)
@@ -64,21 +61,15 @@ func ExtractToken(e echo.Context) (uint, string, uint, error) {
 
 	userIDFloat, ok := claims["id"].(float64)
 	if !ok {
-		return 0, "", 0, errors.New("invalid token claims")
+		return 0, "", errors.New("invalid token claims")
 	}
 	userID := uint(userIDFloat)
 
 	role, ok := claims["role_id"].(string)
 	if !ok {
-		return 0, "", 0, errors.New("invalid token claims")
+		return 0, "", errors.New("invalid token claims")
 	}
 	roleID := role
-
-	creatorIDFloat, ok := claims["creator_id"].(float64)
-	if !ok {
-		return 0, "", 0, errors.New("invalid token claims")
-	}
-	creatorID := uint(creatorIDFloat)
 
 	// name, okName := claims["name"].(string)
 	// if !okName {
@@ -90,6 +81,5 @@ func ExtractToken(e echo.Context) (uint, string, uint, error) {
 	// 	return 0, 0, 0, "", errors.New("invalid token claims")
 	// }
 
-	fmt.Println("Token Claims:", claims)
-	return userID, roleID, creatorID, nil
+	return userID, roleID, nil
 }

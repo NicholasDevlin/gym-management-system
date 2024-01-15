@@ -8,8 +8,8 @@ import (
 )
 
 type IUserService interface {
-	RegisterUser(data user.UserReq) (user.UserRes, error)
-	// LoginUser(data *request.User) (user.CreaRestors, error)
+	RegisterUser(input user.UserReq) (user.UserRes, error)
+	// LoginUser(input *request.User) (user.CreaRestors, error)
 	// GetAllUser(nameFilter string, page, pageSize int) ([]user.UserRes, map[string]int, error)
 	// GetUser(id string) (user.UserRes, error)
 	// UpdateUser(id string, input request.User) (user.UserRes, error)
@@ -20,32 +20,32 @@ type IUserService interface {
 	// CountUsersByRole(roleId uint) (int, error)
 }
 
-type UserService struct {
-	UserRepo repositories.IUserRepository
+type userService struct {
+	userRepo repositories.IUserRepository
 }
 
-func NewUserService(repo repositories.IUserRepository) *UserService {
-	return &UserService{UserRepo: repo}
+func NewUserService(repo repositories.IUserRepository) *userService {
+	return &userService{userRepo: repo}
 }
 
-func (u *UserService) RegisterUser(data user.UserReq) (user.UserRes, error) {
-	if data.Email == "" {
+func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
+	if input.Email == "" {
 		return user.UserRes{}, errors.ERR_EMAIL_IS_EMPTY
 	}
-	if data.PhoneNumber == "" {
+	if input.PhoneNumber == "" {
 		return user.UserRes{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
-	if data.Password == "" {
+	if input.Password == "" {
 		return user.UserRes{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 
-	hashPass, err := bcrypt.HashPassword(data.Password)
+	hashPass, err := bcrypt.HashPassword(input.Password)
 	if err != nil {
 		return user.UserRes{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
-	data.Password = hashPass
-	res, err := u.UserRepo.RegisterUser(*user.ConvertReqToDto(data))
+	input.Password = hashPass
+	res, err := u.userRepo.RegisterUser(*user.ConvertReqToDto(input))
 	if err != nil {
 		return user.UserRes{}, err
 	}

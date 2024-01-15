@@ -20,6 +20,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_TOKEN:
 		return http.StatusInternalServerError
+	case ERR_ROLE_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CREATE_ROLE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
