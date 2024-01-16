@@ -24,6 +24,8 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_CREATE_ROLE:
 		return http.StatusInternalServerError
+	case ERR_GET_DATA:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

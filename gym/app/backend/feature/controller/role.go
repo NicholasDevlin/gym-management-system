@@ -16,11 +16,23 @@ func NewRoleController(roleService services.IRoleService) *RoleController {
 	return &RoleController{roleService}
 }
 
-func (u *RoleController) CreateRole(e echo.Context) error {
+func (r *RoleController) CreateRole(e echo.Context) error {
 	var input role.RoleReq
 	e.Bind(&input)
 
-	res, err := u.roleService.CreateRole(input)
+	res, err := r.roleService.CreateRole(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
+func (r *RoleController) GetAllRole(e echo.Context) error {
+	var input role.RoleReq
+	input.Role = e.QueryParam("name")
+
+	res, err := r.roleService.GetAllRole(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}

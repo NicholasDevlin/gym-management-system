@@ -13,6 +13,28 @@ type BaseResponse struct {
 	Data    interface{} `json:"data"`
 }
 
+type Pagination struct {
+	BaseResponse BaseResponse `json:"response"`
+	CurrentPage int `json:"currentPage"`
+	NextPage int `json:"nextPage"`
+	PrevPage int `json:"prevPage"`
+	AllPages int `json:"allPages"`
+}
+
+func NewSuccessPaginationResponse(c echo.Context, data interface{}, currentPage, nextPage, prevPage, allPages int) error {
+	return c.JSON(http.StatusOK, Pagination{
+		CurrentPage: currentPage,
+		NextPage: nextPage,
+		PrevPage: prevPage,
+		AllPages: allPages,
+		BaseResponse: BaseResponse{
+			Status:  true,
+			Message: "Success",
+			Data:    data,
+		},
+	})
+}
+
 func NewSuccessResponse(c echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, BaseResponse{
 		Status:  true,

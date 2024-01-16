@@ -11,5 +11,6 @@ var (
 	ERR_PHONE_NUMBER_IS_EMPTY = errors.New("Phone number is empty")
 	ERR_ROLE_IS_EMPTY         = errors.New("Role is empty")
 	ERR_BCRYPT_PASSWORD       = errors.New("Failed to bcrypt password")
-	ERR_TOKEN                 = errors.New("F	ailed to create new token")
+	ERR_TOKEN                 = errors.New("Failed to create new token")
+	ERR_GET_DATA              = errors.New("Failed to get data from database")
 )

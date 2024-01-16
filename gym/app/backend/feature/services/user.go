@@ -10,7 +10,7 @@ import (
 type IUserService interface {
 	RegisterUser(input user.UserReq) (user.UserRes, error)
 	// LoginUser(input *request.User) (user.CreaRestors, error)
-	// GetAllUser(nameFilter string, page, pageSize int) ([]user.UserRes, map[string]int, error)
+	GetAllUser(filter user.UserReq, page, pageSize int) ([]user.UserRes, int, error) 
 	// GetUser(id string) (user.UserRes, error)
 	// UpdateUser(id string, input request.User) (user.UserRes, error)
 	// DeleteUser(id string) (user.UserRes, error)
@@ -21,11 +21,11 @@ type IUserService interface {
 }
 
 type userService struct {
-	userRepo repositories.IUserRepository
+	userRepository repositories.IUserRepository
 }
 
 func NewUserService(repo repositories.IUserRepository) *userService {
-	return &userService{userRepo: repo}
+	return &userService{userRepository: repo}
 }
 
 func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
@@ -45,9 +45,22 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 	}
 
 	input.Password = hashPass
-	res, err := u.userRepo.RegisterUser(*user.ConvertReqToDto(input))
+	res, err := u.userRepository.RegisterUser(*user.ConvertReqToDto(input))
 	if err != nil {
 		return user.UserRes{}, err
 	}
 	return *user.ConvertDtoToRes(res), nil
+}
+
+func (u *userService) GetAllUser(filter user.UserReq, page, pageSize int) ([]user.UserRes, int, error) {
+	res, totalRecord, err := u.userRepository.GetAllUser(*user.ConvertReqToDto(filter), page, pageSize)
+	if err != nil {
+		return nil, 0, errors.ERR_GET_DATA
+	}
+	var resUser []user.UserRes
+	for i := 0; i < len(res); i++ {
+		roleVm := user.ConvertDtoToRes(res[i])
+		resUser = append(resUser, *roleVm)
+	}
+	return resUser, totalRecord, nil
 }

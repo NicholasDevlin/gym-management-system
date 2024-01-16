@@ -4,13 +4,14 @@ import (
 	"gym/app/backend/entity/user"
 	"gym/app/backend/utils/errors"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type IUserRepository interface {
 	RegisterUser(data user.UserDto) (user.UserDto, error)
 	// LoginUser(data user.User) (user.UserDto, error)
-	// GetAllUser(nameFilter string, page, pageSize int) ([]user.UserDto, int, error)
+	GetAllUser(filter user.UserDto, page, pageSize int) ([]user.UserDto, int, error)
 	// CountUsersByRole(roleId uint) (int, error)
 	// GetUser(id string) (user.UserDto, error)
 	// //getRoleName(roleID uint) string
@@ -62,41 +63,46 @@ func (u *userRepository) RegisterUser(data user.UserDto) (user.UserDto, error) {
 // 	return *domain.ConvertFromModelToCreatorsRes(creator), nil
 // }
 
-// func (u *userRepository) GetAllUser(nameFilter string, page, pageSize int) ([]user.UserDto, int, error) {
-// 	var allUser []models.Users
-// 	var resAllUser []user.UserDto
+func (u *userRepository) GetAllUser(filter user.UserDto, page, pageSize int) ([]user.UserDto, int, error) {
+	var allUser []user.User
+	var resAllUser []user.UserDto
 
-// 	query := u.db.Preload("Role")
-// 	if nameFilter != "" {
-//     	query = query.Where("first_name LIKE ? OR last_name LIKE ?", "%"+nameFilter+"%", "%"+nameFilter+"%")
-// 	}
+	query := u.db.Preload("Role")
+	if filter.DisplayName != "" {
+		query = query.Where("display_name LIKE ? ", "%"+filter.DisplayName+"%")
+	}
+	if filter.Id != 0 {
+		query = query.Where("id = ?", filter.Id)
+	}
+	if filter.UUID != uuid.Nil {
+		query = query.Where("uuid = ?", filter.UUID)
+	}
 
-// 	offset := (page - 1) * pageSize
+	offset := (page - 1) * pageSize
+	query = query.Limit(pageSize).Offset(offset)
 
-// 	query = query.Limit(pageSize).Offset(offset)
+	err := query.Find(&allUser).Error
+	if err != nil {
+		return nil, 0, err
+	}
 
-// 	err := query.Find(&allUser).Error
-// 	if err != nil {
-// 		return nil, 0, errors.ERR_GET_DATA
-// 	}
+	for i := 0; i < len(allUser); i++ {
+		userVm := user.ConvertModelToDto(allUser[i])
+		resAllUser = append(resAllUser, *userVm)
+	}
 
-// 	for i := 0; i < len(allUser); i++ {
-// 		userVm := user.ConvertModelToDto(allUser[i])
-// 		resAllUser = append(resAllUser, *userVm)
-// 	}
+	var allItems int64
+	query.Count(&allItems)
 
-// 	var allItems int64
-// 	query.Count(&allItems)
-
-// 	return resAllUser, int(allItems), nil
-// }
+	return resAllUser, int(allItems), nil
+}
 
 // func (u *userRepository) CountUsersByRole(roleId uint) (int, error) {
 // 	var count int64
 // 	var query = u.db.Model(&models.Users{})
 
 // 	query.Where("role_id = ?", roleId)
-	
+
 // 	err := query.Count(&count).Error
 // 	if err != nil {
 // 		return 0, err
@@ -176,7 +182,6 @@ func (u *userRepository) RegisterUser(data user.UserDto) (user.UserDto, error) {
 
 // 	return res, nil
 // }
-
 
 // func (u *userRepository) FindByEmail(email string) (*models.Users, error) {
 // 	user := models.Users{}

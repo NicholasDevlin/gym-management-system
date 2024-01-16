@@ -2,13 +2,13 @@ package repositories
 
 import (
 	"gym/app/backend/entity/role"
-	"gym/app/backend/utils/errors"
 
 	"gorm.io/gorm"
 )
 
 type IRoleRepository interface {
 	CreateRole(input role.RoleDto) (role.RoleDto, error)
+	GetAllRole(filter role.RoleDto) ([]role.RoleDto, error)
 }
 
 type roleRepository struct {
@@ -25,14 +25,26 @@ func (r *roleRepository) CreateRole(input role.RoleDto) (role.RoleDto, error) {
 	if err != nil {
 		return role.RoleDto{}, err
 	}
-	err = r.db.Preload("Role").First(&dataRole, "id = ?", dataRole.ID).Error
-	if err != nil {
-		return role.RoleDto{}, errors.ERR_LOGIN
-	}
 	return *role.ConvertModelToDto(*dataRole), nil
 }
 
-// func (r *roleRepository) GetAllRole(filter role.RoleDto) ([]role.RoleDto, error){
+func (r *roleRepository) GetAllRole(filter role.RoleDto) ([]role.RoleDto, error) {
+	var allRole []role.Role
+	var resAllRole []role.RoleDto
 
-// 	// return
-// }
+	query := r.db.Model(&role.Role{})
+	if filter.Role != "" {
+		query = query.Where("role LIKE ?", "%"+filter.Role+"%")
+	}
+
+	err := query.Find(&allRole).Error
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(allRole); i++ {
+		roleVm := role.ConvertModelToDto(allRole[i])
+		resAllRole = append(resAllRole, *roleVm)
+	}
+	return resAllRole, nil
+}
