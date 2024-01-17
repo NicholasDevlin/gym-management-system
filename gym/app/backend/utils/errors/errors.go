@@ -13,4 +13,5 @@ var (
 	ERR_BCRYPT_PASSWORD       = errors.New("Failed to bcrypt password")
 	ERR_TOKEN                 = errors.New("Failed to create new token")
 	ERR_GET_DATA              = errors.New("Failed to get data from database")
+	ERR_NOT_FOUND             = errors.New("Data not Found")
 )

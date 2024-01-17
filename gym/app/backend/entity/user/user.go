@@ -1,6 +1,7 @@
 package user
 
 import (
+	"gym/app/backend/entity/role"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,8 +10,8 @@ import (
 
 type User struct {
 	gorm.Model
-	UUID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
-	Email       string    `gorm:"unique;"`
+	UUID        uuid.UUID
+	Email       string `gorm:"unique;"`
 	Password    string
 	PhoneNumber string `gorm:"unique"`
 	Gender      string
@@ -20,4 +21,7 @@ type User struct {
 	GoogleID       *string // to store Google ID
 	ProfilePicture string  // to store profile picture URL
 	IsGoogleUser   bool    `gorm:"default:false"`
+
+	RoleId uint      // Foreign key for Role
+	Role   role.Role `gorm:"foreignKey:RoleId"`
 }

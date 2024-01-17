@@ -26,6 +26,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_GET_DATA:
 		return http.StatusInternalServerError
+	case ERR_NOT_FOUND:
+		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
 	}

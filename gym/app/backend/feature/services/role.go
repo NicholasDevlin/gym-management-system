@@ -9,6 +9,7 @@ import (
 type IRoleService interface {
 	CreateRole(input role.RoleReq) (role.RoleRes, error)
 	GetAllRole(filter role.RoleReq) ([]role.RoleRes, error)
+	GetRole(filter role.RoleReq) (role.RoleRes, error)
 }
 
 type roleService struct {
@@ -41,4 +42,13 @@ func (r *roleService) GetAllRole(filter role.RoleReq) ([]role.RoleRes, error) {
 		resRole = append(resRole, *roleVm)
 	}
 	return resRole, nil
+}
+
+func (r *roleService) GetRole(filter role.RoleReq) (role.RoleRes, error) {
+	res, err := r.roleRepository.GetRole(*role.ConvertReqToDto(filter))
+
+	if err != nil {
+		return role.RoleRes{}, errors.ERR_NOT_FOUND
+	}
+	return *role.ConvertDtoToRes(res), nil
 }

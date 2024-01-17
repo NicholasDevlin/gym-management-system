@@ -1,6 +1,10 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"gym/app/backend/entity/role"
+
+	"gorm.io/gorm"
+)
 
 func ConvertReqToDto(input UserReq) *UserDto {
 	return &UserDto{
@@ -15,6 +19,10 @@ func ConvertReqToDto(input UserReq) *UserDto {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
+		RoleId: input.RoleId,
+		Role: role.RoleDto{
+			Role: input.Role.Role,
+		},
 	}
 }
 
@@ -33,6 +41,10 @@ func ConvertDtoToModel(input UserDto) *User {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
+		RoleId: input.RoleId,
+		Role: role.Role{
+			Role: input.Role.Role,
+		},
 	}
 }
 
@@ -49,6 +61,10 @@ func ConvertModelToDto(input User) *UserDto {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
+		RoleId: input.RoleId,
+		Role: role.RoleDto{
+			Role: input.Role.Role,
+		},
 	}
 }
 
@@ -64,5 +80,9 @@ func ConvertDtoToRes(input UserDto) *UserRes {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
+		RoleId: input.RoleId,
+		Role: role.RoleRes{
+			Role: input.Role.Role,
+		},
 	}
 }

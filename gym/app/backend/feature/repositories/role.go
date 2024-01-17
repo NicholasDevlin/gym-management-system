@@ -9,6 +9,7 @@ import (
 type IRoleRepository interface {
 	CreateRole(input role.RoleDto) (role.RoleDto, error)
 	GetAllRole(filter role.RoleDto) ([]role.RoleDto, error)
+	GetRole(filter role.RoleDto) (role.RoleDto, error)
 }
 
 type roleRepository struct {
@@ -47,4 +48,21 @@ func (r *roleRepository) GetAllRole(filter role.RoleDto) ([]role.RoleDto, error)
 		resAllRole = append(resAllRole, *roleVm)
 	}
 	return resAllRole, nil
+}
+
+func (r *roleRepository) GetRole(filter role.RoleDto) (role.RoleDto, error) {
+	var model role.Role
+	query := r.db.Model(&role.Role{})
+	if filter.Role != "" {
+		query = query.Where("role LIKE ?", "%"+filter.Role+"%")
+	}
+	if filter.Id != 0 {
+		query = query.Where("id = ?", filter.Id)
+	}
+
+	err := query.First(&model).Error
+	if err != nil {
+		return role.RoleDto{}, err
+	}
+	return *role.ConvertModelToDto(model), nil
 }
