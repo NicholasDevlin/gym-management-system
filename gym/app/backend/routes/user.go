@@ -11,7 +11,8 @@ import (
 
 func UserRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	repository := repositories.NewUsersRepository(db)
-	service := services.NewUserService(repository)
+	roleRepository := repositories.NewRoleRepository(db)
+	service := services.NewUserService(repository, roleRepository)
 	controller := controller.NewUserController(service)
 
 	//access without token

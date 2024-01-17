@@ -17,4 +17,5 @@ func RoleRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	//access without token
 	e.POST("/role", controller.CreateRole)
 	e.GET("/role", controller.GetAllRole)
+	e.GET("/role/:id", controller.GetRole)
 }

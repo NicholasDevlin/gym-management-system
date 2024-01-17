@@ -1,6 +1,7 @@
 package user
 
 import (
+	"gym/app/backend/entity/role"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,4 +20,7 @@ type UserRes struct {
 	GoogleID       *string `json:"googleId" form:"googleId"`      // to store Google ID
 	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
 	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`
+
+	RoleId uint         `json:"roleId" form:"roleId"`
+	Role   role.RoleRes `json:"role" form:"role"`
 }

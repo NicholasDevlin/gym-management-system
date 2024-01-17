@@ -1,6 +1,7 @@
 package user
 
 import (
+	"gym/app/backend/entity/role"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,4 +20,7 @@ type UserDto struct {
 	GoogleID       *string // to store Google ID
 	ProfilePicture string  // to store profile picture URL
 	IsGoogleUser   bool
+
+	RoleId uint
+	Role   role.RoleDto
 }

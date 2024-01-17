@@ -1,6 +1,7 @@
 package services
 
 import (
+	"gym/app/backend/entity/role"
 	"gym/app/backend/entity/user"
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/utils/bcrypt"
@@ -22,10 +23,14 @@ type IUserService interface {
 
 type userService struct {
 	userRepository repositories.IUserRepository
+	roleRepository repositories.IRoleRepository
 }
 
-func NewUserService(repo repositories.IUserRepository) *userService {
-	return &userService{userRepository: repo}
+func NewUserService(repo repositories.IUserRepository, roleRepo repositories.IRoleRepository) *userService {
+	return &userService{
+		userRepository: repo,
+		roleRepository: roleRepo,
+	}
 }
 
 func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
@@ -44,6 +49,12 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 		return user.UserRes{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
+	roleRes, err := u.roleRepository.GetRole(role.RoleDto{Role: input.Role.Role})
+	if err != nil {
+		return user.UserRes{}, errors.ERR_GET_DATA
+	}
+
+	input.RoleId = roleRes.Id
 	input.Password = hashPass
 	res, err := u.userRepository.RegisterUser(*user.ConvertReqToDto(input))
 	if err != nil {
