@@ -1,6 +1,6 @@
 package role
 
 type RoleRes struct {
-	Id   uint
-	Role string
+	Id   uint   `json:"id"`
+	Role string `json:"role"`
 }

@@ -1,6 +1,6 @@
 package role
 
 type RoleReq struct {
-	Id   uint
-	Role string
+	Id   uint   `json:"id" form:"id"`
+	Role string `json:"role" form:"role"`
 }

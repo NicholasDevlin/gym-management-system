@@ -7,16 +7,16 @@ import (
 )
 
 type UserReq struct {
-	Id          uint
-	UUID        uuid.UUID
-	Email       string
-	Password    string
-	PhoneNumber string
-	Gender      string
-	BirthDate   time.Time
+	Id          uint `json:"id" form:"id"`
+	UUID           uuid.UUID `json:"uuid" form:"uuid"`
+	Email          string    `json:"email" form:"email"`
+	Password       string    `json:"password" form:"password"`
+	PhoneNumber    string    `json:"phoneNumber" form:"phoneNumber"`
+	Gender         string    `json:"gender" form:"gender"`
+	BirthDate      time.Time `json:"birthDate" form:"birthDate"`
 
-	DisplayName    string  // to store display name
-	GoogleID       *string // to store Google ID
-	ProfilePicture string  // to store profile picture URL
-	IsGoogleUser   bool
+	DisplayName    string  `json:"displayName" form:"displayName"` // to store display name
+	GoogleID       *string `json:"googleId" form:"googleId"`      // to store Google ID
+	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
+	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`
 }
