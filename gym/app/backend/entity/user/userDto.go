@@ -4,7 +4,7 @@ import (
 	"gym/app/backend/entity/role"
 	"time"
 
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserDto struct {

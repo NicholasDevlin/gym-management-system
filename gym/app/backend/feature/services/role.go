@@ -47,7 +47,7 @@ func (r *roleService) GetAllRole(filter role.RoleReq) ([]role.RoleRes, error) {
 func (r *roleService) GetRole(filter role.RoleReq) (role.RoleRes, error) {
 	res, err := r.roleRepository.GetRole(*role.ConvertReqToDto(filter))
 
-	if err != nil {
+	if err != nil || filter.Id == 0 {
 		return role.RoleRes{}, errors.ERR_NOT_FOUND
 	}
 	return *role.ConvertDtoToRes(res), nil

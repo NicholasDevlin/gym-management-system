@@ -4,14 +4,14 @@ import (
 	"gym/app/backend/entity/role"
 	"time"
 
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	UUID        uuid.UUID
-	Email       string `gorm:"unique;"`
+	UUID        uuid.UUID 
+	Email       string    `gorm:"unique;"`
 	Password    string
 	PhoneNumber string `gorm:"unique"`
 	Gender      string

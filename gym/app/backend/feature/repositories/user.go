@@ -4,7 +4,7 @@ import (
 	"gym/app/backend/entity/user"
 	"gym/app/backend/utils/errors"
 
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -32,6 +32,7 @@ func NewUsersRepository(db *gorm.DB) *userRepository {
 
 func (u *userRepository) RegisterUser(data user.UserDto) (user.UserDto, error) {
 	dataUser := user.ConvertDtoToModel(data)
+	dataUser.UUID = uuid.NewV4()
 	err := u.db.Create(&dataUser).Error
 	if err != nil {
 		return user.UserDto{}, err
