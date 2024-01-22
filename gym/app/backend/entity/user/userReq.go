@@ -4,7 +4,7 @@ import (
 	"gym/app/backend/entity/role"
 	"time"
 
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserReq struct {
@@ -16,7 +16,7 @@ type UserReq struct {
 	Gender      string    `json:"gender" form:"gender"`
 	BirthDate   time.Time `json:"birthDate" form:"birthDate"`
 
-	DisplayName    string  `json:"displayName" form:"displayName"`       // to store display name
+	DisplayName    string  `json:"name" form:"name"`       // to store display name
 	GoogleID       *string `json:"googleId" form:"googleId"`             // to store Google ID
 	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
 	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`

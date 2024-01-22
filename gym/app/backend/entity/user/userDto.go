@@ -4,7 +4,7 @@ import (
 	"gym/app/backend/entity/role"
 	"time"
 
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserDto struct {
@@ -15,6 +15,8 @@ type UserDto struct {
 	PhoneNumber string
 	Gender      string
 	BirthDate   time.Time
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
 	DisplayName    string  // to store display name
 	GoogleID       *string // to store Google ID

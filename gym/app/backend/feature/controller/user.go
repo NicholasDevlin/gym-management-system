@@ -10,17 +10,18 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	uuid "github.com/satori/go.uuid"
 )
 
-type UserController struct {
+type userController struct {
 	userService services.IUserService
 }
 
-func NewUserController(userService services.IUserService) *UserController {
-	return &UserController{userService}
+func NewUserController(userService services.IUserService) *userController {
+	return &userController{userService}
 }
 
-func (u *UserController) RegisterUsers(e echo.Context) error {
+func (u *userController) RegisterUsers(e echo.Context) error {
 	var input user.UserReq
 	e.Bind(&input)
 
@@ -28,8 +29,8 @@ func (u *UserController) RegisterUsers(e echo.Context) error {
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
-	var role string
-	token, err := middleware.CreateToken(res.Id, res.DisplayName, role)
+
+	token, err := middleware.CreateToken(res.Id, res.DisplayName, res.Role.Role)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -39,7 +40,7 @@ func (u *UserController) RegisterUsers(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (u *UserController) GetAllUser(e echo.Context) error {
+func (u *userController) GetAllUser(e echo.Context) error {
 	var filter user.UserReq
 	filter.DisplayName = e.QueryParam("name")
 	page, _ := strconv.Atoi(e.QueryParam("page"))
@@ -61,4 +62,68 @@ func (u *UserController) GetAllUser(e echo.Context) error {
 	prevPage := pagination.GetPrevPage(currentPage)
 
 	return baseresponse.NewSuccessPaginationResponse(e, res, currentPage, nextPage, prevPage, totalRecord)
+}
+
+func (u *userController) LoginUser(e echo.Context) error {
+	var input user.UserReq
+	e.Bind(&input)
+
+	res, err := u.userService.LoginUser(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	token, err := middleware.CreateToken(res.Id, res.DisplayName, res.Role.Role)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, errors.ERR_TOKEN)
+	}
+	res.Token = token
+
+	middleware.SetTokenCookie(e, token)
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
+func (u *userController) GetUser(e echo.Context) error {
+	var input user.UserReq
+
+	uuid, err := uuid.FromString(e.Param("id"))
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	input.UUID = uuid
+
+	res, err := u.userService.GetUser(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
+func (u *userController) UpdateUser(e echo.Context) error {
+	var input user.UserReq
+	e.Bind(&input)
+	uuid, err := uuid.FromString(e.Param("id"))
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	input.UUID = uuid
+
+	res, err := u.userService.UpdateUser(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
+func (u *userController) DeleteUser(e echo.Context) error {
+	uuid, err := uuid.FromString(e.Param("id"))
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	res, err := u.userService.DeleteUser(uuid)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	return baseresponse.NewSuccessResponse(e, res)
 }

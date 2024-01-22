@@ -15,13 +15,11 @@ func UserRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	service := services.NewUserService(repository, roleRepository)
 	controller := controller.NewUserController(service)
 
-	//access without token
-	e.POST("/users/register", controller.RegisterUsers)
-	// e.POST("/users/login", controller.LoginUsers)
+	e.POST("/user/register", controller.RegisterUsers)
+	e.POST("/user/login", controller.LoginUser)
 
-	// // superadmin can access
-	// eJwt.GET("/users", controller.GetAllUser)
-	// eJwt.GET("/users/:id", controller.GetUser)
-	// eJwt.PUT("/users/:id", controller.UpdateUser)
-	// eJwt.DELETE("/users/:id", controller.DeleteUser)
+	eJwt.GET("/user", controller.GetAllUser)
+	eJwt.GET("/user/:id", controller.GetUser)
+	eJwt.PUT("/user/:id", controller.UpdateUser)
+	eJwt.DELETE("/user/:id", controller.DeleteUser)
 }
