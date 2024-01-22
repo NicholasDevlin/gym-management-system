@@ -15,6 +15,8 @@ type UserDto struct {
 	PhoneNumber string
 	Gender      string
 	BirthDate   time.Time
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
 	DisplayName    string  // to store display name
 	GoogleID       *string // to store Google ID
