@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gym/app/backend/entity/role"
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/utils/errors"
@@ -10,6 +11,8 @@ type IRoleService interface {
 	CreateRole(input role.RoleReq) (role.RoleRes, error)
 	GetAllRole(filter role.RoleReq) ([]role.RoleRes, error)
 	GetRole(filter role.RoleReq) (role.RoleRes, error)
+	UpdateRole(input role.RoleReq) (role.RoleRes, error)
+	DeleteRole(id uint) (role.RoleRes, error)
 }
 
 type roleService struct {
@@ -49,6 +52,32 @@ func (r *roleService) GetRole(filter role.RoleReq) (role.RoleRes, error) {
 
 	if err != nil || filter.Id == 0 {
 		return role.RoleRes{}, errors.ERR_NOT_FOUND
+	}
+	return *role.ConvertDtoToRes(res), nil
+}
+
+func (r *roleService) UpdateRole(input role.RoleReq) (role.RoleRes, error) {
+	res, err := r.roleRepository.GetRole(*role.ConvertReqToDto(input))
+	if err != nil {
+		return role.RoleRes{}, errors.ERR_NOT_FOUND
+	}
+	res, err = r.roleRepository.UpdateRole(res, *role.ConvertReqToDto(input))
+	if err != nil {
+		return role.RoleRes{}, errors.ERR_UPDATE_ROLE
+	}
+	return *role.ConvertDtoToRes(res), nil
+}
+
+func (r *roleService) DeleteRole(id uint) (role.RoleRes, error) {
+	fmt.Println(id)
+	res, err := r.roleRepository.GetRole(role.RoleDto{Id: id})
+	if err != nil {
+		return role.RoleRes{}, errors.ERR_NOT_FOUND
+	}
+
+	res, err = r.roleRepository.DeleteRole(fmt.Sprint(id))
+	if err != nil {
+		return role.RoleRes{}, errors.ERR_DELETE_ROLE
 	}
 	return *role.ConvertDtoToRes(res), nil
 }
