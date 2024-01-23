@@ -36,6 +36,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_DELETE_USER:
 		return http.StatusInternalServerError
+	case ERR_UPDATE_ROLE:
+		return http.StatusInternalServerError
+	case ERR_DELETE_ROLE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
