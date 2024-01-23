@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client.js';
+import ReactDOM from 'react-dom';
 import './assets/style/index.css';
 import {
   createBrowserRouter,

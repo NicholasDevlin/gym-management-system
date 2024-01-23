@@ -44,11 +44,11 @@ function Login() {
     <div className={`${Styles.container}`} id="container">
       <form onSubmit={() => false}>
         <div className={Styles.formItem}>
-          <label htmlFor="username">Username</label>
+          <label htmlFor="email">Email</label>
           <div className={Styles.inputWrapper}>
             <input
               type="text"
-              id="username"
+              id="email"
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
