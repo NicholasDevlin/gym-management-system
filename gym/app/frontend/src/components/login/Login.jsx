@@ -1,11 +1,50 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styles from './Login.module.css'
 import GoogleLoginButton from './LoginGoogle.jsx';
+import { API_URLS } from '../../apiConfig.js';
 
 function Login() {
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setLoginData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(API_URLS.LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      localStorage.setItem('authToken', responseData.data.token);
+      console.log('Login successful. Response:', responseData);
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  };
+
   const handleGoogleLoginFailure = (error) => {
     console.error('Google login failed:', error);
   };
+
   useEffect(() => {
     const root = document.getElementById('container');
     const eye = document.getElementById('eyeball');
@@ -42,7 +81,7 @@ function Login() {
 
   return (
     <div className={`${Styles.container}`} id="container">
-      <form onSubmit={() => false}>
+      <form onSubmit={handleLoginSubmit}>
         <div className={Styles.formItem}>
           <label htmlFor="email">Email</label>
           <div className={Styles.inputWrapper}>
@@ -54,6 +93,7 @@ function Login() {
               autoCapitalize="off"
               spellCheck="false"
               data-lpignore="true"
+              onChange={handleInputChange}
             />
           </div>
         </div>
@@ -69,6 +109,7 @@ function Login() {
               spellCheck="false"
               data-lpignore="true"
               className={Styles.inputPassword}
+              onChange={handleInputChange}
             />
             <button type="button" id="eyeball">
               <div className={Styles.eye}></div>
