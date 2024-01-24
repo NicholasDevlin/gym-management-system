@@ -8,7 +8,7 @@ import (
 )
 
 type BaseResponse struct {
-	Status  bool        `json:"status"`
+	Success  bool        `json:"success"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
@@ -28,7 +28,7 @@ func NewSuccessPaginationResponse(c echo.Context, data interface{}, currentPage,
 		PrevPage: prevPage,
 		AllPages: allPages,
 		BaseResponse: BaseResponse{
-			Status:  true,
+			Success:  true,
 			Message: "Success",
 			Data:    data,
 		},
@@ -37,7 +37,7 @@ func NewSuccessPaginationResponse(c echo.Context, data interface{}, currentPage,
 
 func NewSuccessResponse(c echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, BaseResponse{
-		Status:  true,
+		Success:  true,
 		Message: "Success",
 		Data:    data,
 	})
@@ -45,7 +45,7 @@ func NewSuccessResponse(c echo.Context, data interface{}) error {
 
 func NewErrorResponse(c echo.Context, err error) error {
 	return c.JSON(errors.GetCodeError(err), BaseResponse{
-		Status:  false,
+		Success:  false,
 		Message: err.Error(),
 		Data:    nil,
 	})
