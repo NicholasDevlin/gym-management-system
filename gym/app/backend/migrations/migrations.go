@@ -1,8 +1,8 @@
 package migrations
 
 import (
-	"gym/app/backend/entity/role"
-	"gym/app/backend/entity/user"
+	"gym/app/backend/models/role"
+	"gym/app/backend/models/user"
 
 	"gorm.io/gorm"
 )

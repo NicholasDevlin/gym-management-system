@@ -2,7 +2,7 @@ package services
 
 import (
 	"fmt"
-	"gym/app/backend/entity/role"
+	"gym/app/backend/models/role"
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/utils/errors"
 )

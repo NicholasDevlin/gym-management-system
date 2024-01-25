@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Styles from './Login.module.css'
-import GoogleLoginButton from './LoginGoogle.jsx';
+import GoogleLoginButton from './loginWithGoogle/LoginGoogle.jsx';
 import { API_URLS } from '../../apiConfig.js';
 import PasswordFied from './inputPasswordField/PasswordField.jsx';
 import TextField from './inputTextField/TextField.jsx';
@@ -48,9 +48,13 @@ function Login() {
     }
   };
 
-  const handleGoogleLoginFailure = (error) => {
-    console.error('Google login failed:', error);
-  };
+  // const handleGoogleLoginFailure = (error) => {
+  //   console.error('Google login failed:', error);
+  // };
+
+  // const handleGoogleLoginSuccess = (response) => {
+  //   // Handle successful login (e.g., set user state or make API calls)
+  // };
 
   return (
     <div className={`${Styles.container}`} id="container">
@@ -58,7 +62,7 @@ function Login() {
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />
         <div className={Styles.row}>
-          <GoogleLoginButton className={Styles.button} onFailure={handleGoogleLoginFailure} />
+          <GoogleLoginButton />
           <button className={Styles.button} type="submit" id="submit">
             Sign in
           </button>
