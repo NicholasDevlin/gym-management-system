@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"gym/app/backend/entity/user"
+	"gym/app/backend/models/user"
 	"gym/app/backend/utils/bcrypt"
 	"gym/app/backend/utils/errors"
 

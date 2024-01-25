@@ -1,8 +1,8 @@
 package services
 
 import (
-	"gym/app/backend/entity/role"
-	"gym/app/backend/entity/user"
+	"gym/app/backend/models/role"
+	"gym/app/backend/models/user"
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/utils/bcrypt"
 	"gym/app/backend/utils/errors"

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"gym/app/backend/entity/role"
+	"gym/app/backend/models/role"
 	"time"
 
 	uuid "github.com/satori/go.uuid"

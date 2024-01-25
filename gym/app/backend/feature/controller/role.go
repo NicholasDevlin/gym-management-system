@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"gym/app/backend/entity/role"
+	"gym/app/backend/models/role"
 	"gym/app/backend/feature/services"
 	baseresponse "gym/app/backend/utils/baseResponse"
 	"strconv"
