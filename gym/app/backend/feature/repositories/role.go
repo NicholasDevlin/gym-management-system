@@ -46,8 +46,8 @@ func (r *roleRepository) GetAllRole(filter role.RoleDto) ([]role.RoleDto, error)
 	}
 
 	for i := 0; i < len(allRole); i++ {
-		roleVm := role.ConvertModelToDto(allRole[i])
-		resAllRole = append(resAllRole, *roleVm)
+		role := role.ConvertModelToDto(allRole[i])
+		resAllRole = append(resAllRole, *role)
 	}
 	return resAllRole, nil
 }

@@ -8,5 +8,7 @@ import (
 type MembershipPlan struct {
 	gorm.Model
 	UUID        uuid.UUID
-	 
+	Name string
+	Duration int
+	Description string
 }

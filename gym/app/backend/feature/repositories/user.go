@@ -82,8 +82,8 @@ func (u *userRepository) GetAllUser(filter user.UserDto, page, pageSize int) ([]
 	}
 
 	for i := 0; i < len(allUser); i++ {
-		userVm := user.ConvertModelToDto(allUser[i])
-		resAllUser = append(resAllUser, *userVm)
+		user := user.ConvertModelToDto(allUser[i])
+		resAllUser = append(resAllUser, *user)
 	}
 
 	var allItems int64
