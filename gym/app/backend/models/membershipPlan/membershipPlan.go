@@ -11,4 +11,5 @@ type MembershipPlan struct {
 	Name string
 	Duration int
 	Description string
+	Price int64
 }

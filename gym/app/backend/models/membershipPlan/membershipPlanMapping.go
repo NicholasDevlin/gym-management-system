@@ -9,6 +9,7 @@ func ConvertReqToDto(input MembershipPlanReq) *MembershipPlanDto {
 		Name: input.Name,
 		Description: input.Description,
 		Duration: input.Duration,
+		Price: input.Price,
 	}
 }
 
@@ -23,6 +24,7 @@ func ConvertDtoToModel(input MembershipPlanDto) *MembershipPlan {
 		Name: input.Name,
 		Description: input.Description,
 		Duration: input.Duration,
+		Price: input.Price,
 	}
 }
 
@@ -35,6 +37,7 @@ func ConvertModelToDto(input MembershipPlan) *MembershipPlanDto {
 		Name: input.Name,
 		Description: input.Description,
 		Duration: input.Duration,
+		Price: input.Price,
 	}
 }
 
@@ -45,5 +48,6 @@ func ConvertDtoToRes(input MembershipPlanDto) *MembershipPlanRes {
 		Name: input.Name,
 		Description: input.Description,
 		Duration: input.Duration,
+		Price: input.Price,
 	}
 }
