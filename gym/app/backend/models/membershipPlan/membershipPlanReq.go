@@ -8,4 +8,5 @@ type MembershipPlanReq struct {
 	Name string `json:"name" form:"name"`
 	Duration int `json:"duration" form:"duration"`
 	Description string `json:"description" form:"description"`
+	Price int64 `json:"price" form:"price"`
 }

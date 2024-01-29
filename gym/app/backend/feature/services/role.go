@@ -2,8 +2,8 @@ package services
 
 import (
 	"fmt"
-	"gym/app/backend/models/role"
 	"gym/app/backend/feature/repositories"
+	"gym/app/backend/models/role"
 	"gym/app/backend/utils/errors"
 )
 
@@ -25,11 +25,11 @@ func NewRoleService(repo repositories.IRoleRepository) *roleService {
 
 func (r *roleService) CreateRole(input role.RoleReq) (role.RoleRes, error) {
 	if input.Role == "" {
-		return role.RoleRes{}, errors.ERR_BCRYPT_PASSWORD
+		return role.RoleRes{}, errors.ERR_ROLE_IS_EMPTY
 	}
 	res, err := r.roleRepository.CreateRole(*role.ConvertReqToDto(input))
 	if err != nil {
-		return role.RoleRes{}, errors.ERR_BCRYPT_PASSWORD
+		return role.RoleRes{}, errors.ERR_CREATE_ROLE
 	}
 	return *role.ConvertDtoToRes(res), nil
 }
@@ -69,7 +69,6 @@ func (r *roleService) UpdateRole(input role.RoleReq) (role.RoleRes, error) {
 }
 
 func (r *roleService) DeleteRole(id uint) (role.RoleRes, error) {
-	fmt.Println(id)
 	res, err := r.roleRepository.GetRole(role.RoleDto{Id: id})
 	if err != nil {
 		return role.RoleRes{}, errors.ERR_NOT_FOUND

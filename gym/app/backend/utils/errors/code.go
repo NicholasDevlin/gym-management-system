@@ -40,6 +40,12 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_DELETE_ROLE:
 		return http.StatusInternalServerError
+	case ERR_MEMBERSHIP_NAME_EMPTY:
+		return http.StatusBadRequest
+	case ERR_MEMBERSHIP_DURATION_EMPTY:
+		return http.StatusBadRequest
+	case ERR_MEMBERSHIP_PRICE_EMPTY:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

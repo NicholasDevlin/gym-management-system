@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"gym/app/backend/models/membershipplan"
+	membershipplan "gym/app/backend/models/membershipPlan"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
