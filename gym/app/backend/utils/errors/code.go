@@ -46,6 +46,10 @@ func GetCodeError(err error) int {
 		return http.StatusBadRequest
 	case ERR_MEMBERSHIP_PRICE_EMPTY:
 		return http.StatusBadRequest
+	case ERR_DELETE_MEMBERSHIP_PLAN:
+		return http.StatusInternalServerError
+	case ERR_UNAUTHORIZE:
+		return http.StatusUnauthorized
 	default:
 		return http.StatusInternalServerError
 	}

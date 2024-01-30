@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"gym/app/backend/models/user"
 	"gym/app/backend/feature/services"
+	"gym/app/backend/models/user"
 	baseresponse "gym/app/backend/utils/baseResponse"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 	"gym/app/backend/utils/middleware"
 	"gym/app/backend/utils/pagination"
@@ -30,7 +31,7 @@ func (u *userController) RegisterUsers(e echo.Context) error {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(res.Id, res.DisplayName, res.Role.Role)
+	token, err := middleware.CreateToken(res.UUID, res.DisplayName, res.Role.Role)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -73,7 +74,7 @@ func (u *userController) LoginUser(e echo.Context) error {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 
-	token, err := middleware.CreateToken(res.Id, res.DisplayName, res.Role.Role)
+	token, err := middleware.CreateToken(res.UUID, res.DisplayName, res.Role.Role)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, errors.ERR_TOKEN)
 	}
@@ -100,9 +101,18 @@ func (u *userController) GetUser(e echo.Context) error {
 }
 
 func (u *userController) UpdateUser(e echo.Context) error {
+	userId, role, err := middleware.ExtractToken(e)
+	if role != consts.ADMIN {
+		return  baseresponse.NewErrorResponseUnauthorize(e)
+	}
+
 	var input user.UserReq
 	e.Bind(&input)
 	uuid, err := uuid.FromString(e.Param("id"))
+
+	if userId != uuid {
+		return  baseresponse.NewErrorResponseUnauthorize(e)
+	}
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}

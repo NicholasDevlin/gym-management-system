@@ -4,6 +4,8 @@ import (
 	"gym/app/backend/feature/services"
 	membershipplan "gym/app/backend/models/membershipPlan"
 	baseresponse "gym/app/backend/utils/baseResponse"
+	"gym/app/backend/utils/consts"
+	"gym/app/backend/utils/middleware"
 
 	"github.com/labstack/echo/v4"
 	uuid "github.com/satori/go.uuid"
@@ -18,6 +20,11 @@ func NewMembershipPlanController(membershipPlanService services.IMembershipPlanS
 }
 
 func (mp *membershipPlanController) CreateMembershipPlan(e echo.Context) error {
+	_, role, err := middleware.ExtractToken(e)
+	if role != consts.ADMIN {
+		return baseresponse.NewErrorResponseUnauthorize(e)
+	}
+
 	var input membershipplan.MembershipPlanReq
 	e.Bind(&input)
 
@@ -58,6 +65,11 @@ func (mp *membershipPlanController) GetMembershipPlan(e echo.Context) error {
 }
 
 func (mp *membershipPlanController) UpdateMembershipPlan(e echo.Context) error {
+	_, role, err := middleware.ExtractToken(e)
+	if role != consts.ADMIN {
+		return baseresponse.NewErrorResponseUnauthorize(e)
+	}
+
 	var input membershipplan.MembershipPlanReq
 	e.Bind(&input)
 	uuid, err := uuid.FromString(e.Param("id"))
@@ -74,6 +86,11 @@ func (mp *membershipPlanController) UpdateMembershipPlan(e echo.Context) error {
 }
 
 func (mp *membershipPlanController) DeleteMembershipPlan(e echo.Context) error {
+	_, role, err := middleware.ExtractToken(e)
+	if role != consts.ADMIN {
+		return baseresponse.NewErrorResponseUnauthorize(e)
+	}
+
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)

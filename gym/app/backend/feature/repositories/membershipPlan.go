@@ -25,6 +25,7 @@ func NewMembershipPlanRepository(db *gorm.DB) *membershipPlanRepository {
 
 func (mp *membershipPlanRepository) CreateMembershipPlan(input membershipplan.MembershipPlanDto) (membershipplan.MembershipPlanDto, error) {
 	dataMembershipPlan := membershipplan.ConvertDtoToModel(input)
+	dataMembershipPlan.UUID = uuid.NewV4()
 	err := mp.db.Create(&dataMembershipPlan).Error
 	if err != nil {
 		return membershipplan.MembershipPlanDto{}, err
@@ -82,6 +83,9 @@ func (mp *membershipPlanRepository) UpdateMembershipPlan(data, input membershipp
 	if input.Duration != 0 {
 		membershipPlanData.Duration = input.Duration
 	}
+	if input.Price != 0 {
+		membershipPlanData.Price = input.Price
+	}
 
 	if err := mp.db.Save(&membershipPlanData).Error; err != nil {
 		return membershipplan.MembershipPlanDto{}, err
@@ -92,7 +96,7 @@ func (mp *membershipPlanRepository) UpdateMembershipPlan(data, input membershipp
 func (mp *membershipPlanRepository) DeleteMembershipPlan(id string) (membershipplan.MembershipPlanDto, error) {
 	membershipPlanData := membershipplan.MembershipPlan{}
 
-	err := mp.db.Delete(&membershipPlanData, "id = ?", id).Error
+	err := mp.db.Delete(&membershipPlanData, "uuid = ?", id).Error
 	if err != nil {
 		return membershipplan.MembershipPlanDto{}, err
 	}

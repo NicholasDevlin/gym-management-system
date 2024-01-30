@@ -91,7 +91,7 @@ func (u *userService) LoginUser(data user.UserReq) (user.UserRes, error) {
 
 func (u *userService) GetUser(filter user.UserReq) (user.UserRes, error) {
 	res, err := u.userRepository.GetUser(*user.ConvertReqToDto(filter))
-	if err != nil {
+	if err != nil || (filter.Id == 0 && filter.UUID == uuid.Nil) {
 		return user.UserRes{}, errors.ERR_NOT_FOUND
 	}
 	return *user.ConvertDtoToRes(res), nil

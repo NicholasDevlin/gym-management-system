@@ -10,9 +10,10 @@ import (
 	"github.com/joho/godotenv"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	uuid "github.com/satori/go.uuid"
 )
 
-func CreateToken(userId uint, name, role string) (string, error) {
+func CreateToken(userId uuid.UUID, name, role string) (string, error) {
 	godotenv.Load()
 	claims := jwt.MapClaims{}
 	claims["id"] = userId
@@ -43,15 +44,15 @@ func SetTokenCookie(e echo.Context, token string) {
 	e.SetCookie(cookie)
 }
 
-func ExtractToken(e echo.Context) (uint, string, error) {
+func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 	user, ok := e.Get("user").(*jwt.Token)
 	if !ok {
-		return 0, "", errors.New("invalid token")
+		return uuid.UUID{}, "", errors.New("invalid token")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, "", errors.New("invalid token claims")
+		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
 
 	// exp, ok := claims["exp"].(float64)
@@ -59,15 +60,15 @@ func ExtractToken(e echo.Context) (uint, string, error) {
 	// 	return 0, 0, 0, "", "", errors.New("token has expired")
 	// }
 
-	userIDFloat, ok := claims["id"].(float64)
+	userIDFloat, ok := claims["id"].(uuid.UUID)
 	if !ok {
-		return 0, "", errors.New("invalid token claims")
+		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
-	userID := uint(userIDFloat)
+	userID := userIDFloat
 
 	role, ok := claims["role_id"].(string)
 	if !ok {
-		return 0, "", errors.New("invalid token claims")
+		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
 	roleID := role
 
