@@ -16,8 +16,8 @@ func MembershipPlanRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 
 	//access without token
 	eJwt.POST("/membership-plan", controller.CreateMembershipPlan)
-	eJwt.GET("/membership-plan", controller.GetAllMembershipPlan)
-	eJwt.GET("/membership-plan/:id", controller.GetMembershipPlan)
+	e.GET("/membership-plan", controller.GetAllMembershipPlan)
+	e.GET("/membership-plan/:id", controller.GetMembershipPlan)
 	eJwt.PUT("/membership-plan/:id", controller.UpdateMembershipPlan)
 	eJwt.DELETE("/membership-plan/:id", controller.DeleteMembershipPlan)
 }

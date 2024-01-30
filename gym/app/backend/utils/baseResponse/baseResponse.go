@@ -50,3 +50,11 @@ func NewErrorResponse(c echo.Context, err error) error {
 		Data:    nil,
 	})
 }
+
+func NewErrorResponseUnauthorize(c echo.Context) error {
+	return c.JSON(errors.GetCodeError(errors.ERR_UNAUTHORIZE), BaseResponse{
+		Success:  false,
+		Message: errors.ERR_UNAUTHORIZE.Error(),
+		Data:    nil,
+	})
+}

@@ -34,7 +34,7 @@ func (mp *membershipPlanService) CreateMembershipPlan(input membershipplan.Membe
 	if input.Price == 0 {
 		return membershipplan.MembershipPlanRes{}, errors.ERR_MEMBERSHIP_PRICE_EMPTY
 	}
-	
+
 	res, err := mp.membershipPlanRepository.CreateMembershipPlan(*membershipplan.ConvertReqToDto(input))
 	if err != nil {
 		return membershipplan.MembershipPlanRes{}, errors.ERR_BCRYPT_PASSWORD
@@ -58,7 +58,7 @@ func (mp *membershipPlanService) GetAllMembershipPlan(filter membershipplan.Memb
 func (mp *membershipPlanService) GetMembershipPlan(filter membershipplan.MembershipPlanReq) (membershipplan.MembershipPlanRes, error) {
 	res, err := mp.membershipPlanRepository.GetMembershipPlan(*membershipplan.ConvertReqToDto(filter))
 
-	if err != nil || filter.Id == 0 {
+	if err != nil || (filter.Id == 0 && filter.UUID == uuid.Nil) {
 		return membershipplan.MembershipPlanRes{}, errors.ERR_NOT_FOUND
 	}
 	return *membershipplan.ConvertDtoToRes(res), nil
@@ -86,5 +86,5 @@ func (mp *membershipPlanService) DeleteMembershipPlan(id uuid.UUID) (membershipp
 	if err != nil {
 		return membershipplan.MembershipPlanRes{}, errors.ERR_DELETE_USER
 	}
-	return *membershipplan.ConvertDtoToRes(res), nil	
+	return *membershipplan.ConvertDtoToRes(res), nil
 }

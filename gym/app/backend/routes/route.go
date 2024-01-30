@@ -18,4 +18,5 @@ func Route(e *echo.Echo, db *gorm.DB) {
 	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
 	UserRoute(e, db, eJwt)
 	RoleRoute(e, db, eJwt)
+	MembershipPlanRoute(e, db, eJwt)
 }
