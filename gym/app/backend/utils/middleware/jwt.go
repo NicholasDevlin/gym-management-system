@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"net/http"
+	// "net/http"
 	"os"
 	"time"
 
@@ -16,11 +16,11 @@ import (
 func CreateToken(userId uuid.UUID, name, role string) (string, error) {
 	godotenv.Load()
 	claims := jwt.MapClaims{}
-	claims["id"] = userId
-	claims["role_id"] = role
-	claims["name"] = name
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	claims["uuid"] = userId
 	claims["role"] = role
+	// claims["name"] = name
+	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
+	// claims["role"] = role
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
@@ -31,23 +31,23 @@ func JWTMiddleware() echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
 		SigningKey:    []byte(os.Getenv("SECRET_JWT")),
 		SigningMethod: "HS256",
-		//TokenLookup:   "cookie:token",
 	})
 }
 
-func SetTokenCookie(e echo.Context, token string) {
-	cookie := new(http.Cookie)
-	cookie.Name = "token"
-	cookie.Value = token
-	cookie.Path = "/"
+// func SetTokenCookie(e echo.Context, token string) {
+// 	cookie := new(http.Cookie)
+// 	cookie.Name = "token"
+// 	cookie.Value = token
+// 	cookie.Path = "/"
 
-	e.SetCookie(cookie)
-}
+// 	e.SetCookie(cookie)
+// }
 
 func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 	user, ok := e.Get("user").(*jwt.Token)
+
 	if !ok {
-		return uuid.UUID{}, "", errors.New("invalid token")
+		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
@@ -55,22 +55,17 @@ func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
 
-	// exp, ok := claims["exp"].(float64)
-	// if !ok || time.Now().Unix() > int64(exp) {
-	// 	return 0, 0, 0, "", "", errors.New("token has expired")
-	// }
+	userId, ok := claims["uuid"].(string)
 
-	userIDFloat, ok := claims["id"].(uuid.UUID)
 	if !ok {
 		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
-	userID := userIDFloat
+	userUUID, _ := uuid.FromString(userId)
 
-	role, ok := claims["role_id"].(string)
+	role, ok := claims["role"].(string)
 	if !ok {
 		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
-	roleID := role
 
 	// name, okName := claims["name"].(string)
 	// if !okName {
@@ -82,5 +77,5 @@ func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 	// 	return 0, 0, 0, "", errors.New("invalid token claims")
 	// }
 
-	return userID, roleID, nil
+	return userUUID, role, nil
 }

@@ -58,6 +58,9 @@ func (r *roleRepository) GetRole(filter role.RoleDto) (role.RoleDto, error) {
 	if filter.Id != 0 {
 		query = query.Where("id = ?", filter.Id)
 	}
+	if filter.Role != "" {
+		query = query.Where("role = ?", filter.Role)
+	}
 
 	err := query.First(&model).Error
 	if err != nil {
