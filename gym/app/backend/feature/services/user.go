@@ -102,6 +102,12 @@ func (u *userService) UpdateUser(input user.UserReq) (user.UserRes, error) {
 	if err != nil {
 		return user.UserRes{}, errors.ERR_NOT_FOUND
 	}
+	roleRes, err := u.roleRepository.GetRole(role.RoleDto{Role: input.Role.Role})
+	if err != nil {
+		return user.UserRes{}, errors.ERR_GET_DATA
+	}
+
+	input.RoleId = roleRes.Id
 	res, err = u.userRepository.UpdateUser(res, *user.ConvertReqToDto(input))
 	if err != nil {
 		return user.UserRes{}, errors.ERR_UPDATE_USER

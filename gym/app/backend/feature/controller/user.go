@@ -4,7 +4,6 @@ import (
 	"gym/app/backend/feature/services"
 	"gym/app/backend/models/user"
 	baseresponse "gym/app/backend/utils/baseResponse"
-	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 	"gym/app/backend/utils/middleware"
 	"gym/app/backend/utils/pagination"
@@ -37,7 +36,7 @@ func (u *userController) RegisterUsers(e echo.Context) error {
 	}
 	res.Token = token
 
-	middleware.SetTokenCookie(e, token)
+	// middleware.SetTokenCookie(e, token)
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
@@ -80,7 +79,7 @@ func (u *userController) LoginUser(e echo.Context) error {
 	}
 	res.Token = token
 
-	middleware.SetTokenCookie(e, token)
+	// middleware.SetTokenCookie(e, token)
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
@@ -101,17 +100,16 @@ func (u *userController) GetUser(e echo.Context) error {
 }
 
 func (u *userController) UpdateUser(e echo.Context) error {
-	userId, role, err := middleware.ExtractToken(e)
-	if role != consts.ADMIN {
-		return  baseresponse.NewErrorResponseUnauthorize(e)
+	userId, _, err := middleware.ExtractToken(e)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
 	}
 
 	var input user.UserReq
 	e.Bind(&input)
 	uuid, err := uuid.FromString(e.Param("id"))
-
 	if userId != uuid {
-		return  baseresponse.NewErrorResponseUnauthorize(e)
+		return baseresponse.NewErrorResponseUnauthorize(e)
 	}
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
@@ -126,9 +124,15 @@ func (u *userController) UpdateUser(e echo.Context) error {
 }
 
 func (u *userController) DeleteUser(e echo.Context) error {
+	userId, _, err := middleware.ExtractToken(e)
+
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	if userId != uuid {
+		return baseresponse.NewErrorResponseUnauthorize(e)
 	}
 
 	res, err := u.userService.DeleteUser(uuid)

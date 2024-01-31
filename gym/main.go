@@ -15,8 +15,8 @@ func main() {
 	appConfig, dbConfig := config.InitConfig()
 	db := mysql.StartDB(dbConfig)
 
-	var e *echo.Echo
-	e = echo.New()
+	e := echo.New()
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*", "*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch, http.MethodOptions},

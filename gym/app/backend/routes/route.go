@@ -1,21 +1,18 @@
 package routes
 
 import (
-	"os"
-
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
+	jwt "gym/app/backend/utils/middleware"
 )
 
 func Route(e *echo.Echo, db *gorm.DB) {
-	godotenv.Load("")
-	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
-
+	e.Use(middleware.Recover())
+	
 	eJwt := e.Group("")
-	eJwt.Use(middleware.JWT([]byte(os.Getenv("SECRET_JWT"))))
+	eJwt.Use(jwt.JWTMiddleware())
 	UserRoute(e, db, eJwt)
 	RoleRoute(e, db, eJwt)
 	MembershipPlanRoute(e, db, eJwt)
