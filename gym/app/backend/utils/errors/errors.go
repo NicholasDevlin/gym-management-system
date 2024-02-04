@@ -12,6 +12,8 @@ var (
 	ERR_DELETE_MEMBERSHIP_PLAN    = errors.New("Failed to delete membership plan")
 	ERR_DELETE_ROLE               = errors.New("Failed to delete role")
 	ERR_CREATE_ROLE               = errors.New("Failed to create new Role")
+	ERR_CREATE_MEMBERSHIP_PLAN    = errors.New("Failed to create new Membership Plan")
+	ERR_CREATE_PURCHASE           = errors.New("Purchase Failed")
 	ERR_PASSWORD_IS_EMPTY         = errors.New("Password is empty")
 	ERR_PHONE_NUMBER_IS_EMPTY     = errors.New("Phone number is empty")
 	ERR_ROLE_IS_EMPTY             = errors.New("Role is empty")

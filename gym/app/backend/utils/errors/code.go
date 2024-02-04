@@ -50,6 +50,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_UNAUTHORIZE:
 		return http.StatusUnauthorized
+	case ERR_CREATE_MEMBERSHIP_PLAN:
+		return http.StatusInternalServerError
+	case ERR_CREATE_PURCHASE:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
