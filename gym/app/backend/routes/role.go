@@ -14,7 +14,6 @@ func RoleRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	service := services.NewRoleService(repository)
 	controller := controller.NewRoleController(service)
 
-	//access without token
 	eJwt.POST("/role", controller.CreateRole)
 	eJwt.GET("/role", controller.GetAllRole)
 	eJwt.GET("/role/:id", controller.GetRole)

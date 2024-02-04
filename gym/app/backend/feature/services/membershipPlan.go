@@ -37,7 +37,7 @@ func (mp *membershipPlanService) CreateMembershipPlan(input membershipplan.Membe
 
 	res, err := mp.membershipPlanRepository.CreateMembershipPlan(*membershipplan.ConvertReqToDto(input))
 	if err != nil {
-		return membershipplan.MembershipPlanRes{}, errors.ERR_BCRYPT_PASSWORD
+		return membershipplan.MembershipPlanRes{}, errors.ERR_CREATE_MEMBERSHIP_PLAN
 	}
 	return *membershipplan.ConvertDtoToRes(res), nil
 }

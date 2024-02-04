@@ -26,6 +26,7 @@ func NewPurchaseRepository(db *gorm.DB) *purchaseRepository {
 
 func (p *purchaseRepository) CreatePurchase(input purchase.PurchaseDto) (purchase.PurchaseDto, error) {
 	dataPurchase := purchase.ConvertDtoToModel(input)
+	dataPurchase.UUID = uuid.NewV4()
 	err := p.db.Create(&dataPurchase).Error
 	if err != nil {
 		return purchase.PurchaseDto{}, err

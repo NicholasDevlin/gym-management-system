@@ -38,7 +38,7 @@ func (mp *membershipPlanController) CreateMembershipPlan(e echo.Context) error {
 
 func (mp *membershipPlanController) GetAllMembershipPlan(e echo.Context) error {
 	var input membershipplan.MembershipPlanReq
-	input.Name = e.QueryParam("role")
+	input.Name = e.QueryParam("name")
 
 	res, err := mp.membershipPlanService.GetAllMembershipPlan(input)
 	if err != nil {
