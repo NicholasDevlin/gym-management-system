@@ -52,7 +52,13 @@ func GetCodeError(err error) int {
 		return http.StatusUnauthorized
 	case ERR_CREATE_MEMBERSHIP_PLAN:
 		return http.StatusInternalServerError
-	case ERR_CREATE_PURCHASE:
+	case ERR_CREATE_TRANSACTION:
+		return http.StatusInternalServerError
+	case ERR_DELETE_TRANSACTION:
+		return http.StatusInternalServerError
+	case ERR_UPDATE_TRANSACTION:
+		return http.StatusInternalServerError
+	case ERR_UPDATE_MEMBERSHIP_PLAN:
 		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
