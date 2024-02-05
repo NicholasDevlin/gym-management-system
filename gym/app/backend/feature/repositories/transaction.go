@@ -23,7 +23,6 @@ func NewTransactionRepository(db *gorm.DB) *transactionRepository {
 	return &transactionRepository{db}
 }
 
-
 func (t *transactionRepository) CreateTransaction(input transaction.TransactionDto) (transaction.TransactionDto, error) {
 	dataTransaction := transaction.ConvertDtoToModel(input)
 	dataTransaction.UUID = uuid.NewV4()
@@ -43,7 +42,7 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 		query = query.Where("transaction_no LIKE ?", "%"+filter.TransactionNo+"%")
 	}
 
-	err := query.Find(&allTransaction).Error
+	err := query.Preload("User").Find(&allTransaction).Error
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto
 		query = query.Where("uuid = ?", filter.UUID)
 	}
 
-	err := query.First(&model).Error
+	err := query.Preload("User").First(&model).Error
 	if err != nil {
 		return transaction.TransactionDto{}, err
 	}
@@ -77,6 +76,9 @@ func (t *transactionRepository) UpdateTransaction(data, input transaction.Transa
 
 	if !input.TransactionDate.IsZero() {
 		transactionData.TransactionDate = input.TransactionDate
+	}
+	if input.Status != "" {
+		transactionData.Status = input.Status
 	}
 
 	if err := t.db.Save(&transactionData).Error; err != nil {

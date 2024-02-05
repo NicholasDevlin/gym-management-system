@@ -9,6 +9,7 @@ func ConvertReqToDto(input TransactionReq) *TransactionDto {
 		UserId:          input.UserId,
 		TransactionDate: input.TransactionDate,
 		TransactionNo:   input.TransactionNo,
+		Status:          input.Status,
 	}
 }
 
@@ -23,6 +24,7 @@ func ConvertDtoToModel(input TransactionDto) *Transaction {
 		UserId:          input.UserId,
 		TransactionDate: input.TransactionDate,
 		TransactionNo:   input.TransactionNo,
+		Status:          input.Status,
 	}
 }
 
@@ -35,15 +37,15 @@ func ConvertModelToDto(input Transaction) *TransactionDto {
 		UserId:          input.UserId,
 		TransactionDate: input.TransactionDate,
 		TransactionNo:   input.TransactionNo,
+		Status:          input.Status,
 	}
 }
 
 func ConvertDtoToRes(input TransactionDto) *TransactionRes {
 	return &TransactionRes{
-		Id:              input.Id,
 		UUID:            input.UUID,
-		UserId:          input.UserId,
 		TransactionDate: input.TransactionDate,
 		TransactionNo:   input.TransactionNo,
+		Status:          input.Status,
 	}
 }

@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	transactiondetail "gym/app/backend/models/transactionDetail"
 	"gym/app/backend/models/user"
 	"time"
 
@@ -10,9 +11,11 @@ import (
 
 type Transaction struct {
 	gorm.Model
-	UUID            uuid.UUID
-	UserId          uint
-	TransactionDate time.Time
-	TransactionNo   string
-	User            user.User `gorm:"foreignKey:UserId"`
+	UUID              uuid.UUID
+	UserId            uint
+	TransactionDate   time.Time
+	TransactionNo     string
+	Status            string
+	User              user.User                             `gorm:"foreignKey:UserId"`
+	TransactionDetail []transactiondetail.TransactionDetail `gorm:"foreignKey:TransactionId"`
 }

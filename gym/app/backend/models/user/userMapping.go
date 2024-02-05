@@ -19,7 +19,7 @@ func ConvertReqToDto(input UserReq) *UserDto {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
-		RoleId: input.RoleId,
+		RoleId:         input.RoleId,
 		Role: role.RoleDto{
 			Role: input.Role.Role,
 		},
@@ -29,7 +29,7 @@ func ConvertReqToDto(input UserReq) *UserDto {
 func ConvertDtoToModel(input UserDto) *User {
 	return &User{
 		Model: gorm.Model{
-			ID: input.Id,
+			ID:        input.Id,
 			CreatedAt: input.CreatedAt,
 			UpdatedAt: input.UpdatedAt,
 		},
@@ -43,7 +43,7 @@ func ConvertDtoToModel(input UserDto) *User {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
-		RoleId: input.RoleId,
+		RoleId:         input.RoleId,
 		Role: role.Role{
 			Role: input.Role.Role,
 		},
@@ -53,8 +53,8 @@ func ConvertDtoToModel(input UserDto) *User {
 func ConvertModelToDto(input User) *UserDto {
 	return &UserDto{
 		Id:             input.ID,
-		CreatedAt: input.CreatedAt,
-		UpdatedAt: input.UpdatedAt,
+		CreatedAt:      input.CreatedAt,
+		UpdatedAt:      input.UpdatedAt,
 		UUID:           input.UUID,
 		DisplayName:    input.DisplayName,
 		Email:          input.Email,
@@ -65,7 +65,7 @@ func ConvertModelToDto(input User) *UserDto {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
-		RoleId: input.RoleId,
+		RoleId:         input.RoleId,
 		Role: role.RoleDto{
 			Role: input.Role.Role,
 		},
@@ -74,7 +74,6 @@ func ConvertModelToDto(input User) *UserDto {
 
 func ConvertDtoToRes(input UserDto) *UserRes {
 	return &UserRes{
-		Id:             input.Id,
 		UUID:           input.UUID,
 		DisplayName:    input.DisplayName,
 		Email:          input.Email,
@@ -84,7 +83,7 @@ func ConvertDtoToRes(input UserDto) *UserRes {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
-		RoleId: input.RoleId,
+		RoleId:         input.RoleId,
 		Role: role.RoleRes{
 			Role: input.Role.Role,
 		},

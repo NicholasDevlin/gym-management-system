@@ -8,7 +8,6 @@ import (
 )
 
 type UserRes struct {
-	Id          uint      `json:"id"`
 	UUID        uuid.UUID `json:"uuid" form:"uuid"`
 	Email       string    `json:"email" form:"email"`
 	Token       string    `json:"token" form:"token"`
