@@ -12,7 +12,9 @@ import (
 func TransactionRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	repository := repositories.NewTransactionRepository(db)
 	userRepository := repositories.NewUsersRepository(db)
-	service := services.NewTransactionService(repository, userRepository)
+	membershipPlanRepository := repositories.NewMembershipPlanRepository(db)
+	transactionDetailRepository := repositories.NewTransactionDetailRepository(db)
+	service := services.NewTransactionService(repository, userRepository, membershipPlanRepository, transactionDetailRepository)
 	controller := controller.NewTransactionController(service)
 
 	eJwt.POST("/transaction", controller.CreateTransaction)

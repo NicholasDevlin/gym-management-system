@@ -20,9 +20,7 @@ func ConvertReqToDto(input UserReq) *UserDto {
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
 		RoleId:         input.RoleId,
-		Role: role.RoleDto{
-			Role: input.Role.Role,
-		},
+		Role: *role.ConvertReqToDto(input.Role),
 	}
 }
 
@@ -44,9 +42,7 @@ func ConvertDtoToModel(input UserDto) *User {
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
 		RoleId:         input.RoleId,
-		Role: role.Role{
-			Role: input.Role.Role,
-		},
+		Role: *role.ConvertDtoToModel(input.Role),
 	}
 }
 
@@ -66,9 +62,7 @@ func ConvertModelToDto(input User) *UserDto {
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
 		RoleId:         input.RoleId,
-		Role: role.RoleDto{
-			Role: input.Role.Role,
-		},
+		Role:           *role.ConvertModelToDto(input.Role),
 	}
 }
 
@@ -83,9 +77,6 @@ func ConvertDtoToRes(input UserDto) *UserRes {
 		GoogleID:       input.GoogleID,
 		ProfilePicture: input.ProfilePicture,
 		IsGoogleUser:   input.IsGoogleUser,
-		RoleId:         input.RoleId,
-		Role: role.RoleRes{
-			Role: input.Role.Role,
-		},
+		Role:           *role.ConvertDtoToRes(input.Role),
 	}
 }

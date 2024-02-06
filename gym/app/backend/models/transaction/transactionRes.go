@@ -13,6 +13,8 @@ type TransactionRes struct {
 	TransactionDate   time.Time                                `json:"transactionDate" form:"transactionDate"`
 	TransactionNo     string                                   `json:"transactionNo" form:"transactionNo"`
 	Status            string                                   `json:"status" form:"status"`
+	UserUUID          uuid.UUID                                `json:"userUUID" form:"userUUID"`
 	User              user.UserRes                             `json:"user" form:"user"`
+	Total             int64                                      `json:"total" form:"total"`
 	TransactionDetail []transactiondetail.TransactionDetailRes `json:"transactionDetail" form:"transactionDetail"`
 }

@@ -13,6 +13,7 @@ type TransactionDto struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	UUID              uuid.UUID
+	UserUUID          uuid.UUID
 	UserId            uint
 	TransactionDate   time.Time
 	TransactionNo     string

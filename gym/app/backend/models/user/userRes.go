@@ -20,6 +20,5 @@ type UserRes struct {
 	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
 	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`
 
-	RoleId uint         `json:"roleId" form:"roleId"`
 	Role   role.RoleRes `json:"role" form:"role"`
 }

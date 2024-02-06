@@ -9,5 +9,7 @@ import (
 type TransactionDetailRes struct {
 	UUID           uuid.UUID                        `json:"uuid" form:"uuid"`
 	Quantity       int                              `json:"qty" form:"qty"`
-	MembershipPlan membershipplan.MembershipPlanReq `json:"membershipPlan" form:"membershipPlan"`
+	Subtotal       int64                              `json:"subtotal" form:"subtotal"`
+	MembershipPlanUUID uuid.UUID                              `json:"membershipPlanUUID" form:"membershipPlanUUID"`
+	MembershipPlan membershipplan.MembershipPlanRes `json:"membershipPlan" form:"membershipPlan"`
 }

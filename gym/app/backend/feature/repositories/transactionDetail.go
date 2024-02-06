@@ -2,30 +2,30 @@ package repositories
 
 import (
 	transactiondetail "gym/app/backend/models/transactionDetail"
-	transactionDetaildetail "gym/app/backend/models/transactionDetail"
+	transactionDetail "gym/app/backend/models/transactionDetail"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
-type ITransactionDetailDetailRepository interface {
-	CreateTransactionDetailDetail(input transactionDetaildetail.TransactionDetailDto) (transactionDetaildetail.TransactionDetailDto, error)
-	GetAllTransactionDetailDetail(filter transactionDetaildetail.TransactionDetailDto) ([]transactionDetaildetail.TransactionDetailDto, error)
-	GetTransactionDetailDetail(filter transactionDetaildetail.TransactionDetailDto) (transactionDetaildetail.TransactionDetailDto, error)
-	UpdateTransactionDetailDetail(data, input transactionDetaildetail.TransactionDetailDto) (transactionDetaildetail.TransactionDetailDto, error)
-	DeleteTransactionDetailDetail(id string) (transactionDetaildetail.TransactionDetailDto, error)
+type ITransactionDetailRepository interface {
+	CreateTransactionDetail(input transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
+	GetAllTransactionDetail(filter transactionDetail.TransactionDetailDto) ([]transactionDetail.TransactionDetailDto, error)
+	GetTransactionDetail(filter transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
+	UpdateTransactionDetail(data, input transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
+	DeleteTransactionDetail(id string) (transactionDetail.TransactionDetailDto, error)
 }
 
-type transactionDetailDetailRepository struct {
+type transactionDetailRepository struct {
 	db *gorm.DB
 }
 
-func NewTransactionDetailDetailRepository(db *gorm.DB) *transactionDetailDetailRepository {
-	return &transactionDetailDetailRepository{db}
+func NewTransactionDetailRepository(db *gorm.DB) *transactionDetailRepository {
+	return &transactionDetailRepository{db}
 }
 
 
-func (td *transactionDetailDetailRepository) CreateTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) CreateTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
 	dataTransactionDetail := transactiondetail.ConvertDtoToModel(input)
 	dataTransactionDetail.UUID = uuid.NewV4()
 	err := td.db.Create(&dataTransactionDetail).Error
@@ -35,7 +35,7 @@ func (td *transactionDetailDetailRepository) CreateTransactionDetail(input trans
 	return *transactiondetail.ConvertModelToDto(*dataTransactionDetail), nil
 }
 
-func (td *transactionDetailDetailRepository) GetAllTransactionDetail(filter transactiondetail.TransactionDetailDto) ([]transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) GetAllTransactionDetail(filter transactiondetail.TransactionDetailDto) ([]transactiondetail.TransactionDetailDto, error) {
 	var allTransactionDetail []transactiondetail.TransactionDetail
 	var resAllTransactionDetail []transactiondetail.TransactionDetailDto
 
@@ -51,7 +51,7 @@ func (td *transactionDetailDetailRepository) GetAllTransactionDetail(filter tran
 	return resAllTransactionDetail, nil
 }
 
-func (td *transactionDetailDetailRepository) GetTransactionDetail(filter transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) GetTransactionDetail(filter transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
 	var model transactiondetail.TransactionDetail
 	query := td.db.Model(&transactiondetail.TransactionDetail{})
 	if filter.Id != 0 {
@@ -68,7 +68,7 @@ func (td *transactionDetailDetailRepository) GetTransactionDetail(filter transac
 	return *transactiondetail.ConvertModelToDto(model), nil
 }
 
-func (td *transactionDetailDetailRepository) UpdateTransactionDetail(data, input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) UpdateTransactionDetail(data, input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
 	transactionDetailData := *transactiondetail.ConvertDtoToModel(data)
 
 	if input.MembershipPlanId != 0 {
@@ -84,7 +84,7 @@ func (td *transactionDetailDetailRepository) UpdateTransactionDetail(data, input
 	return *transactiondetail.ConvertModelToDto(transactionDetailData), nil
 }
 
-func (td *transactionDetailDetailRepository) DeleteTransactionDetail(id string) (transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) DeleteTransactionDetail(id string) (transactiondetail.TransactionDetailDto, error) {
 	transactionDetailData := transactiondetail.TransactionDetail{}
 
 	err := td.db.Delete(&transactionDetailData, "uuid = ?", id).Error
