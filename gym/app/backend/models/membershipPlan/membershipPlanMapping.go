@@ -43,7 +43,6 @@ func ConvertModelToDto(input MembershipPlan) *MembershipPlanDto {
 
 func ConvertDtoToRes(input MembershipPlanDto) *MembershipPlanRes {
 	return &MembershipPlanRes{
-		Id:             input.Id,
 		UUID:           input.UUID,
 		Name: input.Name,
 		Description: input.Description,

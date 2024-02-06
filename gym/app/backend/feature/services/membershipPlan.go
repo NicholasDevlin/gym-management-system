@@ -71,7 +71,7 @@ func (mp *membershipPlanService) UpdateMembershipPlan(input membershipplan.Membe
 	}
 	res, err = mp.membershipPlanRepository.UpdateMembershipPlan(res, *membershipplan.ConvertReqToDto(input))
 	if err != nil {
-		return membershipplan.MembershipPlanRes{}, errors.ERR_UPDATE_ROLE
+		return membershipplan.MembershipPlanRes{}, errors.ERR_UPDATE_MEMBERSHIP_PLAN
 	}
 	return *membershipplan.ConvertDtoToRes(res), nil
 }
@@ -84,7 +84,7 @@ func (mp *membershipPlanService) DeleteMembershipPlan(id uuid.UUID) (membershipp
 
 	res, err = mp.membershipPlanRepository.DeleteMembershipPlan(id.String())
 	if err != nil {
-		return membershipplan.MembershipPlanRes{}, errors.ERR_DELETE_USER
+		return membershipplan.MembershipPlanRes{}, errors.ERR_DELETE_MEMBERSHIP_PLAN
 	}
 	return *membershipplan.ConvertDtoToRes(res), nil
 }

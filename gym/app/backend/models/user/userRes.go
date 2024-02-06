@@ -8,7 +8,6 @@ import (
 )
 
 type UserRes struct {
-	Id          uint      `json:"id"`
 	UUID        uuid.UUID `json:"uuid" form:"uuid"`
 	Email       string    `json:"email" form:"email"`
 	Token       string    `json:"token" form:"token"`
@@ -21,6 +20,5 @@ type UserRes struct {
 	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
 	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`
 
-	RoleId uint         `json:"roleId" form:"roleId"`
 	Role   role.RoleRes `json:"role" form:"role"`
 }

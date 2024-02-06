@@ -2,7 +2,7 @@ package controller
 
 import (
 	"gym/app/backend/feature/services"
-	"gym/app/backend/models/purchase"
+	"gym/app/backend/models/transaction"
 	baseresponse "gym/app/backend/utils/baseResponse"
 	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/middleware"
@@ -11,23 +11,23 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type purchaseController struct {
-	purchaseService services.IPurchaseService
+type transactionController struct {
+	transactionService services.ITransactionService
 }
 
-func NewPurchaseController(purchaseService services.IPurchaseService) *purchaseController {
-	return &purchaseController{purchaseService}
+func NewTransactionController(transactionService services.ITransactionService) *transactionController {
+	return &transactionController{transactionService}
 }
 
-func (p *purchaseController) CreatePurchase(e echo.Context) error {
+func (t *transactionController) CreateTransaction(e echo.Context) error {
 	userUUID, role, err := middleware.ExtractToken(e)
-	var input purchase.PurchaseReq
+	var input transaction.TransactionReq
 	e.Bind(&input)
 	if role == consts.USER {
 		input.User.UUID = userUUID
 	}
 
-	res, err := p.purchaseService.CreatePurchase(input)
+	res, err := t.transactionService.CreateTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
@@ -35,11 +35,11 @@ func (p *purchaseController) CreatePurchase(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (p *purchaseController) GetAllPurchase(e echo.Context) error {
-	var input purchase.PurchaseReq
-	// input.PurchaseDate.Date() = e.QueryParam("purchaseDate")
+func (t *transactionController) GetAllTransaction(e echo.Context) error {
+	var input transaction.TransactionReq
+	// input.TransactionDate.Date() = e.QueryParam("TransactionDate")
 
-	res, err := p.purchaseService.GetAllPurchase(input)
+	res, err := t.transactionService.GetAllTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
@@ -47,8 +47,8 @@ func (p *purchaseController) GetAllPurchase(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (p *purchaseController) GetPurchase(e echo.Context) error {
-	var input purchase.PurchaseReq
+func (t *transactionController) GetTransaction(e echo.Context) error {
+	var input transaction.TransactionReq
 
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {
@@ -56,15 +56,15 @@ func (p *purchaseController) GetPurchase(e echo.Context) error {
 	}
 	input.UUID = uuid
 
-	res, err := p.purchaseService.GetPurchase(input)
+	res, err := t.transactionService.GetTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (p *purchaseController) UpdatePurchase(e echo.Context) error {
-	var input purchase.PurchaseReq
+func (t *transactionController) UpdateTransaction(e echo.Context) error {
+	var input transaction.TransactionReq
 	e.Bind(&input)
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {
@@ -72,14 +72,14 @@ func (p *purchaseController) UpdatePurchase(e echo.Context) error {
 	}
 	input.UUID = uuid
 
-	res, err := p.purchaseService.UpdatePurchase(input)
+	res, err := t.transactionService.UpdateTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (p *purchaseController) DeletePurchase(e echo.Context) error {
+func (t *transactionController) DeleteTransaction(e echo.Context) error {
 	_, _, err := middleware.ExtractToken(e)
 
 	uuid, err := uuid.FromString(e.Param("id"))
@@ -87,7 +87,7 @@ func (p *purchaseController) DeletePurchase(e echo.Context) error {
 		return baseresponse.NewErrorResponse(e, err)
 	}
 
-	res, err := p.purchaseService.DeletePurchase(uuid)
+	res, err := t.transactionService.DeleteTransaction(uuid)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
