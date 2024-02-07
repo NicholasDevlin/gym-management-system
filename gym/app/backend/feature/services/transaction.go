@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"gym/app/backend/feature/repositories"
 	membershipplan "gym/app/backend/models/membershipPlan"
 	"gym/app/backend/models/transaction"
@@ -24,15 +25,15 @@ type ITransactionService interface {
 type transactionService struct {
 	transactionRepository       repositories.ITransactionRepository
 	userRepository              repositories.IUserRepository
-	membershipPlanRepository              repositories.IMembershipPlanRepository
+	membershipPlanRepository    repositories.IMembershipPlanRepository
 	transactionDetailRepository repositories.ITransactionDetailRepository
 }
 
 func NewTransactionService(repo repositories.ITransactionRepository, userRepo repositories.IUserRepository, membershipPlanRepo repositories.IMembershipPlanRepository, transactionDetailRepo repositories.ITransactionDetailRepository) *transactionService {
 	return &transactionService{
-		transactionRepository: repo,
-		userRepository:        userRepo,
-		membershipPlanRepository : membershipPlanRepo,
+		transactionRepository:       repo,
+		userRepository:              userRepo,
+		membershipPlanRepository:    membershipPlanRepo,
 		transactionDetailRepository: transactionDetailRepo,
 	}
 }
@@ -46,6 +47,7 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
 	entry.UserId = resUser.Id
+	entry.User = resUser
 	res, err := t.transactionRepository.CreateTransaction(entry)
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_CREATE_TRANSACTION
@@ -57,11 +59,11 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		transactionDetailDto = *transactiondetail.ConvertReqToDto(input.TransactionDetail[i])
 		transactionDetailDto.TransactionId = res.Id
 		valid := transactionDetailValidation(transactionDetailDto)
-
+		fmt.Println("1")
 		if !valid {
 			continue
-		} 
-		
+		}
+
 		membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: input.TransactionDetail[i].MembershipPlanUUID})
 
 		if err != nil {
