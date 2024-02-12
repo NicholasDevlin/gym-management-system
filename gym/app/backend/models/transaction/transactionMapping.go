@@ -58,11 +58,11 @@ func ConvertDtoToRes(input TransactionDto) *TransactionRes {
 		Status:            input.Status,
 		UserUUID:          input.UserUUID,
 		User:              *user.ConvertDtoToRes(input.User),
-		TransactionDetail: *ConvertManyDtoToRes(input.TransactionDetail),
+		TransactionDetail: *ConvertDtosToRes(input.TransactionDetail),
 	}
 }
 
-func ConvertManyDtoToRes(input []transactiondetail.TransactionDetailDto) *[]transactiondetail.TransactionDetailRes {
+func ConvertDtosToRes(input []transactiondetail.TransactionDetailDto) *[]transactiondetail.TransactionDetailRes {
 	var result []transactiondetail.TransactionDetailRes
 	for i := range input {
 		res := *transactiondetail.ConvertDtoToRes(input[i])
@@ -70,3 +70,4 @@ func ConvertManyDtoToRes(input []transactiondetail.TransactionDetailDto) *[]tran
 	}
 	return &result
 }
+

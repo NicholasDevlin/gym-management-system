@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"gym/app/backend/feature/repositories"
 	membershipplan "gym/app/backend/models/membershipPlan"
 	"gym/app/backend/models/transaction"
@@ -39,6 +38,9 @@ func NewTransactionService(repo repositories.ITransactionRepository, userRepo re
 }
 
 func (t *transactionService) CreateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
+	if input.TransactionDetail == nil {
+		return transaction.TransactionRes{}, errors.ERR_TRANSACTION_DETAIL_EMPTY
+	}
 	entry := *transaction.ConvertReqToDto(input)
 	entry.TransactionNo = generateTransactionNo()
 	entry.TransactionDate = time.Now()
@@ -59,7 +61,6 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		transactionDetailDto = *transactiondetail.ConvertReqToDto(input.TransactionDetail[i])
 		transactionDetailDto.TransactionId = res.Id
 		valid := transactionDetailValidation(transactionDetailDto)
-		fmt.Println("1")
 		if !valid {
 			continue
 		}

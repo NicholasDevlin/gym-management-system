@@ -60,6 +60,8 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_UPDATE_MEMBERSHIP_PLAN:
 		return http.StatusInternalServerError
+	case ERR_TRANSACTION_DETAIL_EMPTY:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
