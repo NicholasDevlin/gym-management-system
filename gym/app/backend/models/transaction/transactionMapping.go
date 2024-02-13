@@ -51,6 +51,7 @@ func ConvertModelToDto(input Transaction) *TransactionDto {
 }
 
 func ConvertDtoToRes(input TransactionDto) *TransactionRes {
+	transactionDetail, total := ConvertDtosToRes(input.TransactionDetail)
 	return &TransactionRes{
 		UUID:              input.UUID,
 		TransactionDate:   input.TransactionDate,
@@ -58,16 +59,19 @@ func ConvertDtoToRes(input TransactionDto) *TransactionRes {
 		Status:            input.Status,
 		UserUUID:          input.UserUUID,
 		User:              *user.ConvertDtoToRes(input.User),
-		TransactionDetail: *ConvertDtosToRes(input.TransactionDetail),
+		TransactionDetail: *transactionDetail,
+		Total: total,
 	}
 }
 
-func ConvertDtosToRes(input []transactiondetail.TransactionDetailDto) *[]transactiondetail.TransactionDetailRes {
+func ConvertDtosToRes(input []transactiondetail.TransactionDetailDto) (*[]transactiondetail.TransactionDetailRes, int64) {
 	var result []transactiondetail.TransactionDetailRes
+	var total int64
 	for i := range input {
 		res := *transactiondetail.ConvertDtoToRes(input[i])
+		total += res.Subtotal
 		result = append(result, res)
 	}
-	return &result
+	return &result, total
 }
 

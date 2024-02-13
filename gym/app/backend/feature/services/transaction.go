@@ -71,9 +71,9 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 			continue
 		}
 		transactionDetailDto.MembershipPlanId = membershipPlan.Id
+		transactionDetailDto.MembershipPlan = membershipPlan
 		res, err := t.transactionDetailRepository.CreateTransactionDetail(transactionDetailDto)
 		if err == nil {
-			res.Subtotal = int64(res.Quantity) * membershipPlan.Price
 			transactionDetailDtos = append(transactionDetailDtos, res)
 		}
 	}

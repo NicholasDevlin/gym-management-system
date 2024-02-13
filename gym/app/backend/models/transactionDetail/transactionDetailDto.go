@@ -16,6 +16,5 @@ type TransactionDetailDto struct {
 	MembershipPlanId   uint
 	MembershipPlanUUID uuid.UUID
 	Quantity           int
-	Subtotal           int64
-	MembershipPlan membershipplan.MembershipPlanDto
+	MembershipPlan     membershipplan.MembershipPlanDto
 }
