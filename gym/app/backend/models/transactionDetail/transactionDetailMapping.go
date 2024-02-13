@@ -39,6 +39,7 @@ func ConvertModelToDto(input TransactionDetail) *TransactionDetailDto {
 		UUID:            input.UUID,
 		TransactionId: input.TransactionId,
 		MembershipPlanId: input.MembershipPlanId,
+		MembershipPlanUUID: input.MembershipPLan.UUID,
 		Quantity: input.Quantity,
 		MembershipPlan: *membershipplan.ConvertModelToDto(input.MembershipPLan),
 	}
@@ -49,7 +50,7 @@ func ConvertDtoToRes(input TransactionDetailDto) *TransactionDetailRes {
 		UUID:            input.UUID,
 		Quantity: input.Quantity,
 		MembershipPlanUUID: input.MembershipPlanUUID,
-		Subtotal: input.Subtotal,
+		Subtotal: int64(input.Quantity) * input.MembershipPlan.Price,
 		MembershipPlan: *membershipplan.ConvertDtoToRes(input.MembershipPlan),
 	}
 }

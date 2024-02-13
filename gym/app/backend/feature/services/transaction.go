@@ -24,20 +24,23 @@ type ITransactionService interface {
 type transactionService struct {
 	transactionRepository       repositories.ITransactionRepository
 	userRepository              repositories.IUserRepository
-	membershipPlanRepository              repositories.IMembershipPlanRepository
+	membershipPlanRepository    repositories.IMembershipPlanRepository
 	transactionDetailRepository repositories.ITransactionDetailRepository
 }
 
 func NewTransactionService(repo repositories.ITransactionRepository, userRepo repositories.IUserRepository, membershipPlanRepo repositories.IMembershipPlanRepository, transactionDetailRepo repositories.ITransactionDetailRepository) *transactionService {
 	return &transactionService{
-		transactionRepository: repo,
-		userRepository:        userRepo,
-		membershipPlanRepository : membershipPlanRepo,
+		transactionRepository:       repo,
+		userRepository:              userRepo,
+		membershipPlanRepository:    membershipPlanRepo,
 		transactionDetailRepository: transactionDetailRepo,
 	}
 }
 
 func (t *transactionService) CreateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
+	if input.TransactionDetail == nil {
+		return transaction.TransactionRes{}, errors.ERR_TRANSACTION_DETAIL_EMPTY
+	}
 	entry := *transaction.ConvertReqToDto(input)
 	entry.TransactionNo = generateTransactionNo()
 	entry.TransactionDate = time.Now()
@@ -46,6 +49,7 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
 	entry.UserId = resUser.Id
+	entry.User = resUser
 	res, err := t.transactionRepository.CreateTransaction(entry)
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_CREATE_TRANSACTION
@@ -57,20 +61,19 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		transactionDetailDto = *transactiondetail.ConvertReqToDto(input.TransactionDetail[i])
 		transactionDetailDto.TransactionId = res.Id
 		valid := transactionDetailValidation(transactionDetailDto)
-
 		if !valid {
 			continue
-		} 
-		
+		}
+
 		membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: input.TransactionDetail[i].MembershipPlanUUID})
 
 		if err != nil {
 			continue
 		}
 		transactionDetailDto.MembershipPlanId = membershipPlan.Id
+		transactionDetailDto.MembershipPlan = membershipPlan
 		res, err := t.transactionDetailRepository.CreateTransactionDetail(transactionDetailDto)
 		if err == nil {
-			res.Subtotal = int64(res.Quantity) * membershipPlan.Price
 			transactionDetailDtos = append(transactionDetailDtos, res)
 		}
 	}

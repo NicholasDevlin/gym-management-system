@@ -26,6 +26,7 @@ var (
 	ERR_NOT_FOUND                 = errors.New("Data not Found")
 	ERR_EMAIL_NOT_FOUND           = errors.New("Email not found")
 	ERR_WRONG_PASSWORD            = errors.New("Wrong password")
+	ERR_TRANSACTION_DETAIL_EMPTY  = errors.New("Transaction Detail is empty")
 	ERR_MEMBERSHIP_NAME_EMPTY     = errors.New("Membership plan is empty")
 	ERR_MEMBERSHIP_DURATION_EMPTY = errors.New("Membership duration is empty")
 	ERR_MEMBERSHIP_PRICE_EMPTY    = errors.New("Membership price is empty")
