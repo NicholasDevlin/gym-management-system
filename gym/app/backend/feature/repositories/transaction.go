@@ -42,7 +42,7 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 		query = query.Where("transaction_no LIKE ?", "%"+filter.TransactionNo+"%")
 	}
 
-	err := query.Preload("User").Find(&allTransaction).Error
+	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Find(&allTransaction).Error
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto
 		query = query.Where("uuid = ?", filter.UUID)
 	}
 
-	err := query.Preload("User").First(&model).Error
+	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").First(&model).Error
 	if err != nil {
 		return transaction.TransactionDto{}, err
 	}

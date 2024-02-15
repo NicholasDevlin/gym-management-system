@@ -13,5 +13,5 @@ type TransactionDetail struct {
 	TransactionId    uint
 	MembershipPlanId uint
 	Quantity         int
-	MembershipPLan   membershipplan.MembershipPlan `gorm:"foreignKey:MembershipPlanId"`
+	MembershipPlan   membershipplan.MembershipPlan `gorm:"foreignKey:MembershipPlanId"`
 }

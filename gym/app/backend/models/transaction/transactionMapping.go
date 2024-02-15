@@ -37,16 +37,17 @@ func ConvertDtoToModel(input TransactionDto) *Transaction {
 
 func ConvertModelToDto(input Transaction) *TransactionDto {
 	return &TransactionDto{
-		Id:              input.ID,
-		CreatedAt:       input.CreatedAt,
-		UpdatedAt:       input.UpdatedAt,
-		UUID:            input.UUID,
-		UserId:          input.UserId,
-		TransactionDate: input.TransactionDate,
-		TransactionNo:   input.TransactionNo,
-		Status:          input.Status,
-		UserUUID:        input.User.UUID,
-		User:            *user.ConvertModelToDto(input.User),
+		Id:                input.ID,
+		CreatedAt:         input.CreatedAt,
+		UpdatedAt:         input.UpdatedAt,
+		UUID:              input.UUID,
+		UserId:            input.UserId,
+		TransactionDate:   input.TransactionDate,
+		TransactionNo:     input.TransactionNo,
+		Status:            input.Status,
+		UserUUID:          input.User.UUID,
+		User:              *user.ConvertModelToDto(input.User),
+		TransactionDetail: *ConvertModelToDtos(input.TransactionDetail),
 	}
 }
 
@@ -60,7 +61,7 @@ func ConvertDtoToRes(input TransactionDto) *TransactionRes {
 		UserUUID:          input.UserUUID,
 		User:              *user.ConvertDtoToRes(input.User),
 		TransactionDetail: *transactionDetail,
-		Total: total,
+		Total:             total,
 	}
 }
 
@@ -75,3 +76,11 @@ func ConvertDtosToRes(input []transactiondetail.TransactionDetailDto) (*[]transa
 	return &result, total
 }
 
+func ConvertModelToDtos(input []transactiondetail.TransactionDetail) *[]transactiondetail.TransactionDetailDto {
+	var result []transactiondetail.TransactionDetailDto
+	for i := range input {
+		res := *transactiondetail.ConvertModelToDto(input[i])
+		result = append(result, res)
+	}
+	return &result
+}
