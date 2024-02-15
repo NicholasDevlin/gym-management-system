@@ -27,7 +27,7 @@ func ConvertDtoToModel(input TransactionDetailDto) *TransactionDetail {
 		TransactionId: input.TransactionId,
 		MembershipPlanId: input.MembershipPlanId,
 		Quantity: input.Quantity,
-		MembershipPLan: *membershipplan.ConvertDtoToModel(input.MembershipPlan),
+		MembershipPlan: *membershipplan.ConvertDtoToModel(input.MembershipPlan),
 	}
 }
 
@@ -39,9 +39,9 @@ func ConvertModelToDto(input TransactionDetail) *TransactionDetailDto {
 		UUID:            input.UUID,
 		TransactionId: input.TransactionId,
 		MembershipPlanId: input.MembershipPlanId,
-		MembershipPlanUUID: input.MembershipPLan.UUID,
+		MembershipPlanUUID: input.MembershipPlan.UUID,
 		Quantity: input.Quantity,
-		MembershipPlan: *membershipplan.ConvertModelToDto(input.MembershipPLan),
+		MembershipPlan: *membershipplan.ConvertModelToDto(input.MembershipPlan),
 	}
 }
 
