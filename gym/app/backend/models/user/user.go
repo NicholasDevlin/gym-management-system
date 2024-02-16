@@ -10,8 +10,8 @@ import (
 
 type User struct {
 	gorm.Model
-	UUID        uuid.UUID 
-	Email       string    `gorm:"unique;"`
+	UUID        uuid.UUID
+	Email       string `gorm:"unique"`
 	Password    string
 	PhoneNumber string `gorm:"unique"`
 	Gender      string

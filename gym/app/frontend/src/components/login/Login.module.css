@@ -10,11 +10,6 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 .container {
   display: grid;
   place-items: center;
@@ -43,12 +38,34 @@ form {
   }
 }
 
+.textColor, label, input {
+  color: #000 !important;
+  .showPassword & {
+    color: #fff !important;
+  }
+}
+
+.register {
+  margin-top: 70px;
+}
+
+.register .textColor {
+  padding: 20px 0px;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.linkButton {
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  opacity: 0.5 !important;
+}
+
 label,
 input,
 .button {
   font-size: 1.5rem;
-  color: var(--inputColor);
-
   &:focus {
     outline: 3px solid var(--outlineColor);
     outline-offset: 2px;
@@ -57,21 +74,13 @@ input,
   &::-moz-focus-inner {
     border: none;
   }
-
-  &[id="password"] {
-    color: black !important;
-  }
-}
-
-.button {
-  border: none;
 }
 
 [id="submit"] {
+  border: none;
   cursor: pointer;
-  margin: calc(var(--spacer) * 2) 0 0 2px;
   padding: 0.75rem 1.25rem;
-  color: var(--bgColor);
+  color: var(--bgColor) !important;
   background-color: var(--inputColor);
   box-shadow: 4px 4px 0 rgba(dodgerblue, 0.2);
 
@@ -92,7 +101,12 @@ input,
 
 .row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+}
+
+.centerContent {
+  display: flex;
+  justify-content: center;
 }
 
 input {

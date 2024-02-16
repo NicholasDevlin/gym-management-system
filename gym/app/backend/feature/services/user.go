@@ -1,10 +1,11 @@
 package services
 
 import (
+	"gym/app/backend/feature/repositories"
 	"gym/app/backend/models/role"
 	"gym/app/backend/models/user"
-	"gym/app/backend/feature/repositories"
 	"gym/app/backend/utils/bcrypt"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 
 	uuid "github.com/satori/go.uuid"
@@ -47,7 +48,11 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 		return user.UserRes{}, errors.ERR_BCRYPT_PASSWORD
 	}
 
-	roleRes, err := u.roleRepository.GetRole(role.RoleDto{Role: input.Role.Role})
+	if input.Role.Role == "" {
+		input.Role.Role = consts.USER
+	}
+
+	roleRes, err := u.roleRepository.GetRole(role.RoleDto{Role: input.Role.Role, Id: input.RoleId})
 	if err != nil {
 		return user.UserRes{}, errors.ERR_GET_DATA
 	}
@@ -125,5 +130,5 @@ func (u *userService) DeleteUser(id uuid.UUID) (user.UserRes, error) {
 	if err != nil {
 		return user.UserRes{}, errors.ERR_DELETE_USER
 	}
-	return *user.ConvertDtoToRes(res), nil	
+	return *user.ConvertDtoToRes(res), nil
 }

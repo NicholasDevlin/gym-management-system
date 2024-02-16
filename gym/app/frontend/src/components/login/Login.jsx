@@ -6,7 +6,7 @@ import PasswordFied from './inputPasswordField/PasswordField.jsx';
 import TextField from './inputTextField/TextField.jsx';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({registerOnClick}) {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: '',
@@ -48,24 +48,23 @@ function Login() {
     }
   };
 
-  // const handleGoogleLoginFailure = (error) => {
-  //   console.error('Google login failed:', error);
-  // };
-
-  // const handleGoogleLoginSuccess = (response) => {
-  //   // Handle successful login (e.g., set user state or make API calls)
-  // };
-
   return (
-    <div className={`${Styles.container}`} id="container">
+    <div className={Styles.container} id="container">
       <form onSubmit={handleLoginSubmit}>
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />
         <div className={Styles.row}>
-          <GoogleLoginButton />
           <button className={Styles.button} type="submit" id="submit">
             Sign in
           </button>
+        </div>
+        <p className={Styles.textColor}>or login with:</p>
+        <div className={Styles.centerContent}>
+          <GoogleLoginButton />
+        </div>
+        <div className={Styles.register}>
+          <span className={Styles.textColor}>Don't have an account? </span>
+          <button className={`${Styles.linkButton} ${Styles.textColor}`} type="button" onClick={registerOnClick}>Register new account</button>
         </div>
       </form>
     </div>

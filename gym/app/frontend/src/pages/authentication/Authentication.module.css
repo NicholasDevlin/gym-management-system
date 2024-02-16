@@ -1,0 +1,21 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 75%;
+  height: 75%;
+}
+
+.nav {
+  display: inline-flex;
+}
+
+.tab {
+  display: flex;
+  height: 50px;
+}
