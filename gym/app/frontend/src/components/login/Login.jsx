@@ -69,6 +69,6 @@ function Login({registerOnClick}) {
       </form>
     </div>
   );
-};
+}
 // source https://codepen.io/hexagoncircle/pen/zYxzQqa
 export default Login;
