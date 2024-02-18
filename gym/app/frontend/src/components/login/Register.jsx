@@ -5,12 +5,14 @@ import { API_URLS } from '../../apiConfig.js';
 import PasswordFied from './inputPasswordField/PasswordField.jsx';
 import TextField from './inputTextField/TextField.jsx';
 import { useNavigate } from 'react-router-dom';
+import DatetimePicker from '../general/datetimePicker/DatetimePicker.jsx'
 
 function Register({loginOnClick}) {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
+    birthdate: '',
   });
 
   const handleInputChange = (e) => {
@@ -52,6 +54,7 @@ function Register({loginOnClick}) {
     <div className={Styles.container} id="container">
       <form onSubmit={handleLoginSubmit}>
         <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
+        <DatetimePicker label={"Birthdate"} id={"birthdate"} onChange={handleInputChange}/>
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />
         <div className={Styles.row}>

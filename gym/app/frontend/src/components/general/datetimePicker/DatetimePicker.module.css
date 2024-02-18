@@ -1,0 +1,11 @@
+.inputWrapper {
+  position: relative;
+}
+
+.datetimePicker {
+  color: #000 !important;
+}
+
+.datetimePicker tr td, tr th, span {
+  color: #000 !important;
+}
