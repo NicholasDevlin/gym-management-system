@@ -30,7 +30,6 @@ function PasswordFied({id, onChange}) {
     eye.addEventListener('click', handleEyeClick);
 
     return () => {
-      // Cleanup event listeners on component unmount
       root.removeEventListener('mousemove', handleMouseMove);
       eye.removeEventListener('click', handleEyeClick);
     };
