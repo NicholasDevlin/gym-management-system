@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styles from './Login.module.css'
 import GoogleLoginButton from './loginWithGoogle/LoginGoogle.jsx';
 import { API_URLS } from '../../apiConfig.js';
@@ -10,11 +10,19 @@ import PhoneInput from '../general/input/phoneNumberInput/PhoneNumberInput.jsx'
 function Register({loginOnClick}) {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [loginData, setLoginData] = useState({
+  const [registerData, setRegisterData] = useState({
     email: '',
     password: '',
     name: '',
+    phoneNumber: ''
   });
+
+  useEffect(() => {
+    setRegisterData(prevData => ({
+      ...prevData,
+      phoneNumber: phoneNumber
+    }));
+  }, [phoneNumber]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -22,7 +30,7 @@ function Register({loginOnClick}) {
     if (id === 'phoneNumber') {
       setPhoneNumber(value);
     } else {
-      setLoginData((prevData) => ({
+      setRegisterData((prevData) => ({
         ...prevData,
         [id]: value,
       }));
@@ -33,12 +41,12 @@ function Register({loginOnClick}) {
     e.preventDefault();
 
     try {
-      const response = await fetch(API_URLS.LOGIN, {
+      const response = await fetch(API_URLS.REGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginData),
+        body: JSON.stringify(registerData),
       });
 
       if (!response.ok) {

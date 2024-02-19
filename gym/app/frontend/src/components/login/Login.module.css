@@ -3,7 +3,7 @@
   --inputColor: #222220;
   --outlineColor: dodgerblue;
   --beamColor: yellow;
-  --spacer: 1rem;
+  --spacer: 0.5rem;
 }
 
 * {
@@ -46,12 +46,11 @@ form {
 }
 
 .register {
-  margin-top: 70px;
+  margin-top: 50px;
 }
 
 .register .textColor {
   padding: 20px 0px;
-  font-size: 1rem;
   opacity: 0.9;
 }
 
@@ -65,7 +64,6 @@ form {
 label,
 input,
 .button {
-  font-size: 1.5rem;
   &:focus {
     outline: 3px solid var(--outlineColor);
     outline-offset: 2px;

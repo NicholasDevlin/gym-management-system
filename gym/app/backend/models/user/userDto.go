@@ -14,7 +14,7 @@ type UserDto struct {
 	Password    string
 	PhoneNumber string
 	Gender      string
-	BirthDate   time.Time
+	BirthDate   *time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
