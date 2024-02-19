@@ -33,13 +33,13 @@ func NewUserService(repo repositories.IUserRepository, roleRepo repositories.IRo
 }
 
 func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
-	if input.Email == "" {
-		return user.UserRes{}, errors.ERR_EMAIL_IS_EMPTY
-	}
 	if input.PhoneNumber == "" {
 		return user.UserRes{}, errors.ERR_PHONE_NUMBER_IS_EMPTY
 	}
-	if input.Password == "" {
+	if input.Email == "" {
+		return user.UserRes{}, errors.ERR_EMAIL_IS_EMPTY
+	}
+	if input.Password == "" && input.IsGoogleUser == false {
 		return user.UserRes{}, errors.ERR_PASSWORD_IS_EMPTY
 	}
 

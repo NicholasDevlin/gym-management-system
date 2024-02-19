@@ -5,22 +5,28 @@ import { API_URLS } from '../../apiConfig.js';
 import PasswordFied from './inputPasswordField/PasswordField.jsx';
 import TextField from './inputTextField/TextField.jsx';
 import { useNavigate } from 'react-router-dom';
-import DatetimePicker from '../general/datetimePicker/DatetimePicker.jsx'
+import PhoneInput from '../general/input/phoneNumberInput/PhoneNumberInput.jsx'
 
 function Register({loginOnClick}) {
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
-    birthdate: '',
+    name: '',
   });
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setLoginData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
+  
+    if (id === 'phoneNumber') {
+      setPhoneNumber(value);
+    } else {
+      setLoginData((prevData) => ({
+        ...prevData,
+        [id]: value,
+      }));
+    }
   };
 
   const handleLoginSubmit = async (e) => {
@@ -54,7 +60,7 @@ function Register({loginOnClick}) {
     <div className={Styles.container} id="container">
       <form onSubmit={handleLoginSubmit}>
         <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
-        <DatetimePicker label={"Birthdate"} id={"birthdate"} onChange={handleInputChange}/>
+        <PhoneInput id={"phoneNumber"} label={"Phone Number"} onChange={handleInputChange} />
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />
         <div className={Styles.row}>

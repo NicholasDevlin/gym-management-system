@@ -12,5 +12,5 @@ function DatetimePicker({ id, onChange, label }) {
     </div>
   )
 }
-
+// Doc: https://github.com/arqex/react-datetime/blob/2a83208452ac5e41c43fea31ef47c65efba0bb56/README.md
 export default DatetimePicker;

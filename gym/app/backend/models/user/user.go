@@ -22,6 +22,6 @@ type User struct {
 	ProfilePicture string  // to store profile picture URL
 	IsGoogleUser   bool    `gorm:"default:false"`
 
-	RoleId uint      // Foreign key for Role
+	RoleId uint
 	Role   role.Role `gorm:"foreignKey:RoleId"`
 }
