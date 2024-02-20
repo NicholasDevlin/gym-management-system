@@ -12,9 +12,9 @@ function Membership() {
         <Card title={"test"} body={"loremmmm "} button={Button} />
       </div>
       <div className={Styles.cardHolder}>
-        <CardProduct title={"test"}></CardProduct>
-        <CardProduct title={"test"}></CardProduct>
-        <CardProduct title={"test"}></CardProduct>
+        <CardProduct title={"user"}></CardProduct>
+        <CardProduct title={"user"}></CardProduct>
+        <CardProduct title={"user"}></CardProduct>
       </div>
     </Layout>
   );

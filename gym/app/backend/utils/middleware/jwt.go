@@ -18,9 +18,7 @@ func CreateToken(userId uuid.UUID, name, role string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["uuid"] = userId
 	claims["role"] = role
-	// claims["name"] = name
 	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
-	// claims["role"] = role
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
@@ -33,15 +31,6 @@ func JWTMiddleware() echo.MiddlewareFunc {
 		SigningMethod: "HS256",
 	})
 }
-
-// func SetTokenCookie(e echo.Context, token string) {
-// 	cookie := new(http.Cookie)
-// 	cookie.Name = "token"
-// 	cookie.Value = token
-// 	cookie.Path = "/"
-
-// 	e.SetCookie(cookie)
-// }
 
 func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 	user, ok := e.Get("user").(*jwt.Token)
@@ -66,16 +55,6 @@ func ExtractToken(e echo.Context) (uuid.UUID, string, error) {
 	if !ok {
 		return uuid.UUID{}, "", errors.New("invalid token claims")
 	}
-
-	// name, okName := claims["name"].(string)
-	// if !okName {
-	// 	return 0, 0, 0, "", "", errors.New("invalid token claims")
-	// }
-
-	// role, okRole := claims["role"].(string)
-	// if !okRole {
-	// 	return 0, 0, 0, "", errors.New("invalid token claims")
-	// }
 
 	return userUUID, role, nil
 }
