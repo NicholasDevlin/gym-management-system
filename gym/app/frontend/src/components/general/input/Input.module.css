@@ -9,3 +9,9 @@
 .datetimePicker tr td, tr th, span {
   color: #000 !important;
 }
+
+.formItem {
+  >*+* {
+    margin-top: 0.5rem;
+  }
+}

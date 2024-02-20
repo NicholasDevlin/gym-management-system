@@ -26,22 +26,36 @@ code {
 }
 
 @media only screen and (min-width: 400px) {
-  body {
-    font-size: 70%;
+  html {
+    font-size: 1rem;
   }
-};
+}
 @media only screen and (min-width: 800px) {
-  body {
-    font-size: 75%;
+  html {
+    font-size: 1.1rem;
   }
-};
+}
 @media only screen and (min-width: 1000px) {
-  body {
-    font-size: 90%;
+  html {
+    font-size: 1.2rem;
   }
-};
+}
 @media only screen and (min-width: 1200px) {
-  body {
-    font-size: 100% ;
+  html {
+    font-size: 1.3rem;
   }
-};
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="tel"] {
+  font-size: inherit; /* Inherit font size from parent */
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  font-size: inherit; /* Inherit font size from parent */
+}

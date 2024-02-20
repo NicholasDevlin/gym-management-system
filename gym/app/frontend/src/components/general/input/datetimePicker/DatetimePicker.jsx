@@ -1,6 +1,6 @@
 import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
-import Styles from './DatetimePicker.module.css'
+import Styles from '../Input.module.css'
 
 function DatetimePicker({ id, onChange, label }) {
   return (

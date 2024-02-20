@@ -123,6 +123,9 @@ func (u *userRepository) UpdateUser(data, input user.UserDto) (user.UserDto, err
 	if input.PhoneNumber != "" {
 		userData.PhoneNumber = input.PhoneNumber
 	}
+	if input.BirthDate != nil {
+		userData.BirthDate = input.BirthDate
+	}
 	if input.Gender != "" {
 		userData.Gender = input.Gender
 	}

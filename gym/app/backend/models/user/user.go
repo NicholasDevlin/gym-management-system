@@ -15,7 +15,7 @@ type User struct {
 	Password    string
 	PhoneNumber string `gorm:"unique"`
 	Gender      string
-	BirthDate   time.Time
+	BirthDate   *time.Time
 
 	DisplayName    string  // to store display name
 	GoogleID       *string // to store Google ID
