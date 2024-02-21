@@ -1,14 +1,14 @@
-* {
-  font-family: "JetBrains Mono",monospace;
-  color: #d8cdb9 !important;
-}
-
 :root {
   --vintageEphemera: #d8cdb9;
   --coalBlack: #222220;
   --gothicGold: #c28c2e;
   --redBerry: #721b29;
   --primary: #043353;
+}
+
+* {
+  font-family: "JetBrains Mono",monospace;
+  color: var(--vintageEphemera);
 }
 
 body {

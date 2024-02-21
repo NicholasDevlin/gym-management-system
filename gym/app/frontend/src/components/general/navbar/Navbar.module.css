@@ -1,8 +1,18 @@
+:root {
+  --vintageEphemera: #d8cdb9;
+  --coalBlack: #222220;
+  --gothicGold: #c28c2e;
+  --redBerry: #721b29;
+  --primary: #043353;
+  --darkerCoalBlack: #101012;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   width: 100%;
   background-color: #1f2124;
+  position: relative;
 }
 
 .ul {
@@ -16,7 +26,7 @@
 }
 
 .li:hover {
-  color: #c28c2e !important;
+  color: var(--gothicGold);
 }
 
 .ul a {
@@ -31,5 +41,43 @@
   align-items: center;
   margin-left: 20px !important;
   width: 75px !important;
-  color: #d8cdb9;
+}
+
+.profileButton {
+  background-color: transparent;
+}
+
+.profileMenu {
+  position: absolute;
+  min-width: 150px;
+  top: 100%;
+  right: 0;
+  background-color: var(--coalBlack);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px 5px;
+}
+
+.profileMenu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profileMenu li {
+  color: var(--vintageEphemera);
+  padding: 10px;
+}
+
+.profileMenu a {
+  width: 100%;
+  color: var(--vintageEphemera);
+  text-decoration: none;
+  display: block;
+}
+
+.profileMenu li:hover, .profileMenu li:hover a  {
+  background-color: var(--darkerCoalBlack);
+  color: var(--gothicGold);
 }

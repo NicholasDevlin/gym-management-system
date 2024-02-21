@@ -10,18 +10,10 @@ function Authentication() {
   };
 
   return (
-    // <div className={Styles.container}>
-    //   <div className={Styles.card}>
-    //     <div className={Styles.nav}>
-    //       <button className={Styles.tab} onClick={() => handleTabChange('register')}>Register</button>
-    //       <button className={Styles.tab} onClick={() => handleTabChange('login')}>Login</button>
-    //     </div>
-        <div>
-          {activeTab === 'register' && <Register loginOnClick={() => handleTabChange('login')} />}
-          {activeTab === 'login' && <Login registerOnClick={() => handleTabChange('register')} />}
-        </div>
-    //   </div>
-    // </div>
+    <>
+      {activeTab === 'register' && <Register loginOnClick={() => handleTabChange('login')} />}
+      {activeTab === 'login' && <Login registerOnClick={() => handleTabChange('register')} />}
+    </>
   );
 }
 
