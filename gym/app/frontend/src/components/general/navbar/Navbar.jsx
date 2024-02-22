@@ -21,7 +21,7 @@ function Navbar() {
           {isProfileMenuOpen && (
             <div className={Styles.profileMenu}>
               <ul>
-                <li><Link to='/profile'>Profile</Link></li>
+                <Link to='/profile'><li>Profile</li></Link>
                 <li>Sign out</li>
               </ul>
             </div>

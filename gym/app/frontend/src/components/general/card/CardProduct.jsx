@@ -17,7 +17,7 @@ function CardProduct({title}){
           <li><span>1</span> Hour free support</li>
         </ul>
       </div>
-      <a href="#" className={Styles.btn}>Check it out</a>
+      {/* <a href="#" className={Styles.btn}>Check it out</a> */}
     </div>
   )
 }
