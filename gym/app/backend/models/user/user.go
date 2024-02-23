@@ -16,10 +16,11 @@ type User struct {
 	PhoneNumber string `gorm:"unique"`
 	Gender      string
 	BirthDate   *time.Time
+	SubscriptionDueDate *time.Time
 
-	DisplayName    string  // to store display name
-	GoogleID       *string // to store Google ID
-	ProfilePicture string  // to store profile picture URL
+	DisplayName    string  
+	GoogleID       *string
+	ProfilePicture string  
 	IsGoogleUser   bool    `gorm:"default:false"`
 
 	RoleId uint

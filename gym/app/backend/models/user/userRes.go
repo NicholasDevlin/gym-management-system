@@ -14,10 +14,10 @@ type UserRes struct {
 	PhoneNumber string    `json:"phoneNumber" form:"phoneNumber"`
 	Gender      string    `json:"gender" form:"gender"`
 	BirthDate   *time.Time `json:"birthDate" form:"birthDate"`
-
-	DisplayName    string  `json:"name" form:"name"`                     // to store display name
-	GoogleID       *string `json:"googleId" form:"googleId"`             // to store Google ID
-	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` // to store profile picture URL
+	SubscriptionDueDate *time.Time `json:"subscriptionDueDate" form:"subscriptionDueDate"`
+	DisplayName    string  `json:"name" form:"name"`                     
+	GoogleID       *string `json:"googleId" form:"googleId"`             
+	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` 
 	IsGoogleUser   bool    `json:"isGoogleUser" form:"isGoogleUser"`
 
 	Role   role.RoleRes `json:"role" form:"role"`
