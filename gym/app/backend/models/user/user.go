@@ -16,7 +16,7 @@ type User struct {
 	PhoneNumber string `gorm:"unique"`
 	Gender      string
 	BirthDate   *time.Time
-	SubscriptionDueDate *time.Time
+	SubscriptionExpirationDate *time.Time
 
 	DisplayName    string  
 	GoogleID       *string

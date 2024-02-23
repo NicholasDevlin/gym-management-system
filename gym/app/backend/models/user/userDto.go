@@ -15,7 +15,7 @@ type UserDto struct {
 	PhoneNumber string
 	Gender      string
 	BirthDate   *time.Time
-	SubscriptionDueDate   *time.Time
+	SubscriptionExpirationDate   *time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 

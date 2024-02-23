@@ -14,7 +14,7 @@ type UserRes struct {
 	PhoneNumber string    `json:"phoneNumber" form:"phoneNumber"`
 	Gender      string    `json:"gender" form:"gender"`
 	BirthDate   *time.Time `json:"birthDate" form:"birthDate"`
-	SubscriptionDueDate *time.Time `json:"subscriptionDueDate" form:"subscriptionDueDate"`
+	SubscriptionExpirationDate *time.Time `json:"subscriptionDueDate" form:"subscriptionDueDate"`
 	DisplayName    string  `json:"name" form:"name"`                     
 	GoogleID       *string `json:"googleId" form:"googleId"`             
 	ProfilePicture string  `json:"profilePicture" form:"profilePicture"` 

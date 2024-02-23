@@ -20,7 +20,7 @@ func ConvertReqToDto(input UserReq) *UserDto {
 		ProfilePicture:      input.ProfilePicture,
 		IsGoogleUser:        input.IsGoogleUser,
 		RoleId:              input.RoleId,
-		SubscriptionDueDate: input.SubscriptionDueDate,
+		SubscriptionExpirationDate: input.SubscriptionExpirationDate,
 		Role:                *role.ConvertReqToDto(input.Role),
 	}
 }
@@ -43,7 +43,7 @@ func ConvertDtoToModel(input UserDto) *User {
 		ProfilePicture:      input.ProfilePicture,
 		IsGoogleUser:        input.IsGoogleUser,
 		RoleId:              input.RoleId,
-		SubscriptionDueDate: input.SubscriptionDueDate,
+		SubscriptionExpirationDate: input.SubscriptionExpirationDate,
 		Role:                *role.ConvertDtoToModel(input.Role),
 	}
 }
@@ -64,7 +64,7 @@ func ConvertModelToDto(input User) *UserDto {
 		ProfilePicture:      input.ProfilePicture,
 		IsGoogleUser:        input.IsGoogleUser,
 		RoleId:              input.RoleId,
-		SubscriptionDueDate: input.SubscriptionDueDate,
+		SubscriptionExpirationDate: input.SubscriptionExpirationDate,
 		Role:                *role.ConvertModelToDto(input.Role),
 	}
 }
@@ -80,7 +80,7 @@ func ConvertDtoToRes(input UserDto) *UserRes {
 		GoogleID:            input.GoogleID,
 		ProfilePicture:      input.ProfilePicture,
 		IsGoogleUser:        input.IsGoogleUser,
-		SubscriptionDueDate: input.SubscriptionDueDate,
+		SubscriptionExpirationDate: input.SubscriptionExpirationDate,
 		Role:                *role.ConvertDtoToRes(input.Role),
 	}
 }

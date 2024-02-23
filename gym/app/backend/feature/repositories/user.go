@@ -129,6 +129,9 @@ func (u *userRepository) UpdateUser(data, input user.UserDto) (user.UserDto, err
 	if input.Gender != "" {
 		userData.Gender = input.Gender
 	}
+	if input.SubscriptionExpirationDate != nil {
+		userData.SubscriptionExpirationDate = input.SubscriptionExpirationDate
+	}
 	if input.RoleId != 0 {
 		userData.RoleId = input.RoleId
 	}
