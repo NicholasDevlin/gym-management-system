@@ -38,10 +38,14 @@ form {
   }
 }
 
-.textColor, label, input {
-  color: #000 !important;
+.textColor,
+.form,
+.form input,
+.form label {
+  color: #000;
+
   .showPassword & {
-    color: #fff !important;
+    color: #fff;
   }
 }
 

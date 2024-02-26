@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from '../../layout/MainLayout/Layout.jsx';
 import Styles from './Profile.module.css'
+import TextInput from '../../components/general/input/inputTextField/TextField.jsx'
 import { Icon } from '@iconify/react';
 
 function Profile() {
@@ -15,6 +16,12 @@ function Profile() {
             </label>
             <input id='inputFile' type="file" className='d-none' />
           </div>
+        </div>
+      </div>
+      <div className='container'>
+        <div className='row'>
+          <TextInput id={"name"} label={"Name"} />
+          <TextInput id={"name"} label={"Name"} />
         </div>
       </div>
     </Layout>

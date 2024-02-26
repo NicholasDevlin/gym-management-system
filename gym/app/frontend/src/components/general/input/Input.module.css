@@ -3,11 +3,11 @@
 }
 
 .datetimePicker {
-  color: #000 !important;
+  color: #000;
 }
 
 .datetimePicker tr td, tr th, span {
-  color: #000 !important;
+  color: #000;
 }
 
 .formItem {

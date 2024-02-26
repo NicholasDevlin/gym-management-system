@@ -1,4 +1,4 @@
-import Styles from '../Login.module.css'
+import Styles from '../Input.module.css'
 
 function TextField({id, onChange, label}) {
   return (

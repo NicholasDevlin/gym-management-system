@@ -3,7 +3,7 @@ import Styles from './Login.module.css'
 import GoogleLoginButton from './loginWithGoogle/LoginGoogle.jsx';
 import { API_URLS } from '../../apiConfig.js';
 import PasswordFied from './inputPasswordField/PasswordField.jsx';
-import TextField from './inputTextField/TextField.jsx';
+import TextField from '../general/input/inputTextField/TextField.jsx';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from '../general/input/phoneNumberInput/PhoneNumberInput.jsx'
 
@@ -66,7 +66,7 @@ function Register({loginOnClick}) {
 
   return (
     <div className={Styles.container} id="container">
-      <form onSubmit={handleLoginSubmit}>
+      <form className={Styles.form} onSubmit={handleLoginSubmit}>
         <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
         <PhoneInput id={"phoneNumber"} label={"Phone Number"} onChange={handleInputChange} />
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
