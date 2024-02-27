@@ -3,10 +3,10 @@ import Styles from "./GenderPicker.module.css";
 
 function GenderPicker({ id, onChange, label }) {
   return (
-    <div className="row">
+    <div className={Styles.container}>
       <label>Gender</label>
       <div className="row">
-        <input type="radio" name="sex" value="f" data-icon="" />
+        <input type="radio" name="sex" value="f" data-icon="" checked />
         <input type="radio" name="sex" value="m" data-icon="" />
       </div>
     </div>

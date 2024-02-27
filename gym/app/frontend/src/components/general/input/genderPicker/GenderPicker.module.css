@@ -1,11 +1,12 @@
 @import url("//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
 
 .container {
-    display: flex;
+    display: block;
     width: 60%;
 }
 
 input[name="sex"] {
+    margin-top: 0.5rem;
     -webkit-appearance: none;
     -moz-appearance: none;
     -o-appearance: none;
@@ -15,8 +16,8 @@ input[name="sex"] {
     box-shadow: none;
     min-width: 50px;
     width: 20%;
-    padding: 20px;
-    max-width: 70px;
+    max-width: 75px;
+    padding: 5px;
     &:focus {
         outline: none;
     }
