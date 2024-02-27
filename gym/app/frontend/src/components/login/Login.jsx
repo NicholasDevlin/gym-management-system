@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import Styles from './Login.module.css'
-import GoogleLoginButton from './loginWithGoogle/LoginGoogle.jsx';
-import { API_URLS } from '../../apiConfig.js';
-import PasswordFied from './inputPasswordField/PasswordField.jsx';
-import TextField from '../general/input/inputTextField/TextField.jsx';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import Styles from "./Login.module.css";
+import GoogleLoginButton from "./loginWithGoogle/LoginGoogle.jsx";
+import { API_URLS } from "../../apiConfig.js";
+import PasswordFied from "./inputPasswordField/PasswordField.jsx";
+import TextField from "../general/input/inputTextField/TextField.jsx";
+import { useNavigate } from "react-router-dom";
 
-function Login({registerOnClick}) {
+function Login({ registerOnClick }) {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleInputChange = (e) => {
@@ -26,9 +26,9 @@ function Login({registerOnClick}) {
 
     try {
       const response = await fetch(API_URLS.LOGIN, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
       });
@@ -39,17 +39,17 @@ function Login({registerOnClick}) {
 
       const responseData = await response.json();
       if (responseData.success) {
-        navigate('/');
+        navigate("/");
       }
-      localStorage.setItem('authToken', responseData.data.token);
-      console.log('Login successful. Response:', responseData);
+      localStorage.setItem("authToken", responseData.data.token);
+      console.log("Login successful. Response:", responseData);
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error("Error during login:", error);
     }
   };
 
   return (
-    <div className={Styles.container} id="container">
+    <div className={Styles.container}>
       <form className={Styles.form} onSubmit={handleLoginSubmit}>
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />
@@ -64,7 +64,13 @@ function Login({registerOnClick}) {
         </div>
         <div className={Styles.register}>
           <span className={Styles.textColor}>Don't have an account? </span>
-          <button className={`${Styles.linkButton} ${Styles.textColor}`} type="button" onClick={registerOnClick}>Register new account</button>
+          <button
+            className={`${Styles.linkButton} ${Styles.textColor}`}
+            type="button"
+            onClick={registerOnClick}
+          >
+            Register new account
+          </button>
         </div>
       </form>
     </div>
