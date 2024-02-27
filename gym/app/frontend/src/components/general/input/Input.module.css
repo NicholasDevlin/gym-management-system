@@ -1,17 +1,21 @@
 .inputWrapper {
-  position: relative;
+    position: relative;
+    margin: 0;
 }
 
 .datetimePicker {
-  color: #000;
+    color: #000;
 }
 
-.datetimePicker tr td, tr th, span {
-  color: #000;
+.datetimePicker tr td,
+tr th,
+span {
+    color: #000;
 }
 
 .formItem {
-  >*+* {
-    margin-top: 0.5rem;
-  }
+    margin-bottom: 1rem;
+    > * + * {
+        margin-top: 0.1rem;
+    }
 }
