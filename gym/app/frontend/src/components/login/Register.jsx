@@ -65,7 +65,7 @@ function Register({ loginOnClick }) {
   };
 
   return (
-    <div className={Styles.container}>
+    <div className={Styles.container} id="container">
       <form className={Styles.form} onSubmit={handleLoginSubmit}>
         <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
         <PhoneInput

@@ -1,11 +1,12 @@
 import Styles from "../Input.module.css";
 
-function TextField({ id, onChange, label }) {
+function TextAreaField({ id, onChange, label }) {
   return (
     <div className={Styles.formItem}>
       <label htmlFor={id}>{label}</label>
       <div className={Styles.inputWrapper}>
-        <input
+        <textarea
+          rows="2"
           id={id}
           onChange={onChange}
           type="text"
@@ -19,4 +20,4 @@ function TextField({ id, onChange, label }) {
   );
 }
 
-export default TextField;
+export default TextAreaField;

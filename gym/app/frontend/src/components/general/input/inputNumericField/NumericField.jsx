@@ -1,6 +1,6 @@
 import Styles from "../Input.module.css";
 
-function TextField({ id, onChange, label }) {
+function NumericField({ id, onChange, label }) {
   return (
     <div className={Styles.formItem}>
       <label htmlFor={id}>{label}</label>
@@ -8,7 +8,7 @@ function TextField({ id, onChange, label }) {
         <input
           id={id}
           onChange={onChange}
-          type="text"
+          type="number"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
@@ -19,4 +19,4 @@ function TextField({ id, onChange, label }) {
   );
 }
 
-export default TextField;
+export default NumericField;

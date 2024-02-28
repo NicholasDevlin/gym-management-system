@@ -31,12 +31,10 @@ function Profile() {
         </div>
       </div>
       <div className="container">
-        <div className="row">
-          <TextInput id={"name"} label={"Name"} />
-          <PhoneNumberInput id={"phoneNumber"} label={"Phone Number"} />
-          <DatetimePicker label={"Birthdate"} id={"birthdate"} />
-          <GenderPicker />
-        </div>
+        <TextInput id={"name"} label={"Name"} />
+        <PhoneNumberInput id={"phoneNumber"} label={"Phone Number"} />
+        <DatetimePicker label={"Birthdate"} id={"birthdate"} />
+        <GenderPicker />
       </div>
     </Layout>
   );

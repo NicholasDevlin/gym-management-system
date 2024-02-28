@@ -49,7 +49,7 @@ function Login({ registerOnClick }) {
   };
 
   return (
-    <div className={Styles.container}>
+    <div className={Styles.container} id="container">
       <form className={Styles.form} onSubmit={handleLoginSubmit}>
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
         <PasswordFied id={"password"} onChange={handleInputChange} />

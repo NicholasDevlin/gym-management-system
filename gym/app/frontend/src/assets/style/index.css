@@ -66,8 +66,9 @@ textarea {
     /* Inherit font size from parent */
 }
 
-input {
-    padding: 0.75rem 4rem 0.75rem 0.75rem;
+input,
+textarea {
+    padding: 0.75rem 0.75rem 0.75rem 0.75rem;
     width: 100%;
     border: 2px solid transparent;
     border-radius: 0;
@@ -86,6 +87,7 @@ input {
 
 label,
 input,
+textarea,
 .button {
     &:focus {
         outline: 3px solid var(--outlineColor);
