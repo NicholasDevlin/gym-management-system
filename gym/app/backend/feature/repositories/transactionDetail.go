@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	transactiondetail "gym/app/backend/models/transactionDetail"
 	transactionDetail "gym/app/backend/models/transactionDetail"
+	transactiondetail "gym/app/backend/models/transactionDetail"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -23,7 +23,6 @@ type transactionDetailRepository struct {
 func NewTransactionDetailRepository(db *gorm.DB) *transactionDetailRepository {
 	return &transactionDetailRepository{db}
 }
-
 
 func (td *transactionDetailRepository) CreateTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
 	dataTransactionDetail := transactiondetail.ConvertDtoToModel(input)
@@ -76,6 +75,9 @@ func (td *transactionDetailRepository) UpdateTransactionDetail(data, input trans
 	}
 	if input.Quantity != 0 {
 		transactionDetailData.Quantity = input.Quantity
+	}
+	if input.UserId != 0 {
+		transactionDetailData.UserId = input.UserId
 	}
 
 	if err := td.db.Save(&transactionDetailData).Error; err != nil {

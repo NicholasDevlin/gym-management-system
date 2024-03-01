@@ -10,6 +10,7 @@ function TextAreaField({ id, onChange, label }) {
           id={id}
           onChange={onChange}
           type="text"
+          autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"

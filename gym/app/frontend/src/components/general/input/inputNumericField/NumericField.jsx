@@ -9,6 +9,7 @@ function NumericField({ id, onChange, label }) {
           id={id}
           onChange={onChange}
           type="number"
+          autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
