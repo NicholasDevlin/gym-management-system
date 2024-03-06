@@ -1,6 +1,6 @@
-import Styles from '../Login.module.css'
+import Styles from "../Input.module.css";
 
-function TextField({id, onChange, label}) {
+function TextField({ id, onChange, label }) {
   return (
     <div className={Styles.formItem}>
       <label htmlFor={id}>{label}</label>
@@ -17,7 +17,7 @@ function TextField({id, onChange, label}) {
         />
       </div>
     </div>
-  )
+  );
 }
 
 export default TextField;

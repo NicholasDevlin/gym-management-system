@@ -15,12 +15,13 @@ type UserDto struct {
 	PhoneNumber string
 	Gender      string
 	BirthDate   *time.Time
+	SubscriptionExpirationDate   *time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	DisplayName    string  // to store display name
-	GoogleID       *string // to store Google ID
-	ProfilePicture string  // to store profile picture URL
+	DisplayName    string 
+	GoogleID       *string
+	ProfilePicture string 
 	IsGoogleUser   bool
 
 	RoleId uint

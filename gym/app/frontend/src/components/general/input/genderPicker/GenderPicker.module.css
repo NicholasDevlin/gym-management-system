@@ -1,0 +1,45 @@
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+
+.container {
+    display: block;
+    width: 60%;
+}
+
+input[name="gender"] {
+    margin-top: 0.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: none;
+    box-shadow: none;
+    min-width: 50px;
+    width: 20%;
+    max-width: 75px;
+    padding: 5px;
+    &:focus {
+        outline: none;
+    }
+
+    &:after {
+        font-family: "FontAwesome";
+        text-align: center;
+        padding: 20px;
+        content: attr(data-icon);
+        font-size: 30px;
+        text-align: center;
+        border-radius: 15px;
+        color: rgba(0, 0, 0, 0.4);
+        transition:
+            box-shadow 1s,
+            color 1s;
+    }
+
+    &:checked {
+        &:after {
+            box-shadow: 2px 2px 14px rgba(0, 0, 0, 0.4);
+            color: #d8cdb9;
+        }
+    }
+}
