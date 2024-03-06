@@ -28,25 +28,25 @@ code {
 
 @media only screen and (min-width: 400px) {
     html {
-        font-size: 1rem;
+        font-size: 0.7rem;
     }
 }
 
 @media only screen and (min-width: 800px) {
     html {
-        font-size: 1.1rem;
+        font-size: 0.8rem;
     }
 }
 
 @media only screen and (min-width: 1000px) {
     html {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
     }
 }
 
 @media only screen and (min-width: 1200px) {
     html {
-        font-size: 1.3rem;
+        font-size: 1rem;
     }
 }
 

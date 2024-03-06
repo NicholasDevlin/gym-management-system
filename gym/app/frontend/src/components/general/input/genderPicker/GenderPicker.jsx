@@ -1,13 +1,13 @@
 import "react-datetime/css/react-datetime.css";
 import Styles from "./GenderPicker.module.css";
 
-function GenderPicker({ id, onChange, label }) {
+function GenderPicker({ id, onChange }) {
   return (
     <div className={Styles.container}>
       <label>Gender</label>
       <div className="row">
-        <input type="radio" name="sex" value="f" data-icon="" checked />
-        <input type="radio" name="sex" value="m" data-icon="" />
+        <input type="radio" name="gender" value="male" data-icon="" id={id} onChange={onchange} />
+        <input type="radio" name="gender" value="female" data-icon="" id={id} onChange={onChange} />
       </div>
     </div>
   );

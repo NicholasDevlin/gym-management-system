@@ -3,6 +3,7 @@ package repositories
 import (
 	"gym/app/backend/models/user"
 	"gym/app/backend/utils/bcrypt"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 
 	uuid "github.com/satori/go.uuid"
@@ -14,7 +15,7 @@ type IUserRepository interface {
 	LoginUser(data user.UserDto) (user.UserDto, error)
 	GetAllUser(filter user.UserDto, page, pageSize int) ([]user.UserDto, int, error)
 	GetUser(filter user.UserDto) (user.UserDto, error)
-	UpdateUser(data ,input user.UserDto) (user.UserDto, error)
+	UpdateUser(data, input user.UserDto) (user.UserDto, error)
 	DeleteUser(id string) (user.UserDto, error)
 }
 
@@ -128,6 +129,9 @@ func (u *userRepository) UpdateUser(data, input user.UserDto) (user.UserDto, err
 	}
 	if input.Gender != "" {
 		userData.Gender = input.Gender
+		if input.Gender != consts.MALE && input.Gender != consts.FEMALE {
+			userData.Gender = consts.SECRET
+		}
 	}
 	if input.SubscriptionExpirationDate != nil {
 		userData.SubscriptionExpirationDate = input.SubscriptionExpirationDate
