@@ -2,9 +2,9 @@ import Styles from '../Input.module.css'
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
 
-function PhoneNumberInput({ id, label, onChange }) {
+function PhoneNumberInput({ id, label, onChange, value }) {
   const handlePhoneInputChange = (phoneNumber) => {
-    onChange({ target: { id, value: phoneNumber } }); 
+    onChange({ target: { id, value: phoneNumber } });
   };
   return (
     <div className={Styles.formItem}>
@@ -14,8 +14,8 @@ function PhoneNumberInput({ id, label, onChange }) {
           international
           countryCallingCodeEditable={false}
           defaultCountry="ID"
-          // value={value}
-          onChange={handlePhoneInputChange}/>
+          value={value}
+          onChange={handlePhoneInputChange} />
       </div>
     </div>
   )
