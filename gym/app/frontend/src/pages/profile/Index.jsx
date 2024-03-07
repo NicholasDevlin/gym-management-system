@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../layout/MainLayout/Layout.jsx";
 import Styles from "./Profile.module.css";
 import TextInput from "../../components/general/input/inputTextField/TextField.jsx";
@@ -20,12 +20,19 @@ function Profile() {
   });
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
+    const { id, name, value } = e.target || {};
 
-    setprofileData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
+    if (id) {
+      setprofileData((prevData) => ({
+        ...prevData,
+        [id]: value,
+      }));
+    } else if (name) {
+      setprofileData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleInputDateChange = (date) => {
@@ -65,6 +72,37 @@ function Profile() {
     }
   }
 
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
+  async function getUserProfile() {
+    try {
+      const response = await fetch(`${API_URLS.USER}/${userData.uuid}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem('authToken')
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      debugger;
+      if (responseData.success) {
+        setprofileData(responseData.data);
+        console.log("Get data successful. Response:", responseData);
+      } else {
+        console.error("Get data unsuccessful. Response:", responseData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   return (
     <Layout>
       <div className="d-flex justify-content-center mt-4">
@@ -88,10 +126,10 @@ function Profile() {
         </div>
       </div>
       <div className="container">
-        <TextInput id={"name"} label={"Name"} onChange={handleInputChange} />
-        <PhoneNumberInput id={"phoneNumber"} label={"Phone Number"} onChange={handleInputChange} />
-        <DatetimePicker label={"Birthdate"} id={"birthDate"} onChange={handleInputDateChange} />
-        <GenderPicker onChange={handleInputChange} id={"gender"} />
+        <TextInput id={"name"} label={"Name"} value={profileData.name || ''} onChange={handleInputChange} />
+        <PhoneNumberInput id={"phoneNumber"} value={profileData.phoneNumber || ''} label={"Phone Number"} onChange={handleInputChange} />
+        <DatetimePicker label={"Birthdate"} value={new Date(profileData.birthDate)} id={"birthDate"} onChange={handleInputDateChange} />
+        <GenderPicker onChange={handleInputChange} value={profileData.gender} id={"gender"} />
         <div className="d-flex justify-content-end">
           <Button onClick={saveUserProfile} text={"Save"} />
         </div>
