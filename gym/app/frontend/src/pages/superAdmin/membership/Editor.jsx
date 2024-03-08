@@ -1,22 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import TextField from "../../../components/general/input/inputTextField/TextField.jsx";
 import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
 import TextAreaField from "../../../components/general/input/inputTextAreaField/TextAreaField.jsx";
 import Button from "../../../components/general/button/Button.jsx";
-// import Button from '../../../components/general/button/Button.jsx'
-// import Styles from './Membership.module.css'
+import { API_URLS } from "../../../apiConfig.js";
 
 function MembershipEditor() {
+  const [membershipPlanData, setMembershipPlanData] = useState({
+    name: "",
+    duration: "",
+    price: "",
+    description: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || {};
+
+    setMembershipPlanData((prevData) => ({
+      ...prevData,
+      [id]: id === 'duration' || id === 'price' ? parseInt(value) : value,
+    }));
+  };
+
+  async function saveMembershipPlan() {
+    try {
+      const response = await fetch(`${API_URLS.MEMBERSHIP_PLAN}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem('authToken')
+        },
+        body: JSON.stringify(membershipPlanData),
+      });
+
+      debugger;
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        console.log("Save successful. Response:", responseData);
+      } else {
+        console.error("Save unsuccessful. Response:", responseData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   return (
     <Layout>
       <div className="container my-5">
-        <TextField id={"membershipPlan"} label={"Membership Plan"} />
-        <NumericField id={"duration"} label={"Duration"} />
-        <NumericField id={"price"} label={"Price"} />
-        <TextAreaField id={"description"} label={"Description"} />
+        <TextField id={"name"} value={membershipPlanData.name || ''} onChange={handleInputChange} label={"Membership Plan"} />
+        <NumericField id={"duration"} onChange={handleInputChange} value={membershipPlanData.duration} label={"Duration"} />
+        <NumericField id={"price"} onChange={handleInputChange} value={membershipPlanData.price} label={"Price"} />
+        <TextAreaField id={"description"} value={membershipPlanData.description} onChange={handleInputChange} label={"Description"} />
         <div className="d-flex justify-content-end">
-          <Button text={"Save"} />
+          <Button onClick={saveMembershipPlan} text={"Save"} />
         </div>
       </div>
     </Layout>
