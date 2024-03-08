@@ -13,11 +13,6 @@
   box-sizing: border-box;
 }
 
-body {
-  background: var(--color-two);
-  /* font-family: "Varela Round", sans-serif; */
-}
-
 .card {
   background: var(--color-one);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
@@ -108,4 +103,8 @@ li {
 
 ul {
   padding: 0;
+}
+
+.description {
+  min-height: 80px;
 }

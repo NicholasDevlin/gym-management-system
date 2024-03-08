@@ -2,21 +2,21 @@ import React from 'react'
 import Styles from './CardProduct.module.css'
 import { Link } from 'react-router-dom'
 
-function CardProduct({ title }) {
+function CardProduct({ title, duration, price, description }) {
   return (
     <div className={Styles.card}>
       <div className={Styles.title}>{title}</div>
       <div className={Styles.icon}>
 
       </div>
-
       <div className={Styles.features}>
         <ul>
-          <li><span>5</span> Edits</li>
-          <li><span>1GB</span> Storage</li>
-          <li><span>3</span> Pages</li>
-          <li><span>1</span> Hour free support</li>
+          <li>{duration}</li>
+          <li>{price}</li>
         </ul>
+      </div>
+      <div className={`'row' ${Styles.description}`}>
+        <p>{description}</p>
       </div>
       <Link href="#" className={Styles.btn}>Check it out</Link>
     </div>

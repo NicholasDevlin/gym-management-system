@@ -5,8 +5,10 @@ import NumericField from "../../../components/general/input/inputNumericField/Nu
 import TextAreaField from "../../../components/general/input/inputTextAreaField/TextAreaField.jsx";
 import Button from "../../../components/general/button/Button.jsx";
 import { API_URLS } from "../../../apiConfig.js";
+import { useAlert } from "react-alert";
 
 function MembershipEditor() {
+  const alert = useAlert()
   const [membershipPlanData, setMembershipPlanData] = useState({
     name: "",
     duration: "",
@@ -42,12 +44,12 @@ function MembershipEditor() {
       const responseData = await response.json();
 
       if (responseData.success) {
-        console.log("Save successful. Response:", responseData);
+        alert.success("Membership plan created successful")
       } else {
-        console.error("Save unsuccessful. Response:", responseData);
+        alert.show("Save unsuccessful. Response:", responseData);
       }
     } catch (error) {
-      console.error("Error:", error);
+      alert.error("Error:", error);
     }
   }
 
