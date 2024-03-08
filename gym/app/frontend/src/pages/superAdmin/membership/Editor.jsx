@@ -46,10 +46,10 @@ function MembershipEditor() {
       if (responseData.success) {
         alert.success("Membership plan created successful")
       } else {
-        alert.show("Save unsuccessful. Response:", responseData);
+        alert.error("Save unsuccessful");
       }
     } catch (error) {
-      alert.error("Error:", error);
+      alert.error(`Error: ${error}`);
     }
   }
 

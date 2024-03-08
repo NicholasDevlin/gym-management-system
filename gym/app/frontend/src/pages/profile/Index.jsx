@@ -93,15 +93,13 @@ function Profile() {
       }
 
       const responseData = await response.json();
-      debugger;
       if (responseData.success) {
         setprofileData(responseData.data);
-        console.log("Get data successful. Response:", responseData);
       } else {
-        console.error("Get data unsuccessful. Response:", responseData);
+        alert.error("Get data unsuccessful");
       }
     } catch (error) {
-      console.error("Error:", error);
+      alert.error(`Error: ${error}`);
     }
   }
 
