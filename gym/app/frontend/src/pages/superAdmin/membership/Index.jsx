@@ -46,7 +46,7 @@ function Membership() {
       </div>
       <div className={Styles.cardHolder}>
         {membershipPlanData.map((plan, index) => (
-          <CardProduct title={plan.name} duration={plan.duration} price={plan.price} description={plan.description} />
+          <CardProduct title={plan.name} duration={plan.duration} price={plan.price} description={plan.description} detail={`/membership/editor/${plan.uuid}`} />
         ))}
       </div>
     </Layout>
