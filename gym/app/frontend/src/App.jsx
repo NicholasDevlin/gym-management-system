@@ -25,7 +25,7 @@ const App = () => {
           />
         )}
         <Route path="/profile" element={<Profile />} />
-        <Route path="/membership/editor" element={<MembershipEditor />} />
+        <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
         <Route path="/help" element={<Help />} />
       </Routes>
     </Router>

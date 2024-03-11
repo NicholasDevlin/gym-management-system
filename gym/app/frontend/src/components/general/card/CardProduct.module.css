@@ -5,6 +5,12 @@
   --color-two: #383A3F;
   --color-three: #C28c2e;
   --color-four: #d8cdb9;
+  --vintageEphemera: #d8cdb9;
+  --coalBlack: #222220;
+  --gothicGold: #c28c2e;
+  --redBerry: #721b29;
+  --primary: #043353;
+  --darkerCoalBlack: #101012;
 }
 
 *,
@@ -13,41 +19,46 @@
   box-sizing: border-box;
 }
 
-body {
-  background: var(--color-two);
-  /* font-family: "Varela Round", sans-serif; */
-}
-
 .card {
   background: var(--color-one);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   border-radius: 5px;
-  margin: 50px 20px 20px 20px;
   width: calc(33.3333% - 40px);
-
-  padding: 20px;
+  display: grid;
+  margin: 20px;
   text-align: center;
   color: #d8cdb9;
+  padding: 10px;
   float: left;
 
   @media (max-width: 768px) {
     margin: 10px 20px;
     width: calc(100% - 40px);
 
-    &:first-child {
-      margin-top: 20px;
-    }
   }
 
   &:nth-child(2) {
-    margin: 20px 0px;
+    margin: 10px 0px;
     width: 33.3333%;
-    padding: 50px 20px;
+    padding: 20px;
 
     @media (max-width: 768px) {
-      margin: 10px 20px;
+      margin: 20px;
       width: calc(100% - 40px);
     }
+  }
+
+  .buttonContainer {
+    display: flex;
+    justify-content: end;
+    position: relative;
+  }
+
+  .button {
+    background-color: transparent;
+    outline: none;
+    border: 0;
+    padding: 10px 10px;
   }
 
   .title {
@@ -84,12 +95,17 @@ body {
     }
   }
 
+  .bottom {
+    position: relative;
+    display: flex;
+    align-items: end;
+  }
+
   .btn {
-    display: block;
+    width: 100%;
     background: var(--color-four);
     color: #721b29 !important;
     padding: 15px 20px;
-    margin: 20px 0;
     border-radius: 5px;
     box-shadow: rgba(0, 0, 0, 0.9);
     transition: all 200ms ease-in-out;
@@ -108,4 +124,44 @@ li {
 
 ul {
   padding: 0;
+}
+
+.description {
+  min-height: 80px;
+}
+
+.cardMenu {
+  position: absolute;
+  min-width: 150px;
+  top: 100%;
+  right: 0;
+  background-color: var(--coalBlack);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px 5px;
+}
+
+.cardMenu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cardMenu li {
+  color: var(--vintageEphemera);
+  padding: 10px;
+}
+
+.cardMenu a {
+  width: 100%;
+  color: var(--vintageEphemera);
+  text-decoration: none;
+  display: block;
+}
+
+.cardMenu li:hover,
+.cardMenu li:hover a {
+  background-color: var(--darkerCoalBlack);
+  color: var(--gothicGold);
 }

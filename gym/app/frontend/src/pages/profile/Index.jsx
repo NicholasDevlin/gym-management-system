@@ -9,8 +9,10 @@ import Button from "../../components/general/button/Button.jsx";
 import { Icon } from "@iconify/react";
 import { API_URLS } from "../../apiConfig.js";
 import { useUserData } from "../../utils/jwt/UserData.jsx";
+import { useAlert } from "react-alert";
 
 function Profile() {
+  const alert = useAlert()
   const userData = useUserData();
   const [profileData, setprofileData] = useState({
     name: "",
@@ -63,12 +65,12 @@ function Profile() {
       const responseData = await response.json();
 
       if (responseData.success) {
-        console.log("Save successful. Response:", responseData);
+        alert.success("Save successful");
       } else {
-        console.error("Save unsuccessful. Response:", responseData);
+        alert.error("Save unsuccessful. Response:", responseData);
       }
     } catch (error) {
-      console.error("Error:", error);
+      alert.error("Error:", error);
     }
   }
 
@@ -91,15 +93,13 @@ function Profile() {
       }
 
       const responseData = await response.json();
-      debugger;
       if (responseData.success) {
         setprofileData(responseData.data);
-        console.log("Get data successful. Response:", responseData);
       } else {
-        console.error("Get data unsuccessful. Response:", responseData);
+        alert.error("Get data unsuccessful");
       }
     } catch (error) {
-      console.error("Error:", error);
+      alert.error(`Error: ${error}`);
     }
   }
 
