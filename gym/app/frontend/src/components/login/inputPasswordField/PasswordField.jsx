@@ -1,7 +1,7 @@
 import Styles from '../Login.module.css'
 import React, { useEffect } from 'react';
 
-function PasswordFied({id, onChange}) {
+function PasswordFied({id, onChange, value}) {
   useEffect(() => {
     const root = document.getElementById('container');
     const eye = document.getElementById('eyeball');
@@ -41,6 +41,7 @@ function PasswordFied({id, onChange}) {
         <input
           type="password"
           id={id}
+          value={value}
           onChange={onChange}
           autoComplete="off"
           autoCorrect="off"

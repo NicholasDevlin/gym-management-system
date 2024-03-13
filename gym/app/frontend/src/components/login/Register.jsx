@@ -6,8 +6,10 @@ import PasswordFied from "./inputPasswordField/PasswordField.jsx";
 import TextField from "../general/input/inputTextField/TextField.jsx";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "../general/input/phoneNumberInput/PhoneNumberInput.jsx";
+import { useAlert } from "react-alert";
 
 function Register({ loginOnClick }) {
+  const alert = useAlert();
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [registerData, setRegisterData] = useState({
@@ -50,7 +52,7 @@ function Register({ loginOnClick }) {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        alert.error(`HTTP error! Status: ${response.status}`);
       }
 
       const responseData = await response.json();
@@ -58,9 +60,9 @@ function Register({ loginOnClick }) {
         navigate("/");
       }
       localStorage.setItem("authToken", responseData.data.token);
-      console.log("Register successful. Response:", responseData);
+      alert.success("Register successful.");
     } catch (error) {
-      console.error("Error during register:", error);
+      alert.error("Error during register:", error);
     }
   };
 
@@ -74,7 +76,7 @@ function Register({ loginOnClick }) {
           onChange={handleInputChange}
         />
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
-        <PasswordFied id={"password"} onChange={handleInputChange} />
+        <PasswordFied id={"password"} onChange={handleInputChange} value={registerData.password} />
         <div className={Styles.row}>
           <button className={Styles.button} type="submit" id="submit">
             Sign up

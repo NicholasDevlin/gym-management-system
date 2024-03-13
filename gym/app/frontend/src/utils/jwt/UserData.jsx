@@ -7,26 +7,36 @@ export const useUserData = () => useContext(UserDataContext);
 
 export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
+  const [key, setKey] = useState(0); // State to trigger remount
+
+  const fetchData = async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        const decodedUserData = await decodeToken(authToken);
+        setUserData(decodedUserData);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const authToken = localStorage.getItem('authToken');
-        if (authToken) {
-          const userData = await decodeToken(authToken); 
-          setUserData(userData);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
     fetchData();
   }, []);
 
+  useEffect(() => {
+    setKey(prevKey => prevKey + 1);
+  }, [userData]);
+
+  const handleLogout = () => {
+    setUserData(null);
+    localStorage.removeItem('authToken');
+  };
+
   return (
-    <UserDataContext.Provider value={userData}>
-      {children}
+    <UserDataContext.Provider value={{ userData, fetchData, handleLogout }}>
+      <div key={key}>{children}</div>
     </UserDataContext.Provider>
   );
 };

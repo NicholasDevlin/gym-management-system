@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import Styles from './CardProduct.module.css'
 import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react';
+import { useUserData } from '../../../utils/jwt/UserData.jsx';
 
 function CardProduct({ title, duration, price, description, detail }) {
   const [isCardMenuOpen, setCardMenuOpen] = useState(false);
+  const userData = useUserData();
 
   const toggleCardMenu = () => {
     setCardMenuOpen(!isCardMenuOpen);
@@ -13,9 +15,11 @@ function CardProduct({ title, duration, price, description, detail }) {
     <div className={Styles.card}>
       <div className={Styles.content}>
         <div className={Styles.buttonContainer}>
-          <button className={Styles.button} onClick={toggleCardMenu}>
-            <Icon icon="fluent:more-vertical-20-filled" width="1.5rem" height="1.5rem" />
-          </button>
+          {userData.role === 'admin' && (
+            <button className={Styles.button} onClick={toggleCardMenu}>
+              <Icon icon="fluent:more-vertical-20-filled" width="1.5rem" height="1.5rem" />
+            </button>
+          )}
           {isCardMenuOpen && (
             <div className={Styles.cardMenu}>
               <ul>

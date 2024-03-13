@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import Styles from './Navbar.module.css'
-import { Link } from 'react-router-dom'
+import Styles from './Navbar.module.css';
+import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { useUserData } from '../../../utils/jwt/UserData.jsx'; // Import useUserData hook
 
 function Navbar() {
+  const { handleLogout, userData } = useUserData();
+
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const toggleProfileMenu = () => {
     setProfileMenuOpen(!isProfileMenuOpen);
   };
+
   return (
     <nav className={Styles.navbar}>
       <div className={Styles.logo}><p>LOGO</p></div>
@@ -22,7 +26,11 @@ function Navbar() {
             <div className={Styles.profileMenu}>
               <ul>
                 <Link to='/profile'><li>Profile</li></Link>
-                <li>Sign out</li>
+                {userData ? (
+                  <Link to="/authentication"><li onClick={handleLogout}>Sign out</li></Link>
+                ) : (
+                  <Link to="/authentication"><li>Sign in</li></Link>
+                )}
               </ul>
             </div>
           )}
@@ -32,4 +40,4 @@ function Navbar() {
   );
 }
 
-export default Navbar
+export default Navbar;
