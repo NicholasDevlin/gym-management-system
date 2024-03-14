@@ -7,7 +7,7 @@ export const useUserData = () => useContext(UserDataContext);
 
 export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
-  const [key, setKey] = useState(0); // State to trigger remount
+  const [key, setKey] = useState(0);
 
   const fetchData = async () => {
     try {
