@@ -6,6 +6,8 @@ import Membership from './pages/user/membership/Index.jsx';
 import MembershipForAdmin from './pages/superAdmin/membership/Index.jsx';
 import Transaction from './pages/user/transaction/Index.jsx';
 import TransactionForAdmin from './pages/superAdmin/transaction/Index.jsx';
+import TransactionEditor from './pages/user/transaction/Editor.jsx';
+import TransactionEditorForAdmin from './pages/superAdmin/transaction/Editor.jsx';
 import Authentication from './pages/authentication/Index.jsx';
 import Profile from './pages/profile/Index.jsx';
 import Help from './pages/user/help/Index.jsx';
@@ -23,6 +25,7 @@ function App() {
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
           <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />
+          <Route path="/transaction/editor" element={userData && userData.role === 'admin' ? <TransactionEditorForAdmin /> : <TransactionEditor />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
           <Route path="/membership/editor" element={<MembershipEditor />} />

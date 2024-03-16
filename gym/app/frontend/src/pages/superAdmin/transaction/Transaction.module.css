@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  justify-content: center;
+  padding-top: 2%;
+}
+
+.dataHeader {
+  padding: 0;
+  font-weight: 600;
+}

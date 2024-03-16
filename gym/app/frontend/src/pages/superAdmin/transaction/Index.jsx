@@ -4,6 +4,7 @@ import Card from '../../../components/general/card/Card.jsx'
 import Button from '../../../components/general/button/Button.jsx'
 import Styles from './Transaction.module.css'
 import { API_URLS } from '../../../apiConfig.js'
+import { Link } from 'react-router-dom'
 import { useAlert } from "react-alert";
 
 function Transaction() {
@@ -40,11 +41,12 @@ function Transaction() {
   }
   return (
     <Layout>
-      <div className={Styles.cardHolder}>
-        {/* {transactionData.map((plan, index) => (
+      <div className={Styles.Container}>
+        <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
+      </div>
+      {/* {transactionData.map((plan, index) => (
 
         ))} */}
-      </div>
     </Layout>
   );
 }

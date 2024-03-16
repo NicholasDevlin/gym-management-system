@@ -1,6 +1,6 @@
 import Styles from "../Input.module.css";
 
-function TextField({ id, onChange, label, value }) {
+function TextField({ id, onChange, label, value, disabled = false }) {
   return (
     <div className={Styles.formItem}>
       <label htmlFor={id}>{label}</label>
@@ -15,6 +15,7 @@ function TextField({ id, onChange, label, value }) {
           spellCheck="false"
           data-lpignore="true"
           value={value}
+          disabled={disabled}
         />
       </div>
     </div>
