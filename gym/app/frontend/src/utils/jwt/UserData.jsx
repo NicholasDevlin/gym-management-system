@@ -36,7 +36,7 @@ export const UserDataProvider = ({ children }) => {
 
   return (
     <UserDataContext.Provider value={{ userData, fetchData, handleLogout }}>
-      <div key={key}>{children}</div>
+      <div key={key} className='w-100 h-100'>{children}</div>
     </UserDataContext.Provider>
   );
 };

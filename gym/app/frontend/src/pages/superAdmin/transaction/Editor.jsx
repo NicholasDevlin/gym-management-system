@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import Button from "../../../components/general/button/Button.jsx";
+import ButtonDelete from "../../../components/general/button/DeleteButton.jsx";
+import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
 import { API_URLS } from "../../../apiConfig.js";
 import { useAlert } from "react-alert";
 import Styles from './Transaction.module.css'
@@ -125,10 +127,25 @@ function TransactionEditor() {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="card">
-            <div className="card-header">
-              <Select label={"Membership Plan"} options={options} name={"language"} placeholder={"Choose a language..."} />
+        <div className="row p-3">
+          <div className={`${'card bg-dark'} ${Styles.card}`}>
+            <div className="card-header row">
+              <div className="col-md-6 col-s-12">
+                <Select label={"Membership Plan"} options={options} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} />
+              </div>
+              <div className="col-md-6 col-s-12 d-flex justify-content-end">
+                <ButtonDelete />
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-6">
+                  <Select label={"Member"} options={options} name={"userUUID"} placeholder={"Choose Member"} />
+                </div>
+                <div className="col-6">
+                  <NumericField id={"qty"} label={"Qty"} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -136,7 +153,7 @@ function TransactionEditor() {
           {/* <Button onClick={saveMembershipPlan} text={'Save'} /> */}
         </div>
       </div>
-    </Layout>
+    </Layout >
   );
 }
 

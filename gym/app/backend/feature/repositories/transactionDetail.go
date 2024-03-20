@@ -76,9 +76,6 @@ func (td *transactionDetailRepository) UpdateTransactionDetail(data, input trans
 	if input.Quantity != 0 {
 		transactionDetailData.Quantity = input.Quantity
 	}
-	if input.UserId != 0 {
-		transactionDetailData.UserId = input.UserId
-	}
 
 	if err := td.db.Save(&transactionDetailData).Error; err != nil {
 		return transactiondetail.TransactionDetailDto{}, err

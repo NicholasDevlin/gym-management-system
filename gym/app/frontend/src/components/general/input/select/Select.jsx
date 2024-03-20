@@ -12,5 +12,5 @@ function Select({ options, name, placeholder, label }) {
     </div>
   );
 }
-
+// source: https://www.npmjs.com/package/react-select-search
 export default Select;
