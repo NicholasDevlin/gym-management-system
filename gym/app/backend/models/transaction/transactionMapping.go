@@ -16,6 +16,7 @@ func ConvertReqToDto(input TransactionReq) *TransactionDto {
 		TransactionNo:   input.TransactionNo,
 		Status:          input.Status,
 		User:            *user.ConvertReqToDto(input.User),
+		TransactionDetail: *ConvertReqToDtos(input.TransactionDetail),
 	}
 }
 
@@ -80,6 +81,15 @@ func ConvertModelToDtos(input []transactiondetail.TransactionDetail) *[]transact
 	var result []transactiondetail.TransactionDetailDto
 	for i := range input {
 		res := *transactiondetail.ConvertModelToDto(input[i])
+		result = append(result, res)
+	}
+	return &result
+}
+
+func ConvertReqToDtos(input []transactiondetail.TransactionDetailReq) *[]transactiondetail.TransactionDetailDto {
+	var result []transactiondetail.TransactionDetailDto
+	for i := range input {
+		res := *transactiondetail.ConvertReqToDto(input[i])
 		result = append(result, res)
 	}
 	return &result

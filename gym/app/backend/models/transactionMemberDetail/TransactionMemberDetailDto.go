@@ -1,7 +1,6 @@
 package transactionmemberdetail
 
 import (
-	transactiondetail "gym/app/backend/models/transactionDetail"
 	"gym/app/backend/models/user"
 	"time"
 
@@ -18,5 +17,4 @@ type TransactionMemberDetailDto struct {
 	UserId                uint
 	UserUUID              uuid.UUID
 	User                  user.UserDto
-	TransactionDetail     transactiondetail.TransactionDetailDto
 }

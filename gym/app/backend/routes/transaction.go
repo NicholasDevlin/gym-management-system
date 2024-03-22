@@ -10,16 +10,18 @@ import (
 )
 
 func TransactionRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
-	repository := repositories.NewTransactionRepository(db)
+	detailRepo := repositories.NewTransactionDetailRepository(db)
+	detailMemberRepo := repositories.NewTransactionMemberDetailRepository(db)
+	repository := repositories.NewTransactionRepository(db, detailRepo, detailMemberRepo)
 	userRepository := repositories.NewUsersRepository(db)
 	membershipPlanRepository := repositories.NewMembershipPlanRepository(db)
 	transactionDetailRepository := repositories.NewTransactionDetailRepository(db)
 	service := services.NewTransactionService(repository, userRepository, membershipPlanRepository, transactionDetailRepository)
 	controller := controller.NewTransactionController(service)
 
-	eJwt.POST("/transaction", controller.CreateTransaction)
+	eJwt.POST("/transaction", controller.SaveTransaction)
 	eJwt.GET("/transaction", controller.GetAllTransaction)
 	eJwt.GET("/transaction/:id", controller.GetTransaction)
-	eJwt.PUT("/transaction/:id", controller.UpdateTransaction)
+	eJwt.POST("/transaction/:id", controller.SaveTransaction)
 	eJwt.DELETE("/transaction/:id", controller.DeleteTransaction)
 }

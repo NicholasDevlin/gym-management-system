@@ -1,7 +1,6 @@
 package transactionmemberdetail
 
 import (
-	transactiondetail "gym/app/backend/models/transactionDetail"
 	"gym/app/backend/models/user"
 
 	uuid "github.com/satori/go.uuid"
@@ -13,6 +12,5 @@ type TransactionMemberDetail struct {
 	UUID                uuid.UUID
 	TransactionDetailId uint
 	UserId              uint
-	User                user.User
-	TransactionDetail   transactiondetail.TransactionDetail
+	User                user.User `gorm:"foreignKey:UserId"`
 }

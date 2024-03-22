@@ -63,16 +63,14 @@ func (t *transactionController) GetTransaction(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (t *transactionController) UpdateTransaction(e echo.Context) error {
+func (t *transactionController) SaveTransaction(e echo.Context) error {
 	var input transaction.TransactionReq
 	e.Bind(&input)
-	uuid, err := uuid.FromString(e.Param("id"))
-	if err != nil {
-		return baseresponse.NewErrorResponse(e, err)
+	if e.Param("id") != "" {
+		input.UUID, _ = uuid.FromString(e.Param("id"))
 	}
-	input.UUID = uuid
 
-	res, err := t.transactionService.UpdateTransaction(input)
+	res, err := t.transactionService.SaveTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}

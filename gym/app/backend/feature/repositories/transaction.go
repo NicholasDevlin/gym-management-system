@@ -11,16 +11,22 @@ type ITransactionRepository interface {
 	CreateTransaction(input transaction.TransactionDto) (transaction.TransactionDto, error)
 	GetAllTransaction(filter transaction.TransactionDto) ([]transaction.TransactionDto, error)
 	GetTransaction(filter transaction.TransactionDto) (transaction.TransactionDto, error)
-	UpdateTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error)
+	SaveTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error)
 	DeleteTransaction(id string) (transaction.TransactionDto, error)
 }
 
 type transactionRepository struct {
 	db *gorm.DB
+	transactionDetailRepository ITransactionDetailRepository
+	transactionMemberDetailRepository ITransactionMemberDetailRepository
 }
 
-func NewTransactionRepository(db *gorm.DB) *transactionRepository {
-	return &transactionRepository{db}
+func NewTransactionRepository(db *gorm.DB, transactionDetailRepo ITransactionDetailRepository, transactionMemberDetailRepo ITransactionMemberDetailRepository) *transactionRepository {
+	return &transactionRepository{
+		db,
+		transactionDetailRepo,
+		transactionMemberDetailRepo,
+	}
 }
 
 func (t *transactionRepository) CreateTransaction(input transaction.TransactionDto) (transaction.TransactionDto, error) {
@@ -71,7 +77,8 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto
 	return *transaction.ConvertModelToDto(model), nil
 }
 
-func (t *transactionRepository) UpdateTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error) {
+func (t *transactionRepository) SaveTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error) {
+	tx := t.db.Begin()
 	transactionData := *transaction.ConvertDtoToModel(data)
 
 	if !input.TransactionDate.IsZero() {
@@ -80,10 +87,36 @@ func (t *transactionRepository) UpdateTransaction(data, input transaction.Transa
 	if input.Status != "" {
 		transactionData.Status = input.Status
 	}
+	if input.UserId != 0 {
+		transactionData.UserId = input.UserId
+	}
 
-	if err := t.db.Save(&transactionData).Error; err != nil {
+	if err := tx.Save(&transactionData).Error; err != nil {
+		tx.Rollback()
 		return transaction.TransactionDto{}, err
 	}
+
+	// save transaction detail
+	for _, detail := range input.TransactionDetail {
+		detailRes, err := t.transactionDetailRepository.SaveTransactionDetail(detail)
+		if err != nil {
+			tx.Rollback()
+			return transaction.TransactionDto{}, err
+		}
+		// save transaction detail member 
+		for _, member := range detail.TransactionMemberDetail {
+			member.TransactionDetailId = detailRes.Id
+			memberRes, err := t.transactionMemberDetailRepository.SaveTransactionMemberDetail(member)
+			if err != nil {
+				tx.Rollback()
+				return transaction.TransactionDto{}, err
+			}
+			member = memberRes
+		}
+		detail = detailRes
+	}
+
+	tx.Commit()
 	return *transaction.ConvertModelToDto(transactionData), nil
 }
 

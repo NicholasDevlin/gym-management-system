@@ -2,6 +2,7 @@ package transactiondetail
 
 import (
 	membershipplan "gym/app/backend/models/membershipPlan"
+	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -17,4 +18,5 @@ type TransactionDetailDto struct {
 	MembershipPlanUUID uuid.UUID
 	Quantity           int
 	MembershipPlan     membershipplan.MembershipPlanDto
+	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailDto
 }

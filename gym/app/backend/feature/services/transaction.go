@@ -17,7 +17,7 @@ type ITransactionService interface {
 	CreateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error)
 	GetAllTransaction(filter transaction.TransactionReq) ([]transaction.TransactionRes, error)
 	GetTransaction(filter transaction.TransactionReq) (transaction.TransactionRes, error)
-	UpdateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error)
+	SaveTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error)
 	DeleteTransaction(id uuid.UUID) (transaction.TransactionRes, error)
 }
 
@@ -72,7 +72,7 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 		}
 		transactionDetailDto.MembershipPlanId = membershipPlan.Id
 		transactionDetailDto.MembershipPlan = membershipPlan
-		res, err := t.transactionDetailRepository.CreateTransactionDetail(transactionDetailDto)
+		res, err := t.transactionDetailRepository.SaveTransactionDetail(transactionDetailDto)
 		if err == nil {
 			transactionDetailDtos = append(transactionDetailDtos, res)
 		}
@@ -103,12 +103,17 @@ func (t *transactionService) GetTransaction(filter transaction.TransactionReq) (
 	return *transaction.ConvertDtoToRes(res), nil
 }
 
-func (t *transactionService) UpdateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
-	res, err := t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(input))
-	if err != nil {
-		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
+func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
+	var data transaction.TransactionDto
+	var err error
+	if input.UUID != uuid.Nil {
+		data, err = t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(input))
+		if err != nil {
+			return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
+		}
 	}
-	res, err = t.transactionRepository.UpdateTransaction(res, *transaction.ConvertReqToDto(input))
+
+	res, err := t.transactionRepository.SaveTransaction(data, *transaction.ConvertReqToDto(input))
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_UPDATE_TRANSACTION
 	}

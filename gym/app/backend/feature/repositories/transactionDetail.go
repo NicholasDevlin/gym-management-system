@@ -9,7 +9,7 @@ import (
 )
 
 type ITransactionDetailRepository interface {
-	CreateTransactionDetail(input transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
+	SaveTransactionDetail(input transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
 	GetAllTransactionDetail(filter transactionDetail.TransactionDetailDto) ([]transactionDetail.TransactionDetailDto, error)
 	GetTransactionDetail(filter transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
 	UpdateTransactionDetail(data, input transactionDetail.TransactionDetailDto) (transactionDetail.TransactionDetailDto, error)
@@ -24,10 +24,28 @@ func NewTransactionDetailRepository(db *gorm.DB) *transactionDetailRepository {
 	return &transactionDetailRepository{db}
 }
 
-func (td *transactionDetailRepository) CreateTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+func (td *transactionDetailRepository) SaveTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+	data, err := td.GetTransactionDetail(input)
+	if err != nil {
+		return transactiondetail.TransactionDetailDto{}, err
+	}
+	
+	if input.TransactionId != 0 {
+		data.TransactionId = input.TransactionId
+	}
+	if input.UUID == uuid.Nil || data.Id == 0 {
+		data.UUID = uuid.NewV4()
+	}
+	if input.MembershipPlanId != 0 {
+		data.MembershipPlanId = input.MembershipPlanId
+	}
+	if input.Quantity != 0 {
+		data.Quantity = input.Quantity
+	}
+
 	dataTransactionDetail := transactiondetail.ConvertDtoToModel(input)
-	dataTransactionDetail.UUID = uuid.NewV4()
-	err := td.db.Create(&dataTransactionDetail).Error
+	err = td.db.Save(&data).Error
+
 	if err != nil {
 		return transactiondetail.TransactionDetailDto{}, err
 	}
@@ -51,6 +69,9 @@ func (td *transactionDetailRepository) GetAllTransactionDetail(filter transactio
 }
 
 func (td *transactionDetailRepository) GetTransactionDetail(filter transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+	if filter.UUID == uuid.Nil && filter.Id == 0 {
+		return transactiondetail.TransactionDetailDto{}, nil
+	}
 	var model transactiondetail.TransactionDetail
 	query := td.db.Model(&transactiondetail.TransactionDetail{})
 	if filter.Id != 0 {
