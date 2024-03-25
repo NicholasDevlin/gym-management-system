@@ -5,6 +5,8 @@ import (
 	membershipplan "gym/app/backend/models/membershipPlan"
 	"gym/app/backend/models/transaction"
 	transactiondetail "gym/app/backend/models/transactionDetail"
+	"gym/app/backend/models/user"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 	"math/rand"
 	"strconv"
@@ -106,16 +108,59 @@ func (t *transactionService) GetTransaction(filter transaction.TransactionReq) (
 func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
 	var data transaction.TransactionDto
 	var err error
+
+	dto := *transaction.ConvertReqToDto(input)
+	var transactionDetailDto transactiondetail.TransactionDetailDto
+	for i := range dto.TransactionDetail {
+		transactionDetailDto = dto.TransactionDetail[i]
+		if transactionDetailDto.Quantity != len(transactionDetailDto.TransactionMemberDetail) {
+			return transaction.TransactionRes{}, errors.ERR_TRANSACTION_MEMBER_EMPTY
+		}
+
+		if transactionDetailDto.Quantity == 0 {
+			return transaction.TransactionRes{}, errors.ERR_QTY_EMPTY
+		}
+
+		membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: transactionDetailDto.MembershipPlanUUID})
+
+		if err != nil {
+			return transaction.TransactionRes{}, errors.ERR_MEMBERSHIP_PLAN_NOT_FOUND
+		}
+		transactionDetailDto.MembershipPlanId = membershipPlan.Id
+		transactionDetailDto.MembershipPlan = membershipPlan
+
+		for _, member := range transactionDetailDto.TransactionMemberDetail {
+			user, err := t.userRepository.GetUser(user.UserDto{UUID: member.UserUUID})
+			if err != nil {
+				return transaction.TransactionRes{}, errors.ERR_USER_NOT_FOUND
+			}
+			member.UserId = user.Id
+		}
+		dto.TransactionDetail[i] = transactionDetailDto
+	}
+
 	if input.UUID != uuid.Nil {
 		data, err = t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(input))
 		if err != nil {
 			return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 		}
+	} else {
+		data.TransactionNo = generateTransactionNo()
+		data.TransactionDate = time.Now()
+		data.Status = consts.WAITING_FOR_PAYMENT
+		data.UUID = uuid.NewV4()
 	}
 
-	res, err := t.transactionRepository.SaveTransaction(data, *transaction.ConvertReqToDto(input))
+	resUser, err := t.userRepository.GetUser(*&transaction.ConvertReqToDto(input).User)
 	if err != nil {
-		return transaction.TransactionRes{}, errors.ERR_UPDATE_TRANSACTION
+		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
+	}
+	data.UserId = resUser.Id
+	data.User = resUser
+
+	res, err := t.transactionRepository.SaveTransaction(data, dto)
+	if err != nil {
+		return transaction.TransactionRes{}, err
 	}
 	return *transaction.ConvertDtoToRes(res), nil
 }

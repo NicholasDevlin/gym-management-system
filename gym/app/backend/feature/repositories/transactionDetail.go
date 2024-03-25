@@ -3,6 +3,7 @@ package repositories
 import (
 	transactionDetail "gym/app/backend/models/transactionDetail"
 	transactiondetail "gym/app/backend/models/transactionDetail"
+	"gym/app/backend/utils/errors"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -25,16 +26,18 @@ func NewTransactionDetailRepository(db *gorm.DB) *transactionDetailRepository {
 }
 
 func (td *transactionDetailRepository) SaveTransactionDetail(input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
-	data, err := td.GetTransactionDetail(input)
-	if err != nil {
-		return transactiondetail.TransactionDetailDto{}, err
-	}
-	
+	var data transactionDetail.TransactionDetail
+	if input.UUID == uuid.Nil {
+		data.UUID = uuid.NewV4()
+		} else {
+			dataTransactionDetail, err := td.GetTransactionDetail(input)
+			if err != nil {
+				return transactiondetail.TransactionDetailDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+			}
+			data = *transactionDetail.ConvertDtoToModel(dataTransactionDetail)
+		}
 	if input.TransactionId != 0 {
 		data.TransactionId = input.TransactionId
-	}
-	if input.UUID == uuid.Nil || data.Id == 0 {
-		data.UUID = uuid.NewV4()
 	}
 	if input.MembershipPlanId != 0 {
 		data.MembershipPlanId = input.MembershipPlanId
@@ -42,14 +45,11 @@ func (td *transactionDetailRepository) SaveTransactionDetail(input transactionde
 	if input.Quantity != 0 {
 		data.Quantity = input.Quantity
 	}
-
-	dataTransactionDetail := transactiondetail.ConvertDtoToModel(input)
-	err = td.db.Save(&data).Error
-
+	err := td.db.Save(&data).Error
 	if err != nil {
 		return transactiondetail.TransactionDetailDto{}, err
 	}
-	return *transactiondetail.ConvertModelToDto(*dataTransactionDetail), nil
+	return *transactiondetail.ConvertModelToDto(data), nil
 }
 
 func (td *transactionDetailRepository) GetAllTransactionDetail(filter transactiondetail.TransactionDetailDto) ([]transactiondetail.TransactionDetailDto, error) {

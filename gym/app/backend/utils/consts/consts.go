@@ -8,4 +8,7 @@ var (
 	MALE   = "male"
 	FEMALE = "female"
 	SECRET = "secret"
+	// transaction status
+	WAITING_FOR_PAYMENT = "waiting for payment"
+	COMPLETE            = "transaction complete"
 )

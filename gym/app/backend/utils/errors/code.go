@@ -62,6 +62,18 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_TRANSACTION_DETAIL_EMPTY:
 		return http.StatusBadRequest
+	case ERR_MEMBERSHIP_PLAN_NOT_FOUND:
+		return http.StatusNotFound
+	case ERR_TRANSACTION_MEMBER_EMPTY:
+		return http.StatusBadRequest
+	case ERR_USER_NOT_FOUND:
+		return http.StatusNotFound
+	case ERR_QTY_EMPTY:
+		return http.StatusBadRequest
+	case ERR_CREATE_TRANSACTION_DETAIL:
+		return http.StatusInternalServerError
+	case ERR_TRANSACTION_DETAIL_NOT_FOUND:
+		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
 	}
