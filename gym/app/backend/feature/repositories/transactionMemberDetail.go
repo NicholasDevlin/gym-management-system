@@ -9,6 +9,7 @@ import (
 
 type ITransactionMemberDetailRepository interface {
 	SaveTransactionMemberDetail(input transactionmemberdetail.TransactionMemberDetailDto) (transactionmemberdetail.TransactionMemberDetailDto, error)
+	GetTransactionMemberDetail(filter transactionmemberdetail.TransactionMemberDetailDto) (transactionmemberdetail.TransactionMemberDetailDto, error)
 	// DeleteTransactionMemberDetail(id string) (transactionmemberdetail.TransactionMemberDetailDto, error)
 }
 
@@ -42,4 +43,24 @@ func (td *transactionMemberDetailRepository) SaveTransactionMemberDetail(input t
 		return transactionmemberdetail.TransactionMemberDetailDto{}, err
 	}
 	return *transactionmemberdetail.ConvertModelToDto(*dataTransactionMemberDetail), nil
+}
+
+func (td *transactionMemberDetailRepository) GetTransactionMemberDetail(filter transactionmemberdetail.TransactionMemberDetailDto) (transactionmemberdetail.TransactionMemberDetailDto, error) {
+	if filter.UUID == uuid.Nil && filter.Id == 0 {
+		return transactionmemberdetail.TransactionMemberDetailDto{}, nil
+	}
+	var model transactionmemberdetail.TransactionMemberDetail
+	query := td.db.Model(&transactionmemberdetail.TransactionMemberDetail{})
+	if filter.Id != 0 {
+		query = query.Where("id = ?", filter.Id)
+	}
+	if filter.UUID != uuid.Nil {
+		query = query.Where("uuid = ?", filter.UUID)
+	}
+
+	err := query.Preload("User").First(&model).Error
+	if err != nil {
+		return transactionmemberdetail.TransactionMemberDetailDto{}, err
+	}
+	return *transactionmemberdetail.ConvertModelToDto(model), nil
 }

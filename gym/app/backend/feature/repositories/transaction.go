@@ -1,8 +1,11 @@
 package repositories
 
 import (
+	"fmt"
 	"gym/app/backend/models/transaction"
 	transactiondetail "gym/app/backend/models/transactionDetail"
+	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
+	"gym/app/backend/models/user"
 	"gym/app/backend/utils/errors"
 
 	uuid "github.com/satori/go.uuid"
@@ -83,13 +86,12 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 	var err error
 	tx := t.db.Begin()
 	defer func() {
-    if r := recover(); r != nil {
-      tx.Rollback()
-    }
-  }()
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
 	transactionData := *transaction.ConvertDtoToModel(data)
-
 	if !input.TransactionDate.IsZero() {
 		transactionData.TransactionDate = input.TransactionDate
 	}
@@ -110,11 +112,14 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 		}
 		return transaction.TransactionDto{}, err
 	}
+	data = *transaction.ConvertModelToDto(transactionData)
 
 	// save transaction detail
 	var transactionDetailData transactiondetail.TransactionDetail
+	var transactionMemberDetailData transactionmemberdetail.TransactionMemberDetail
 	var existingDetail transactiondetail.TransactionDetailDto
-	for _, detail := range input.TransactionDetail {
+	var existingMemberDetail transactionmemberdetail.TransactionMemberDetailDto
+	for i, detail := range input.TransactionDetail {
 		detail.TransactionId = transactionData.ID
 		if detail.UUID != uuid.Nil {
 			existingDetail, err = t.transactionDetailRepository.GetTransactionDetail(detail)
@@ -129,22 +134,29 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 			err = errors.ERR_CREATE_TRANSACTION_DETAIL
 			return transaction.TransactionDto{}, err
 		}
-		// // save transaction detail member
-		// for _, member := range detail.TransactionMemberDetail {
-		// 	fmt.Println("member")
-		// 	member.TransactionDetailId = detailRes.Id
-		// 	_, err := t.transactionMemberDetailRepository.SaveTransactionMemberDetail(member)
-		// 	if err != nil {
-		// 		// tx.Rollback()
-		// 		return transaction.TransactionDto{}, err
-		// 	}
-		// member = memberRes
-		//}
-		// detail = detailRes
+		data.TransactionDetail[i] = *transactiondetail.ConvertModelToDto(transactionDetailData)
+		// save transaction detail member
+		for j, member := range detail.TransactionMemberDetail {
+			if member.UUID != uuid.Nil {
+				existingMemberDetail, err = t.transactionMemberDetailRepository.GetTransactionMemberDetail(member)
+				if err != nil {
+					return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+				}
+			}
+			member.TransactionDetailId = transactionDetailData.ID
+			transactionMemberDetailData = SaveTransactionMemberDetail(existingMemberDetail, member)
+			err = tx.Save(&transactionMemberDetailData).Error
+			if err != nil {
+				tx.Rollback()
+				return transaction.TransactionDto{}, errors.ERR_SAVE_TRANSACTION_MEMBER_DETAIL
+			}
+			data.TransactionDetail[i].TransactionMemberDetail[j] = *transactionmemberdetail.ConvertModelToDto(transactionMemberDetailData)
+			data.TransactionDetail[i].TransactionMemberDetail[j].TransactionDetailUUID = data.TransactionDetail[i].UUID
+		}
 	}
 
 	tx.Commit()
-	return *transaction.ConvertModelToDto(transactionData), nil
+	return data, nil
 }
 
 func (t *transactionRepository) DeleteTransaction(id string) (transaction.TransactionDto, error) {
@@ -160,10 +172,11 @@ func (t *transactionRepository) DeleteTransaction(id string) (transaction.Transa
 
 func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDto) transactiondetail.TransactionDetail {
 	var data transactiondetail.TransactionDetail
+	existing.MembershipPlan = input.MembershipPlan
+	existing.TransactionMemberDetail = input.TransactionMemberDetail
+	data = *transactiondetail.ConvertDtoToModel(existing)
 	if input.UUID == uuid.Nil {
 		data.UUID = uuid.NewV4()
-	} else {
-		data = *transactiondetail.ConvertDtoToModel(existing)
 	}
 	if input.TransactionId != 0 {
 		data.TransactionId = input.TransactionId
@@ -174,5 +187,22 @@ func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDt
 	if input.Quantity != 0 {
 		data.Quantity = input.Quantity
 	}
+	return data
+}
+
+func SaveTransactionMemberDetail(existing, input transactionmemberdetail.TransactionMemberDetailDto) transactionmemberdetail.TransactionMemberDetail {
+	var data transactionmemberdetail.TransactionMemberDetail
+	data = *transactionmemberdetail.ConvertDtoToModel(existing)
+	if input.UUID == uuid.Nil {
+		data.UUID = uuid.NewV4()
+	}
+	if input.TransactionDetailId != 0 {
+		data.TransactionDetailId = input.TransactionDetailId
+	}
+	if input.UserId != 0 {
+		data.UserId = input.UserId
+	}
+	data.User = *user.ConvertDtoToModel(input.User)
+	fmt.Println(data.User)
 	return data
 }

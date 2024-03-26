@@ -129,12 +129,13 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 		transactionDetailDto.MembershipPlanId = membershipPlan.Id
 		transactionDetailDto.MembershipPlan = membershipPlan
 
-		for _, member := range transactionDetailDto.TransactionMemberDetail {
+		for j, member := range transactionDetailDto.TransactionMemberDetail {
 			user, err := t.userRepository.GetUser(user.UserDto{UUID: member.UserUUID})
 			if err != nil {
 				return transaction.TransactionRes{}, errors.ERR_USER_NOT_FOUND
 			}
-			member.UserId = user.Id
+			transactionDetailDto.TransactionMemberDetail[j].User = user
+			transactionDetailDto.TransactionMemberDetail[j].UserId = user.Id
 		}
 		dto.TransactionDetail[i] = transactionDetailDto
 	}
@@ -149,6 +150,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 		data.TransactionDate = time.Now()
 		data.Status = consts.WAITING_FOR_PAYMENT
 		data.UUID = uuid.NewV4()
+		data.TransactionDetail = dto.TransactionDetail
 	}
 
 	resUser, err := t.userRepository.GetUser(*&transaction.ConvertReqToDto(input).User)

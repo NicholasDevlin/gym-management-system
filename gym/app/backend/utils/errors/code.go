@@ -74,6 +74,10 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_TRANSACTION_DETAIL_NOT_FOUND:
 		return http.StatusNotFound
+	case ERR_TRANSACTION_MEMBER_DETAIL_NOT_FOUND:
+		return http.StatusNotFound
+	case ERR_SAVE_TRANSACTION_MEMBER_DETAIL:
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}
