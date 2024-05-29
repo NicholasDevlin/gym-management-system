@@ -1,11 +1,9 @@
-/* styles.module.css */
-
 :root {
   --transition-duration: 0.8s;
   --transition-easing: cubic-bezier(0.230, 1.000, 0.320, 1.000);
   --bounce-easing: cubic-bezier(0.175, 0.885, 0.320, 1.275);
-  --closed-width: 200px;
-  --closed-height: 80px;
+  --closed-width: 100px;
+  --closed-height: 40px;
   --opened-width: 400px;
   --opened-height: 160px;
 }

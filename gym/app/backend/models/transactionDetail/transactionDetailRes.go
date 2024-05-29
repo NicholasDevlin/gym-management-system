@@ -2,17 +2,16 @@ package transactiondetail
 
 import (
 	membershipplan "gym/app/backend/models/membershipPlan"
-	"gym/app/backend/models/user"
+	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 
 	uuid "github.com/satori/go.uuid"
 )
 
 type TransactionDetailRes struct {
-	UUID               uuid.UUID                        `json:"uuid" form:"uuid"`
-	Quantity           int                              `json:"qty" form:"qty"`
-	Subtotal           int64                            `json:"subtotal" form:"subtotal"`
-	UserUUID           uuid.UUID                        `json:"userUUID" form:"userUUID"`
-	MembershipPlanUUID uuid.UUID                        `json:"membershipPlanUUID" form:"membershipPlanUUID"`
-	User               user.UserRes                     `json:"user" form:"user"`
-	MembershipPlan     membershipplan.MembershipPlanRes `json:"membershipPlan" form:"membershipPlan"`
+	UUID                    uuid.UUID                                            `json:"uuid" form:"uuid"`
+	Quantity                int                                                  `json:"qty" form:"qty"`
+	Subtotal                int64                                                `json:"subtotal" form:"subtotal"`
+	MembershipPlanUUID      uuid.UUID                                            `json:"membershipPlanUUID" form:"membershipPlanUUID"`
+	MembershipPlan          membershipplan.MembershipPlanRes                     `json:"membershipPlan" form:"membershipPlan"`
+	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailRes `json:"transactionMemberDetail" form:"transactionMemberDetail"`
 }

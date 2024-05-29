@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
-import Styles from './Navbar.module.css'
-import { Link } from 'react-router-dom'
+import Styles from './Navbar.module.css';
+import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { useUserData } from '../../../utils/jwt/UserData.jsx'; // Import useUserData hook
 
 function Navbar() {
+  const { handleLogout, userData } = useUserData();
+
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const toggleProfileMenu = () => {
     setProfileMenuOpen(!isProfileMenuOpen);
   };
+
   return (
     <nav className={Styles.navbar}>
       <div className={Styles.logo}><p>LOGO</p></div>
       <ul className={Styles.ul}>
         <Link to='/'><li className={Styles.li}>Home</li></Link>
         <Link to='/membership'><li className={Styles.li}>Membership</li></Link>
+        <Link to='/transaction'><li className={Styles.li}>Transaction</li></Link>
         <Link to='/help'><li className={Styles.li}>Help</li></Link>
         <li className={Styles.li} onClick={toggleProfileMenu}>
           <Icon icon="iconamoon:profile-circle-fill" color="#d8cdb9" width="32" height="32" />
@@ -22,7 +27,11 @@ function Navbar() {
             <div className={Styles.profileMenu}>
               <ul>
                 <Link to='/profile'><li>Profile</li></Link>
-                <li>Sign out</li>
+                {userData ? (
+                  <Link to="/authentication"><li onClick={handleLogout}>Sign out</li></Link>
+                ) : (
+                  <Link to="/authentication"><li>Sign in</li></Link>
+                )}
               </ul>
             </div>
           )}
@@ -32,4 +41,4 @@ function Navbar() {
   );
 }
 
-export default Navbar
+export default Navbar;

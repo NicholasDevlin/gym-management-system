@@ -5,9 +5,13 @@ import { API_URLS } from "../../apiConfig.js";
 import PasswordFied from "./inputPasswordField/PasswordField.jsx";
 import TextField from "../general/input/inputTextField/TextField.jsx";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "react-alert";
+import { useUserData } from "../../utils/jwt/UserData.jsx";
 
 function Login({ registerOnClick }) {
+  const alert = useAlert();
   const navigate = useNavigate();
+  const { fetchData } = useUserData(); 
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -39,12 +43,13 @@ function Login({ registerOnClick }) {
 
       const responseData = await response.json();
       if (responseData.success) {
-        navigate("/");
+        localStorage.setItem("authToken", responseData.data.token);
+        await fetchData(); 
+        await navigate("/");
+        alert.success("Loggin successfull");
       }
-      localStorage.setItem("authToken", responseData.data.token);
-      console.log("Login successful. Response:", responseData);
     } catch (error) {
-      console.error("Error during login:", error);
+      alert.error("Error during login:", error);
     }
   };
 
@@ -52,7 +57,7 @@ function Login({ registerOnClick }) {
     <div className={Styles.container} id="container">
       <form className={Styles.form} onSubmit={handleLoginSubmit}>
         <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
-        <PasswordFied id={"password"} onChange={handleInputChange} />
+        <PasswordFied value={loginData.password} id={"password"} onChange={handleInputChange} />
         <div className={Styles.row}>
           <button className={Styles.button} type="submit" id="submit">
             Sign in

@@ -79,8 +79,9 @@ function Profile() {
   }, []);
 
   async function getUserProfile() {
+    debugger
     try {
-      const response = await fetch(`${API_URLS.USER}/${userData.uuid}`, {
+      const response = await fetch(`${API_URLS.USER}/${userData.userData.uuid}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Layout from '../../../layout/MainLayout/Layout.jsx'
 import Card from '../../../components/general/card/Card.jsx'
-import CardProduct from '../../../components/general/card/CardProduct.jsx'
 import Button from '../../../components/general/button/Button.jsx'
-import Styles from './Membership.module.css'
-import { Link } from 'react-router-dom'
+import Styles from './Transaction.module.css'
 import { API_URLS } from '../../../apiConfig.js'
 import { useAlert } from "react-alert";
 
-function Membership() {
+function Transaction() {
   const alert = useAlert()
-  const [membershipPlanData, setMembershipPlanData] = useState([]);
+  const [transactionData, setTransaction] = useState([]);
 
   useEffect(() => {
-    getMembershipPlan();
+    getTransaction();
   }, []);
 
-  async function getMembershipPlan() {
+  async function getTransaction() {
     try {
       const response = await fetch(`${API_URLS.MEMBERSHIP_PLAN}`, {
         method: "GET",
@@ -32,7 +30,7 @@ function Membership() {
 
       const responseData = await response.json();
       if (responseData.success) {
-        setMembershipPlanData(responseData.data);
+        setTransaction(responseData.data);
       } else {
         alert.error("Get data unsuccessful");
       }
@@ -42,24 +40,13 @@ function Membership() {
   }
   return (
     <Layout>
-      <div className={Styles.container}>
-        <Card title={"test"} body={"loremmmm "} button={Button} />
-      </div>
       <div className={Styles.cardHolder}>
-        {membershipPlanData !== null &&
-          membershipPlanData.map((plan, index) => (
-            <CardProduct
-              key={index}
-              title={plan.name}
-              duration={plan.duration}
-              price={plan.price}
-              description={plan.description}
-              detail={`/membership/editor/${plan.uuid}`}
-            />
-          ))}
+        {/* {transactionData.map((plan, index) => (
+
+        ))} */}
       </div>
     </Layout>
   );
 }
 
-export default Membership;
+export default Transaction;

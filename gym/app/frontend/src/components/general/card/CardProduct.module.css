@@ -50,7 +50,7 @@
 
   .buttonContainer {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     position: relative;
   }
 
@@ -87,10 +87,6 @@
       li {
         margin: 10px 0;
         font-size: 14px;
-
-        span {
-          border-bottom: 2px dotted var(--color-four);
-        }
       }
     }
   }

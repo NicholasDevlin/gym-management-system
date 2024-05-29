@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom';
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import TextField from "../../../components/general/input/inputTextField/TextField.jsx";
 import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
@@ -42,7 +42,6 @@ function MembershipEditor() {
       const responseData = await response.json();
       if (responseData.success) {
         setMembershipPlanData(responseData.data);
-        alert.success('Get data successful');
       } else {
         alert.error('Get data unsuccessful');
       }

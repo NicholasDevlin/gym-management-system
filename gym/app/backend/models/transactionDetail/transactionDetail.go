@@ -2,7 +2,7 @@ package transactiondetail
 
 import (
 	membershipplan "gym/app/backend/models/membershipPlan"
-	"gym/app/backend/models/user"
+	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -10,11 +10,10 @@ import (
 
 type TransactionDetail struct {
 	gorm.Model
-	UUID             uuid.UUID
-	TransactionId    uint
-	MembershipPlanId uint
-	UserId           uint
-	Quantity         int
-	User             user.User
-	MembershipPlan   membershipplan.MembershipPlan `gorm:"foreignKey:MembershipPlanId"`
+	UUID                    uuid.UUID
+	TransactionId           uint
+	MembershipPlanId        uint
+	Quantity                int
+	MembershipPlan          membershipplan.MembershipPlan                   `gorm:"foreignKey:MembershipPlanId"`
+	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetail `gorm:"foreignKey:TransactionDetailId"`
 }

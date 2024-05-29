@@ -63,16 +63,20 @@ func (t *transactionController) GetTransaction(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (t *transactionController) UpdateTransaction(e echo.Context) error {
+func (t *transactionController) SaveTransaction(e echo.Context) error {
+	userUUID, role, err := middleware.ExtractToken(e)
 	var input transaction.TransactionReq
 	e.Bind(&input)
-	uuid, err := uuid.FromString(e.Param("id"))
-	if err != nil {
-		return baseresponse.NewErrorResponse(e, err)
+	if role == consts.USER {
+		input.User.UUID = userUUID
 	}
-	input.UUID = uuid
 
-	res, err := t.transactionService.UpdateTransaction(input)
+	e.Bind(&input)
+	if e.Param("id") != "" {
+		input.UUID, _ = uuid.FromString(e.Param("id"))
+	}
+
+	res, err := t.transactionService.SaveTransaction(input)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
