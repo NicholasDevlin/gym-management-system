@@ -17,4 +17,5 @@ func Route(e *echo.Echo, db *gorm.DB) {
 	RoleRoute(e, db, eJwt)
 	MembershipPlanRoute(e, db, eJwt)
 	TransactionRoute(e, db, eJwt)
+	AbsensiRoute(e, db, eJwt)
 }

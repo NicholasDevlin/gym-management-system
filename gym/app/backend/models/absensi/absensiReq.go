@@ -7,7 +7,7 @@ import (
 )
 
 type AbsensiReq struct {
-	UUID     uuid.UUID
-	UserUUID uuid.UUID
-	Date     time.Time
+	UUID     uuid.UUID `json:"uuid" form:"uuid"`
+	UserUUID uuid.UUID `json:"userUUID" form:"userUUID"`
+	Date     time.Time `json:"date" form:"date"`
 }

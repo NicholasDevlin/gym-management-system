@@ -8,8 +8,8 @@ import (
 )
 
 type AbsensiRes struct {
-	UUID   uuid.UUID
-	UserUUID uuid.UUID
-	Date   time.Time
-	User   user.UserRes
+	UUID     uuid.UUID    `json:"uuid" form:"uuid"`
+	UserUUID uuid.UUID    `json:"userUUID" form:"userUUID"`
+	Date     time.Time    `json:"date" form:"date"`
+	User     user.UserRes `json:"user" form:"user"`
 }

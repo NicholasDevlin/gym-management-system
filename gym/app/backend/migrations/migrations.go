@@ -1,6 +1,7 @@
 package migrations
 
 import (
+	"gym/app/backend/models/absensi"
 	membershipplan "gym/app/backend/models/membershipPlan"
 	"gym/app/backend/models/role"
 	"gym/app/backend/models/transaction"
@@ -18,4 +19,5 @@ func InitMigrate(db *gorm.DB) {
 	db.AutoMigrate(&transaction.Transaction{})
 	db.AutoMigrate(&transactiondetail.TransactionDetail{})
 	db.AutoMigrate(&transactionmemberdetail.TransactionMemberDetail{})
+	db.AutoMigrate(&absensi.Absensi{})
 }
