@@ -34,7 +34,6 @@
   @media (max-width: 768px) {
     margin: 10px 20px;
     width: calc(100% - 40px);
-
   }
 
   &:nth-child(2) {

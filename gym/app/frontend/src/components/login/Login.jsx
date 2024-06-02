@@ -11,7 +11,7 @@ import { useUserData } from "../../utils/jwt/UserData.jsx";
 function Login({ registerOnClick }) {
   const alert = useAlert();
   const navigate = useNavigate();
-  const { fetchData } = useUserData(); 
+  const { fetchData } = useUserData();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -44,7 +44,7 @@ function Login({ registerOnClick }) {
       const responseData = await response.json();
       if (responseData.success) {
         localStorage.setItem("authToken", responseData.data.token);
-        await fetchData(); 
+        await fetchData();
         await navigate("/");
         alert.success("Loggin successfull");
       }
@@ -63,10 +63,10 @@ function Login({ registerOnClick }) {
             Sign in
           </button>
         </div>
-        <p className={Styles.textColor}>or login with:</p>
+        {/* <p className={Styles.textColor}>or login with:</p>
         <div className={Styles.centerContent}>
           <GoogleLoginButton />
-        </div>
+        </div> */}
         <div className={Styles.register}>
           <span className={Styles.textColor}>Don't have an account? </span>
           <button

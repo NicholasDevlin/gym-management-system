@@ -82,10 +82,10 @@ function Register({ loginOnClick }) {
             Sign up
           </button>
         </div>
-        <p className={Styles.textColor}>or register with:</p>
+        {/* <p className={Styles.textColor}>or register with:</p>
         <div className={Styles.centerContent}>
           <GoogleLoginButton />
-        </div>
+        </div> */}
         <div className={Styles.register}>
           <span className={Styles.textColor}>Already have an account? </span>
           <button
