@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Styles from './DeleteButton.module.css'
+import PropTypes from 'prop-types';
 
-function DeleteButton() {
+function DeleteButton({ onDelete }) {
   const [dataDirection, setDataDirection] = useState('');
 
   const btnRef = React.useRef(null);
   let btn;
   const btnFrontClickHandler = (event) => {
-    btn = document.getElementById('btn')
+    btn = btnRef.current;
     btn.classList.toggle(Styles.btnIsOpen);
 
     const mx = event.clientX - btnRef.current.offsetLeft;
@@ -31,12 +32,13 @@ function DeleteButton() {
   };
 
   const btnYesClickHandler = () => {
-    btn = document.getElementById('btn')
+    btn = btnRef.current;
     btn.classList.toggle(Styles.btnIsOpen);
+    onDelete();
   };
 
   const btnNoClickHandler = () => {
-    btn = document.getElementById('btn')
+    btn = btnRef.current;
     btn.classList.toggle(Styles.btnIsOpen);
   };
 
@@ -46,7 +48,7 @@ function DeleteButton() {
     return Math.sqrt(dx * dx + dy * dy);
   };
   return (
-    <div data-direction={dataDirection} className={Styles.btn} id="btn" ref={btnRef}>
+    <div data-direction={dataDirection} className={Styles.btn} ref={btnRef}>
       <div className={Styles.btnBack}>
         <p>Are you sure you want to do that?</p>
         <button className={Styles.yes} onClick={btnYesClickHandler}>Yes</button>
@@ -56,6 +58,10 @@ function DeleteButton() {
     </div>
   );
 }
+
+DeleteButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
 
 // source https://codepen.io/hakimel/pen/ZYRgwB
 export default DeleteButton;

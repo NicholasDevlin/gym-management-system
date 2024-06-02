@@ -15,6 +15,7 @@ var (
 	ERR_DELETE_ROLE                         = errors.New("Failed to delete Role")
 	ERR_DELETE_TRANSACTION                  = errors.New("Failed to delete Transaction")
 	ERR_CREATE_ROLE                         = errors.New("Failed to create new Role")
+	ERR_CREATE_ABSENSI                      = errors.New("Failed to create Absensi")
 	ERR_CREATE_MEMBERSHIP_PLAN              = errors.New("Failed to create new Membership Plan")
 	ERR_CREATE_TRANSACTION                  = errors.New("Failed to create new Transaction")
 	ERR_CREATE_TRANSACTION_DETAIL           = errors.New("Failed to create new Transaction Detail")

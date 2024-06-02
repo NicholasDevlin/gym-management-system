@@ -10,7 +10,7 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 100vw;
   background-color: #1f2124;
   position: relative;
 }

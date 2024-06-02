@@ -22,7 +22,7 @@ func ConvertDtoToModel(input AbsensiDto) *Absensi {
 			UpdatedAt: input.UpdatedAt,
 		},
 		Date:   input.Date,
-		UserId: input.UserId,
+		UserId: input.User.Id,
 		User:   *user.ConvertDtoToModel(input.User),
 	}
 }

@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import Button from "../../../components/general/button/Button.jsx";
-import ButtonDelete from "../../../components/general/button/DeleteButton.jsx";
-import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
 import { API_URLS } from "../../../apiConfig.js";
 import { useAlert } from "react-alert";
 import Styles from './Transaction.module.css'
-import Select from "../../../components/general/input/select/Select.jsx";
+import TransactionDetailCollapse from "../../../components/transaction/TransactionDetailCollapse.jsx";
 
 function TransactionEditor() {
   const alert = useAlert();
   const { uuid } = useParams();
+  const [details, setDetails] = useState([]);
 
   const [transactionData, setTransactionData] = useState({
     transactionNo: '',
@@ -90,67 +89,41 @@ function TransactionEditor() {
   //   }
   // }
 
-  const options = [
-    { name: 'Swedish', value: 'sv' },
-    { name: 'English', value: 'en' },
-    {
-      type: 'group',
-      name: 'Group name',
-      items: [
-        { name: 'Spanish', value: 'es' },
-      ]
-    },
-  ];
+  const addTransactionDetail = () => {
+    setDetails([...details, {}]);
+  }
 
   return (
     <Layout>
       <div className="container my-5">
         <div className="row">
-          <div className="row">
-            <div className="col-6">
-              <p className="text-start mb-0">Transaction No</p>
-              <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.transactionNo} test</h4></p>
-            </div>
-            <div className="col-6">
-              <p className="text-end mb-0">Transaction Date</p>
-              <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.transactionDate} test</h4></p>
-            </div>
+          <div className="col-6">
+            <p className="text-start mb-0">Transaction No</p>
+            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.transactionNo} test</h4></p>
           </div>
-          <div className="row">
-            <div className="col-6">
-              <p className="text-start mb-0">Status</p>
-              <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.status} test</h4></p>
-            </div>
-            <div className="col-6">
-              <p className="text-end mb-0">Total</p>
-              <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.total} test</h4></p>
-            </div>
+          <div className="col-6">
+            <p className="text-end mb-0">Transaction Date</p>
+            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.transactionDate} test</h4></p>
           </div>
         </div>
-        <div className="row p-3">
-          <div className={`${'card bg-dark'} ${Styles.card}`}>
-            <div className="card-header row">
-              <div className="col-md-6 col-s-12">
-                <Select label={"Membership Plan"} options={options} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} />
-              </div>
-              <div className="col-md-6 col-s-12 d-flex justify-content-end">
-                <ButtonDelete />
-              </div>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-6">
-                  <Select label={"Member"} options={options} name={"userUUID"} placeholder={"Choose Member"} />
-                </div>
-                <div className="col-6">
-                  <NumericField id={"qty"} label={"Qty"} />
-                </div>
-              </div>
-            </div>
+        <div className="row">
+          <div className="col-6">
+            <p className="text-start mb-0">Status</p>
+            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.status} test</h4></p>
+          </div>
+          <div className="col-6">
+            <p className="text-end mb-0">Total</p>
+            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.total} test</h4></p>
           </div>
         </div>
-        <div className="d-flex justify-content-end">
-          {/* <Button onClick={saveMembershipPlan} text={'Save'} /> */}
+        <div className="d-flex justify-content-between my-2">
+          <Button text={"+ Add Transaction Detail"} onClick={addTransactionDetail} />
+          <Button text={"Save"} />
+        </div>
+        <div className="my-3">
+          {details.map((detail) => (
+            <TransactionDetailCollapse />
+          ))}
         </div>
       </div>
     </Layout >

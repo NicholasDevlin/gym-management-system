@@ -11,7 +11,6 @@ type AbsensiDto struct {
 	Id        uint
 	UUID      uuid.UUID
 	UserUUID  uuid.UUID
-	UserId    uint
 	Date      time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time

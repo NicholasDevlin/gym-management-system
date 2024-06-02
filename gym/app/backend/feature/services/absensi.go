@@ -4,6 +4,9 @@ import (
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/models/absensi"
 	"gym/app/backend/utils/errors"
+	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 type IAbsensiService interface {
@@ -16,30 +19,33 @@ type IAbsensiService interface {
 
 type absensiService struct {
 	absensiRepository repositories.IAbsensiRepository
-	userRepository repositories.IUserRepository
+	userRepository    repositories.IUserRepository
 }
 
 func NewAbsensiService(repo repositories.IAbsensiRepository, userRepo repositories.IUserRepository) IAbsensiService {
 	return &absensiService{
 		absensiRepository: repo,
-		userRepository: userRepo,
+		userRepository:    userRepo,
 	}
 }
 
 func (a *absensiService) CreateAbsensi(input absensi.AbsensiReq) (absensi.AbsensiRes, error) {
-	// if input.Role == "" {
-	// 	return absensi.AbsensiRes{}, errors.ERR_ROLE_IS_EMPTY
-	// }
-	dto := absensi.ConvertReqToDto(input)
-	userDto, err := a.userRepository.GetUser(dto.User)
-	if err != nil {
-		return absensi.AbsensiRes{}, err
+	if input.UserUUID == uuid.Nil {
+		return absensi.AbsensiRes{}, errors.ERR_USER_NOT_FOUND
 	}
-	dto.User = userDto
-	dto.UserId = userDto.Id
+	if input.Date.IsZero() {
+		input.Date = time.Now()
+	}
+	var err error
+	dto := absensi.ConvertReqToDto(input)
+	dto.User, err = a.userRepository.GetUser(dto.User)
+	if err != nil {
+		return absensi.AbsensiRes{}, errors.ERR_USER_NOT_FOUND
+	}
+	
 	err = a.absensiRepository.CreateAbsensi(dto)
 	if err != nil {
-		return absensi.AbsensiRes{}, errors.ERR_CREATE_ROLE
+		return absensi.AbsensiRes{}, errors.ERR_CREATE_ABSENSI
 	}
 	return *absensi.ConvertDtoToRes(*dto), nil
 }

@@ -1,6 +1,8 @@
 .inputWrapper {
     position: relative;
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 .datetimePicker {
@@ -15,7 +17,18 @@ tr th,
 
 .formItem {
     margin-bottom: 1rem;
-    > * + * {
+
+    >*+* {
         margin-top: 0.1rem;
     }
+}
+
+.prefix,
+.suffix {
+    background-color: #d8cdb9;
+    cursor: pointer;
+    padding: 0 10px;
+    color: #721b29;
+    font-size: 1rem;
+    margin: 0 5px;
 }
