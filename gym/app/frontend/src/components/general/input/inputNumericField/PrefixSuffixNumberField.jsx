@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Styles from "../Input.module.css";
 
 function PrefixSuffixNumericField({ id, onChange, label, value, prefixOnClick, suffixOnClick }) {
@@ -6,15 +6,20 @@ function PrefixSuffixNumericField({ id, onChange, label, value, prefixOnClick, s
 
   const handlePrefix = () => {
     if (count > 0) {
+      onChange(count - 1);
       setCount(count - 1);
       prefixOnClick && prefixOnClick();
     }
   }
 
+  useEffect(() => {
+    setCount(value);
+  }, [value])
+
   const handleSuffix = () => {
+    onChange(count + 1);
     setCount(count + 1);
     suffixOnClick && suffixOnClick();
-    console.log("test")
   }
 
   return (
@@ -26,7 +31,6 @@ function PrefixSuffixNumericField({ id, onChange, label, value, prefixOnClick, s
           id={id}
           className="w-40 text-end"
           disabled
-          onChange={onChange}
           type="number"
           autoComplete="off"
           autoCorrect="off"

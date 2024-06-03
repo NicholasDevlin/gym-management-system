@@ -10,6 +10,7 @@ export default function TransactionDetailCollapse({ detail }) {
   const detailRef = useRef(null);
   const [detailMember, setDetailMember] = useState([]);
   const [isCollapse, setIsCollapse] = useState(true);
+  const [qty, setQty] = useState(0);
 
   const handleDelete = () => {
     if (detailRef.current) {
@@ -42,6 +43,10 @@ export default function TransactionDetailCollapse({ detail }) {
     setIsCollapse(!isCollapse)
   }
 
+  const handleQtyChange = (value) => {
+    setQty(value);
+  }
+
   return (
     <div ref={detailRef} className="row py-2">
       <div className={`${'card bg-dark p-0'} ${Styles.card}`}>
@@ -55,7 +60,7 @@ export default function TransactionDetailCollapse({ detail }) {
                 <NumericField id={"price"} label={"Price"} />
               </div>
               <div className="col-md-4">
-                <PrefixSuffixNumericField id={"qty"} label={"Qty"} prefixOnClick={substracQty} suffixOnClick={addQty} />
+                <PrefixSuffixNumericField id={"qty"} label={"Qty"} onChange={handleQtyChange} value={qty} prefixOnClick={substracQty} suffixOnClick={addQty} />
               </div>
               <div className="col-md-4">
                 <NumericField id={"subtotal"} label={"Subtotal"} disabled={true} />
@@ -71,7 +76,7 @@ export default function TransactionDetailCollapse({ detail }) {
         </div>
         <div className={`card-body collapse ${isCollapse ? '' : 'show'}`}>
           {detailMember.map((detail) => (
-            <Member />
+            <Member qty={qty} setQty={setQty} />
           ))}
         </div>
       </div>
@@ -79,7 +84,16 @@ export default function TransactionDetailCollapse({ detail }) {
   )
 }
 
-const Member = () => {
+const Member = ({ qty, setQty }) => {
+  const memberRef = useRef(null);
+
+  const handleDelete = () => {
+    if (memberRef.current) {
+      memberRef.current.remove();
+      setQty(qty - 1);
+    }
+  };
+
   const options = [
     { name: 'Swedish', value: 'sv' },
     { name: 'English', value: 'en' },
@@ -92,12 +106,15 @@ const Member = () => {
     },
   ];
   return (
-    <div className="row">
-      <div className="col-6">
+    <div ref={memberRef} className="row">
+      <div className="col-3">
         <Select label={"Member"} options={options} name={"userUUID"} placeholder={"Choose Member"} />
       </div>
-      <div className='col-6'>
+      <div className='col-5'>
         <NumericField id={"additionalPrice"} label={"Additional Price"} />
+      </div>
+      <div className='col-4 d-flex align-items-center justify-content-end'>
+        <DeleteButton onDelete={handleDelete} />
       </div>
     </div>
   )

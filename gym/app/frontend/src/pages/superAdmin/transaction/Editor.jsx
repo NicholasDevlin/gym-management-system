@@ -121,8 +121,8 @@ function TransactionEditor() {
           <Button text={"Save"} />
         </div>
         <div className="my-3" id="transaction-details">
-          {details.map((detail, index) => (
-            <TransactionDetailCollapse id={index}/>
+          {details.map((detail) => (
+            <TransactionDetailCollapse />
           ))}
         </div>
       </div>
