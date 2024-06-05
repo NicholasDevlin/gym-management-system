@@ -110,3 +110,26 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+/* select search additional style */
+.select-search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.select-search-select {
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.on-bottom .select-search-select {
+    top: 100% !important;
+    margin-top: 2px;
+}
+
+.on-top .select-search-select {
+    bottom: 100% !important;
+    top: auto !important;
+    margin-bottom: 2px;
+}

@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import { Icon } from '@iconify/react';
 import PrefixSuffixNumericField from '../general/input/inputNumericField/PrefixSuffixNumberField.jsx';
 
-export default function TransactionDetailCollapse({ detail }) {
+export default function TransactionDetailCollapse({ detail, userOptions, membershipOptions }) {
   const detailRef = useRef(null);
   const [detailMember, setDetailMember] = useState([]);
   const [isCollapse, setIsCollapse] = useState(true);
@@ -21,6 +21,11 @@ export default function TransactionDetailCollapse({ detail }) {
   const options = [
     { name: 'Swedish', value: 'sv' },
     { name: 'English', value: 'en' },
+    { name: 'Swedish', value: 'sv' },
+    { name: 'English', value: 'en' },
+    { name: 'Swedish', value: 'sv' },
+    { name: 'English', value: 'en' },
+    { name: 'Swedish', value: 'sv' },
     {
       type: 'group',
       name: 'Group name',
@@ -76,7 +81,7 @@ export default function TransactionDetailCollapse({ detail }) {
         </div>
         <div className={`card-body collapse ${isCollapse ? '' : 'show'}`}>
           {detailMember.map((detail) => (
-            <Member qty={qty} setQty={setQty} />
+            <Member qty={qty} setQty={setQty} userOptions={userOptions} />
           ))}
         </div>
       </div>
@@ -84,7 +89,7 @@ export default function TransactionDetailCollapse({ detail }) {
   )
 }
 
-const Member = ({ qty, setQty }) => {
+const Member = ({ qty, setQty, userOptions }) => {
   const memberRef = useRef(null);
 
   const handleDelete = () => {
@@ -94,21 +99,12 @@ const Member = ({ qty, setQty }) => {
     }
   };
 
-  const options = [
-    { name: 'Swedish', value: 'sv' },
-    { name: 'English', value: 'en' },
-    {
-      type: 'group',
-      name: 'Group name',
-      items: [
-        { name: 'Spanish', value: 'es' },
-      ]
-    },
-  ];
   return (
     <div ref={memberRef} className="row">
       <div className="col-3">
-        <Select label={"Member"} options={options} name={"userUUID"} placeholder={"Choose Member"} />
+        <div className='row'>
+          <Select label={"Member"} options={userOptions} name={"userUUID"} placeholder={"Choose Member"} />
+        </div>
       </div>
       <div className='col-5'>
         <NumericField id={"additionalPrice"} label={"Additional Price"} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from 'react-router-dom';
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import Button from "../../../components/general/button/Button.jsx";
@@ -6,11 +6,14 @@ import { API_URLS } from "../../../apiConfig.js";
 import { useAlert } from "react-alert";
 import Styles from './Transaction.module.css'
 import TransactionDetailCollapse from "../../../components/transaction/TransactionDetailCollapse.jsx";
+import { GetUsers } from "../../../controller/UserController.js";
 
 function TransactionEditor() {
   const alert = useAlert();
   const { uuid } = useParams();
   const [details, setDetails] = useState([]);
+  const [isFetched, setIsFetched] = useState(false);
+  const [userOptions, setUserOptions] = useState([]);
 
   const [transactionData, setTransactionData] = useState({
     transactionNo: '',
@@ -19,9 +22,23 @@ function TransactionEditor() {
     total: ''
   });
 
+  const fetchUsersOptions = useCallback(async () => {
+    const result = await GetUsers();
+    if (result) {
+      setUserOptions(result.map((data) => ({
+        name: data.name,
+        value: data.uuid,
+      })));
+    }
+  }, []);
+
   useEffect(() => {
     if (uuid) {
       getTransaction();
+    }
+    if (!isFetched) {
+      fetchUsersOptions();
+      setIsFetched(true);
     }
   }, [uuid]);
 
@@ -122,7 +139,7 @@ function TransactionEditor() {
         </div>
         <div className="my-3" id="transaction-details">
           {details.map((detail) => (
-            <TransactionDetailCollapse />
+            <TransactionDetailCollapse userOptions={userOptions} />
           ))}
         </div>
       </div>
