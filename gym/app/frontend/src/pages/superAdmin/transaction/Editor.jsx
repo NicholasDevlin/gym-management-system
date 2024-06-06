@@ -7,6 +7,7 @@ import { useAlert } from "react-alert";
 import Styles from './Transaction.module.css'
 import TransactionDetailCollapse from "../../../components/transaction/TransactionDetailCollapse.jsx";
 import { GetUsers } from "../../../controller/UserController.js";
+import { GetMembershipPlan } from "../../../controller/MembershipPlanController.js";
 
 function TransactionEditor() {
   const alert = useAlert();
@@ -14,6 +15,7 @@ function TransactionEditor() {
   const [details, setDetails] = useState([]);
   const [isFetched, setIsFetched] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
+  const [membershipPlan, setMembershipPlan] = useState([]);
 
   const [transactionData, setTransactionData] = useState({
     transactionNo: '',
@@ -26,9 +28,16 @@ function TransactionEditor() {
     const result = await GetUsers();
     if (result) {
       setUserOptions(result.map((data) => ({
-        name: data.name,
+        name: ` ${data.name} (${data.phoneNumber})`,
         value: data.uuid,
       })));
+    }
+  }, []);
+
+  const fetchMembershipPlanOptions = useCallback(async () => {
+    const result = await GetMembershipPlan();
+    if (result) {
+      setMembershipPlan(result);
     }
   }, []);
 
@@ -37,6 +46,7 @@ function TransactionEditor() {
       getTransaction();
     }
     if (!isFetched) {
+      fetchMembershipPlanOptions();
       fetchUsersOptions();
       setIsFetched(true);
     }
@@ -139,7 +149,7 @@ function TransactionEditor() {
         </div>
         <div className="my-3" id="transaction-details">
           {details.map((detail) => (
-            <TransactionDetailCollapse userOptions={userOptions} />
+            <TransactionDetailCollapse userOptions={userOptions} membershipPlan={membershipPlan} />
           ))}
         </div>
       </div>

@@ -2,15 +2,17 @@ import Select from '../general/input/select/Select'
 import Styles from './Transaction.module.css'
 import NumericField from '../general/input/inputNumericField/NumericField.jsx'
 import DeleteButton from '../general/button/DeleteButton.jsx'
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@iconify/react';
 import PrefixSuffixNumericField from '../general/input/inputNumericField/PrefixSuffixNumberField.jsx';
 
-export default function TransactionDetailCollapse({ detail, userOptions, membershipOptions }) {
+export default function TransactionDetailCollapse({ detail, userOptions, membershipPlan }) {
   const detailRef = useRef(null);
   const [detailMember, setDetailMember] = useState([]);
   const [isCollapse, setIsCollapse] = useState(true);
   const [qty, setQty] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [membershipPlanOptions, setMembershipPlanOptions] = useState([]);
 
   const handleDelete = () => {
     if (detailRef.current) {
@@ -18,22 +20,14 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
     }
   };
 
-  const options = [
-    { name: 'Swedish', value: 'sv' },
-    { name: 'English', value: 'en' },
-    { name: 'Swedish', value: 'sv' },
-    { name: 'English', value: 'en' },
-    { name: 'Swedish', value: 'sv' },
-    { name: 'English', value: 'en' },
-    { name: 'Swedish', value: 'sv' },
-    {
-      type: 'group',
-      name: 'Group name',
-      items: [
-        { name: 'Spanish', value: 'es' },
-      ]
-    },
-  ];
+  useEffect(() => {
+    if (membershipPlan) {
+      setMembershipPlanOptions(membershipPlan.map((data) => ({
+        name: `${data.name} (${data.duration} Days)`,
+        value: data.uuid,
+      })));
+    }
+  }, [membershipPlan])
 
   const addQty = () => {
     setDetailMember([...detailMember, {}]);
@@ -52,17 +46,22 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
     setQty(value);
   }
 
+  const handleMembershipOnSelect = (e) => {
+    let selectedMembershipPlan = membershipPlan.find(x => x.uuid === e);
+    setPrice(selectedMembershipPlan.price);
+  }
+
   return (
     <div ref={detailRef} className="row py-2">
       <div className={`${'card bg-dark p-0'} ${Styles.card}`}>
         <div className="card-header row pe-1">
           <div className="col-md-3 col-sm-12">
-            <Select label={"Membership Plan"} options={options} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} />
+            <Select label={"Membership Plan"} options={membershipPlanOptions} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} onSelect={handleMembershipOnSelect} />
           </div>
           <div className="col-md-5 col-sm-6">
             <div className="row">
               <div className="col-md-4">
-                <NumericField id={"price"} label={"Price"} />
+                <NumericField id={"price"} label={"Price"} value={price} onChange={(e) => setPrice(e.target.value)} />
               </div>
               <div className="col-md-4">
                 <PrefixSuffixNumericField id={"qty"} label={"Qty"} onChange={handleQtyChange} value={qty} prefixOnClick={substracQty} suffixOnClick={addQty} />

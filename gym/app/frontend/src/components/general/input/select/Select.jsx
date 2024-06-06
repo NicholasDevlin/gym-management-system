@@ -3,13 +3,14 @@ import 'react-select-search/style.css';
 import Styles from '../Input.module.css';
 import { useRef, useState } from 'react';
 
-function Select({ options, name, placeholder, label, value, getOptions }) {
+function Select({ options, name, placeholder, label, value, getOptions, onSelect }) {
   const [selected, setSelected] = useState(value);
   const selectRef = useRef(null);
   const [placement, setPlacement] = useState('on-bottom');
 
   const onChange = (e) => {
     setSelected(e);
+    onSelect && onSelect(e);
   }
 
   const onFocus = () => {
