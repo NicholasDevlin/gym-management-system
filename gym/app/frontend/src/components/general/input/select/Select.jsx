@@ -26,7 +26,7 @@ function Select({ options, name, placeholder, label, value, getOptions, onSelect
 
   return (
     <div className={Styles.formItem}>
-      <label htmlFor={name}>{label}</label>
+      {label ?  <label htmlFor={name}>{label}</label> : <></>}
       <div className={Styles.inputWrapper}>
         <SelectSearch ref={selectRef} onFocus={onFocus} className={`${placement} select-search`} options={options} name={name} onChange={onChange} getOptions={getOptions} value={selected} search="true" placeholder={placeholder} />
       </div>

@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"gym/app/backend/models/transaction"
 	transactiondetail "gym/app/backend/models/transactionDetail"
 	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
@@ -203,6 +202,5 @@ func SaveTransactionMemberDetail(existing, input transactionmemberdetail.Transac
 		data.UserId = input.UserId
 	}
 	data.User = *user.ConvertDtoToModel(input.User)
-	fmt.Println(data.User)
 	return data
 }

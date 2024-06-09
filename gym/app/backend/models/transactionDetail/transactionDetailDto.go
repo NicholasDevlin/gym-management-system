@@ -17,6 +17,7 @@ type TransactionDetailDto struct {
 	MembershipPlanId   uint
 	MembershipPlanUUID uuid.UUID
 	Quantity           int
+	Price           int
 	MembershipPlan     membershipplan.MembershipPlanDto
 	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailDto
 }

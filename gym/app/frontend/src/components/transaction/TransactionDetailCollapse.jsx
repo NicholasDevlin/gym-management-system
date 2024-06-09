@@ -6,18 +6,33 @@ import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@iconify/react';
 import PrefixSuffixNumericField from '../general/input/inputNumericField/PrefixSuffixNumberField.jsx';
 
-export default function TransactionDetailCollapse({ detail, userOptions, membershipPlan }) {
+export default function TransactionDetailCollapse({ detail, index, setDetail, userOptions, membershipPlan }) {
   const detailRef = useRef(null);
-  const [detailMember, setDetailMember] = useState([]);
+  const [detailMembers, setDetailMembers] = useState([]);
   const [isCollapse, setIsCollapse] = useState(true);
-  const [qty, setQty] = useState(0);
+  const [qty, setQty] = useState(detail.qty || 0);
   const [price, setPrice] = useState(0);
   const [membershipPlanOptions, setMembershipPlanOptions] = useState([]);
 
   const handleDelete = () => {
     if (detailRef.current) {
-      detailRef.current.remove();
+      detailRef.current.classList.add("d-none");
+      setDetail(prevItems => {
+        const newItems = [...prevItems];
+        newItems[index] = { ...newItems[index], deleted: true };
+        return newItems;
+      });
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || {};
+
+    setDetail(prevItems => {
+      const newItems = [...prevItems];
+      newItems[index] = { ...newItems[index], [id]: value };
+      return newItems;
+    });
   };
 
   useEffect(() => {
@@ -29,13 +44,21 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
     }
   }, [membershipPlan])
 
+  useEffect(() => {
+    setDetail(prevItems => {
+      const newItems = [...prevItems];
+      newItems[index] = { ...newItems[index], price: price, qty: qty, transactionMemberDetail: detailMembers };
+      return newItems;
+    });
+  }, [detailMembers, qty, price]);
+
   const addQty = () => {
-    setDetailMember([...detailMember, {}]);
+    setDetailMembers([...detailMembers, {}]);
     setIsCollapse(false);
   }
 
   const substracQty = () => {
-    setDetailMember(detailMember.slice(0, -1));
+    setDetailMembers(detailMembers.slice(0, -1));
   }
 
   const toggleCollapse = () => {
@@ -49,6 +72,11 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
   const handleMembershipOnSelect = (e) => {
     let selectedMembershipPlan = membershipPlan.find(x => x.uuid === e);
     setPrice(selectedMembershipPlan.price);
+    setDetail(prevItems => {
+      const newItems = [...prevItems];
+      newItems[index] = { ...newItems[index], membershipPlanUUID: e };
+      return newItems;
+    });
   }
 
   return (
@@ -61,7 +89,10 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
           <div className="col-md-5 col-sm-6">
             <div className="row">
               <div className="col-md-4">
-                <NumericField id={"price"} label={"Price"} value={price} onChange={(e) => setPrice(e.target.value)} />
+                <NumericField id={"price"} label={"Price"} value={price} onChange={(e) => {
+                  setPrice(e.target.value);
+                  handleInputChange(e);
+                }} />
               </div>
               <div className="col-md-4">
                 <PrefixSuffixNumericField id={"qty"} label={"Qty"} onChange={handleQtyChange} value={qty} prefixOnClick={substracQty} suffixOnClick={addQty} />
@@ -79,8 +110,8 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
           </div>
         </div>
         <div className={`card-body collapse ${isCollapse ? '' : 'show'}`}>
-          {detailMember.map((detail) => (
-            <Member qty={qty} setQty={setQty} userOptions={userOptions} />
+          {detailMembers.map((detailMember, index) => (
+            <Member qty={qty} setQty={setQty} userOptions={userOptions} detailMember={detailMember} setDetailMember={setDetailMembers} index={index} />
           ))}
         </div>
       </div>
@@ -88,25 +119,48 @@ export default function TransactionDetailCollapse({ detail, userOptions, members
   )
 }
 
-const Member = ({ qty, setQty, userOptions }) => {
+const Member = ({ qty, setQty, userOptions, setDetailMember, detailMember, index }) => {
   const memberRef = useRef(null);
 
   const handleDelete = () => {
     if (memberRef.current) {
-      memberRef.current.remove();
+      memberRef.current.classList.add("d-none");
       setQty(qty - 1);
+      setDetailMember(prevItems => {
+        const newItems = [...prevItems];
+        newItems[index].deleted = true;
+        return newItems;
+      });
     }
   };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || {};
+
+    setDetailMember(prevItems => {
+      const newItems = [...prevItems];
+      newItems[index] = { ...newItems[index], [id]: parseInt(value) };
+      return newItems;
+    });
+  };
+
+  const handleOnSelect = (v) => {
+    setDetailMember(prevItems => {
+      const newItems = [...prevItems];
+      newItems[index] = { ...newItems[index], userUUID: v };
+      return newItems;
+    });
+  }
 
   return (
     <div ref={memberRef} className="row">
       <div className="col-3">
         <div className='row'>
-          <Select label={"Member"} options={userOptions} name={"userUUID"} placeholder={"Choose Member"} />
+          <Select label={"Member"} options={userOptions} onSelect={handleOnSelect} name={"userUUID"} placeholder={"Choose Member"} />
         </div>
       </div>
       <div className='col-5'>
-        <NumericField id={"additionalPrice"} label={"Additional Price"} />
+        <NumericField id={"additionalPrice"} onChange={handleInputChange} value={detailMember.additionalPrice || 0} label={"Additional Price"} />
       </div>
       <div className='col-4 d-flex align-items-center justify-content-end'>
         <DeleteButton onDelete={handleDelete} />

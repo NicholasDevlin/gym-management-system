@@ -44,9 +44,9 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
           <p>{description}</p>
         </div>
       </div>
-      <div className={Styles.bottom}>
+      {/* <div className={Styles.bottom}>
         <Link className={Styles.btn}>Check it out</Link>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -72,7 +72,7 @@ func ConvertDtosToRes(input []transactiondetail.TransactionDetailDto) (*[]transa
 	var total int64
 	for i := range input {
 		res := *transactiondetail.ConvertDtoToRes(input[i])
-		total += res.Subtotal
+		total += int64(res.Subtotal)
 		result = append(result, res)
 	}
 	return &result, total

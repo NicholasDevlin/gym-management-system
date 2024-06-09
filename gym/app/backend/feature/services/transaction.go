@@ -128,6 +128,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 		}
 		transactionDetailDto.MembershipPlanId = membershipPlan.Id
 		transactionDetailDto.MembershipPlan = membershipPlan
+		transactionDetailDto.Price = int(membershipPlan.Price)
 
 		for j, member := range transactionDetailDto.TransactionMemberDetail {
 			user, err := t.userRepository.GetUser(user.UserDto{UUID: member.UserUUID})

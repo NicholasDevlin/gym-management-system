@@ -12,6 +12,7 @@ func ConvertReqToDto(input TransactionDetailReq) *TransactionDetailDto {
 		UUID:           input.UUID,
 		TransactionId:  input.TransactionId,
 		Quantity:       input.Quantity,
+		Price: input.Price,
 		MembershipPlan: *membershipplan.ConvertReqToDto(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertReqToDtos(input.TransactionMemberDetail),
 	}
@@ -28,6 +29,7 @@ func ConvertDtoToModel(input TransactionDetailDto) *TransactionDetail {
 		TransactionId:    input.TransactionId,
 		MembershipPlanId: input.MembershipPlanId,
 		Quantity:         input.Quantity,
+		Price: input.Price,
 		MembershipPlan:   *membershipplan.ConvertDtoToModel(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertDtosToModel(input.TransactionMemberDetail),
 	}
@@ -43,6 +45,7 @@ func ConvertModelToDto(input TransactionDetail) *TransactionDetailDto {
 		MembershipPlanId:   input.MembershipPlanId,
 		MembershipPlanUUID: input.MembershipPlan.UUID,
 		Quantity:           input.Quantity,
+		Price: input.Price,
 		MembershipPlan:     *membershipplan.ConvertModelToDto(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertModelToDtos(input.TransactionMemberDetail),
 	}
@@ -53,7 +56,8 @@ func ConvertDtoToRes(input TransactionDetailDto) *TransactionDetailRes {
 		UUID:               input.UUID,
 		Quantity:           input.Quantity,
 		MembershipPlanUUID: input.MembershipPlanUUID,
-		Subtotal:           int64(input.Quantity) * input.MembershipPlan.Price,
+		Price: input.Price,
+		Subtotal:           input.Quantity * input.Price,
 		MembershipPlan:     *membershipplan.ConvertDtoToRes(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertDtosToRes(input.TransactionMemberDetail),
 	}

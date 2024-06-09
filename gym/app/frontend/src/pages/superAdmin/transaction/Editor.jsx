@@ -8,6 +8,10 @@ import Styles from './Transaction.module.css'
 import TransactionDetailCollapse from "../../../components/transaction/TransactionDetailCollapse.jsx";
 import { GetUsers } from "../../../controller/UserController.js";
 import { GetMembershipPlan } from "../../../controller/MembershipPlanController.js";
+import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
+import Select from "../../../components/general/input/select/Select.jsx";
+import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
+import TextField from "../../../components/general/input/inputTextField/TextField.jsx";
 
 function TransactionEditor() {
   const alert = useAlert();
@@ -16,13 +20,24 @@ function TransactionEditor() {
   const [isFetched, setIsFetched] = useState(false);
   const [userOptions, setUserOptions] = useState([]);
   const [membershipPlan, setMembershipPlan] = useState([]);
-
   const [transactionData, setTransactionData] = useState({
     transactionNo: '',
     transactionDate: '',
     status: '',
-    total: ''
+    total: '',
+    transactionDetail: []
   });
+
+  const statusOptions = [
+    {
+      name: "Waiting for payment",
+      value: "Waiting for payment"
+    },
+    {
+      name: "Transaction complete",
+      value: "Transaction complete"
+    }
+  ];
 
   const fetchUsersOptions = useCallback(async () => {
     const result = await GetUsers();
@@ -52,6 +67,13 @@ function TransactionEditor() {
     }
   }, [uuid]);
 
+  useEffect(() => {
+    setTransactionData(prevData => ({
+      ...prevData,
+      transactionDetail: details
+    }));
+  }, [details])
+
   async function getTransaction() {
     try {
       const response = await fetch(`${API_URLS.TRANSACTION}/${uuid}`, {
@@ -69,6 +91,7 @@ function TransactionEditor() {
       const responseData = await response.json();
       if (responseData.success) {
         setTransactionData(responseData.data);
+        setDetails(response.data.transactionDetail);
       } else {
         alert.error('Get data unsuccessful');
       }
@@ -86,35 +109,36 @@ function TransactionEditor() {
   //   }));
   // };
 
-  // async function saveMembershipPlan() {
-  //   try {
-  //     const apiUrl = uuid ? `${API_URLS.MEMBERSHIP_PLAN}/${uuid}` : API_URLS.MEMBERSHIP_PLAN;
-  //     const method = uuid ? 'PUT' : 'POST';
+  async function saveTransaction() {
+    console.log(transactionData);
+    try {
+      const apiUrl = uuid ? `${API_URLS.TRANSACTION}/${uuid}` : API_URLS.TRANSACTION;
+      const method = uuid ? 'PUT' : 'POST';
 
-  //     const response = await fetch(apiUrl, {
-  //       method: method,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-  //       },
-  //       body: JSON.stringify(transactionData),
-  //     });
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+        body: JSON.stringify(transactionData),
+      });
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-  //     const responseData = await response.json();
+      const responseData = await response.json();
 
-  //     if (responseData.success) {
-  //       alert.success(uuid ? 'Membership plan updated successfully' : 'Membership plan created successfully');
-  //     } else {
-  //       alert.error('Save unsuccessful');
-  //     }
-  //   } catch (error) {
-  //     alert.error(`Error: ${error}`);
-  //   }
-  // }
+      if (responseData.success) {
+        alert.success(uuid ? 'Transaction updated successfully' : 'Transaction created successfully');
+      } else {
+        alert.error('Save unsuccessful');
+      }
+    } catch (error) {
+      alert.error(`Error: ${error}`);
+    }
+  }
 
   const addTransactionDetail = () => {
     setDetails([...details, {}]);
@@ -126,30 +150,36 @@ function TransactionEditor() {
         <div className="row">
           <div className="col-6">
             <p className="text-start mb-0">Transaction No</p>
-            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.transactionNo} test</h4></p>
+            <div className="d-flex justify-content-start">
+              <TextField value={transactionData.transactionNo} disabled={true} />
+            </div>
           </div>
           <div className="col-6">
             <p className="text-end mb-0">Transaction Date</p>
-            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.transactionDate} test</h4></p>
+            <div className="d-flex justify-content-end">
+              <DatetimePicker className={Styles.textEnd} />
+            </div>
           </div>
         </div>
         <div className="row">
           <div className="col-6">
             <p className="text-start mb-0">Status</p>
-            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.status} test</h4></p>
+            <Select options={statusOptions} />
           </div>
           <div className="col-6">
             <p className="text-end mb-0">Total</p>
-            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.total} test</h4></p>
+            <div className="d-flex justify-content-end">
+              <NumericField className={`${Styles.dataHeader} text-end`} name="total" value={transactionData.total} disabled={true} />
+            </div>
           </div>
         </div>
-        <div className="d-flex justify-content-between my-2">
+        <div className="d-flex justify-content-between my-3">
           <Button text={"+ Add Transaction Detail"} onClick={addTransactionDetail} />
-          <Button text={"Save"} />
+          <Button text={"Save"} onClick={saveTransaction} />
         </div>
         <div className="my-3" id="transaction-details">
-          {details.map((detail) => (
-            <TransactionDetailCollapse userOptions={userOptions} membershipPlan={membershipPlan} />
+          {details.map((detail, index) => (
+            <TransactionDetailCollapse detail={detail} index={index} setDetail={setDetails} userOptions={userOptions} membershipPlan={membershipPlan} />
           ))}
         </div>
       </div>
