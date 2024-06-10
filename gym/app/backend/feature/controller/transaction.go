@@ -64,14 +64,16 @@ func (t *transactionController) GetTransaction(e echo.Context) error {
 }
 
 func (t *transactionController) SaveTransaction(e echo.Context) error {
-	userUUID, role, err := middleware.ExtractToken(e)
 	var input transaction.TransactionReq
-	e.Bind(&input)
+	
+	if err := e.Bind(&input); err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	userUUID, role, err := middleware.ExtractToken(e)
 	if role == consts.USER {
 		input.User.UUID = userUUID
 	}
 
-	e.Bind(&input)
 	if e.Param("id") != "" {
 		input.UUID, _ = uuid.FromString(e.Param("id"))
 	}

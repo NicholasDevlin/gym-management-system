@@ -21,10 +21,10 @@ function TransactionEditor() {
   const [userOptions, setUserOptions] = useState([]);
   const [membershipPlan, setMembershipPlan] = useState([]);
   const [transactionData, setTransactionData] = useState({
-    transactionNo: '',
-    transactionDate: '',
-    status: '',
-    total: '',
+    transactionNo: "",
+    transactionDate: new Date(),
+    status: "",
+    total: "",
     transactionDetail: []
   });
 
@@ -70,7 +70,7 @@ function TransactionEditor() {
   useEffect(() => {
     setTransactionData(prevData => ({
       ...prevData,
-      transactionDetail: details
+      transactionDetail: [...details]
     }));
   }, [details])
 
@@ -100,17 +100,17 @@ function TransactionEditor() {
     }
   }
 
-  // const handleInputChange = (e) => {
-  //   const { id, value } = e.target || {};
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || {};
 
-  //   setTransactionData((prevData) => ({
-  //     ...prevData,
-  //     [id]: id === 'duration' || id === 'price' ? parseInt(value) : value,
-  //   }));
-  // };
+    setTransactionData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
 
   async function saveTransaction() {
-    console.log(transactionData);
+    debugger
     try {
       const apiUrl = uuid ? `${API_URLS.TRANSACTION}/${uuid}` : API_URLS.TRANSACTION;
       const method = uuid ? 'PUT' : 'POST';
@@ -157,7 +157,7 @@ function TransactionEditor() {
           <div className="col-6">
             <p className="text-end mb-0">Transaction Date</p>
             <div className="d-flex justify-content-end">
-              <DatetimePicker className={Styles.textEnd} />
+              <DatetimePicker onChange={handleInputChange} id="transactionDate" className={Styles.textEnd} />
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import (
 	membershipplan "gym/app/backend/models/membershipPlan"
 	"gym/app/backend/models/transaction"
 	transactiondetail "gym/app/backend/models/transactionDetail"
+	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 	"gym/app/backend/models/user"
 	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
@@ -28,14 +29,22 @@ type transactionService struct {
 	userRepository              repositories.IUserRepository
 	membershipPlanRepository    repositories.IMembershipPlanRepository
 	transactionDetailRepository repositories.ITransactionDetailRepository
+	transactionDetailMember     repositories.ITransactionMemberDetailRepository
 }
 
-func NewTransactionService(repo repositories.ITransactionRepository, userRepo repositories.IUserRepository, membershipPlanRepo repositories.IMembershipPlanRepository, transactionDetailRepo repositories.ITransactionDetailRepository) *transactionService {
+func NewTransactionService(
+	repo repositories.ITransactionRepository, 
+	userRepo repositories.IUserRepository, 
+	membershipPlanRepo repositories.IMembershipPlanRepository, 
+	transactionDetailRepo repositories.ITransactionDetailRepository,
+	transactionDetailMember repositories.ITransactionMemberDetailRepository,
+	) *transactionService {
 	return &transactionService{
 		transactionRepository:       repo,
 		userRepository:              userRepo,
 		membershipPlanRepository:    membershipPlanRepo,
 		transactionDetailRepository: transactionDetailRepo,
+		transactionDetailMember: transactionDetailMember,
 	}
 }
 
@@ -113,30 +122,16 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 	var transactionDetailDto transactiondetail.TransactionDetailDto
 	for i := range dto.TransactionDetail {
 		transactionDetailDto = dto.TransactionDetail[i]
-		if transactionDetailDto.Quantity != len(transactionDetailDto.TransactionMemberDetail) {
-			return transaction.TransactionRes{}, errors.ERR_TRANSACTION_MEMBER_EMPTY
-		}
-
-		if transactionDetailDto.Quantity == 0 {
-			return transaction.TransactionRes{}, errors.ERR_QTY_EMPTY
-		}
-
-		membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: transactionDetailDto.MembershipPlanUUID})
-
+		transactionDetailDto, err = SaveTransactionDetail(t, transactionDetailDto)
 		if err != nil {
-			return transaction.TransactionRes{}, errors.ERR_MEMBERSHIP_PLAN_NOT_FOUND
+			return transaction.TransactionRes{}, err
 		}
-		transactionDetailDto.MembershipPlanId = membershipPlan.Id
-		transactionDetailDto.MembershipPlan = membershipPlan
-		transactionDetailDto.Price = int(membershipPlan.Price)
 
 		for j, member := range transactionDetailDto.TransactionMemberDetail {
-			user, err := t.userRepository.GetUser(user.UserDto{UUID: member.UserUUID})
+			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member)
 			if err != nil {
-				return transaction.TransactionRes{}, errors.ERR_USER_NOT_FOUND
+				return transaction.TransactionRes{}, err
 			}
-			transactionDetailDto.TransactionMemberDetail[j].User = user
-			transactionDetailDto.TransactionMemberDetail[j].UserId = user.Id
 		}
 		dto.TransactionDetail[i] = transactionDetailDto
 	}
@@ -194,4 +189,62 @@ func transactionDetailValidation(input transactiondetail.TransactionDetailDto) b
 		input.Quantity = 1
 	}
 	return true
+}
+
+func SaveTransactionDetail(t *transactionService, input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
+	var existing transactiondetail.TransactionDetailDto
+	if input.Quantity != len(input.TransactionMemberDetail) {
+		return transactiondetail.TransactionDetailDto{}, errors.ERR_TRANSACTION_MEMBER_EMPTY
+	}
+
+	if input.Quantity == 0 {
+		return transactiondetail.TransactionDetailDto{}, errors.ERR_QTY_EMPTY
+	}
+
+	if input.UUID == uuid.Nil {
+		existing.UUID = uuid.NewV4()
+	} else {
+		existing, _ = t.transactionDetailRepository.GetTransactionDetail(input)
+	}
+
+	membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: existing.MembershipPlanUUID})
+
+	if err != nil {
+		return transactiondetail.TransactionDetailDto{}, errors.ERR_MEMBERSHIP_PLAN_NOT_FOUND
+	}
+	if input.Quantity != 0 {
+		existing.Quantity = input.Quantity
+	}
+	if input.Price != 0 {
+		existing.Price = input.Price
+	}
+	existing.MembershipPlanId = membershipPlan.Id
+	existing.MembershipPlan = membershipPlan
+	existing.Price = int(membershipPlan.Price)
+	existing.MembershipPlanUUID = membershipPlan.UUID
+	existing.TransactionMemberDetail = input.TransactionMemberDetail
+	return existing, nil
+}
+
+func SaveTransactionDetailMember(t *transactionService, input transactionmemberdetail.TransactionMemberDetailDto) (transactionmemberdetail.TransactionMemberDetailDto, error) {
+	var existing transactionmemberdetail.TransactionMemberDetailDto
+
+	if input.UUID == uuid.Nil {
+		existing.UUID = uuid.NewV4()
+	} else {
+		existing, _ = t.transactionDetailMember.GetTransactionMemberDetail(input)
+	}
+
+	user, err := t.userRepository.GetUser(user.UserDto{UUID: input.UserUUID})
+	if err != nil {
+		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
+	}
+
+	if err != nil {
+		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
+	}
+	existing.User = user
+	existing.UserId = user.Id
+
+	return existing, nil
 }

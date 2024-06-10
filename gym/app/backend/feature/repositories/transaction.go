@@ -82,7 +82,6 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto
 }
 
 func (t *transactionRepository) SaveTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error) {
-	var err error
 	tx := t.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -105,7 +104,7 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 		tx.Rollback()
 		if data.Id != 0 {
 			err = errors.ERR_UPDATE_TRANSACTION
-			tx.SavePoint("transaction")
+			// tx.SavePoint("transaction")
 		} else {
 			err = errors.ERR_CREATE_TRANSACTION
 		}
@@ -114,45 +113,45 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 	data = *transaction.ConvertModelToDto(transactionData)
 
 	// save transaction detail
-	var transactionDetailData transactiondetail.TransactionDetail
-	var transactionMemberDetailData transactionmemberdetail.TransactionMemberDetail
-	var existingDetail transactiondetail.TransactionDetailDto
-	var existingMemberDetail transactionmemberdetail.TransactionMemberDetailDto
-	for i, detail := range input.TransactionDetail {
-		detail.TransactionId = transactionData.ID
-		if detail.UUID != uuid.Nil {
-			existingDetail, err = t.transactionDetailRepository.GetTransactionDetail(detail)
-			if err != nil {
-				return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
-			}
-		}
-		transactionDetailData = SaveTransactionDetail(existingDetail, detail)
-		err = tx.Save(&transactionDetailData).Error
-		if err != nil {
-			tx.RollbackTo("transaction")
-			err = errors.ERR_CREATE_TRANSACTION_DETAIL
-			return transaction.TransactionDto{}, err
-		}
-		data.TransactionDetail[i] = *transactiondetail.ConvertModelToDto(transactionDetailData)
-		// save transaction detail member
-		for j, member := range detail.TransactionMemberDetail {
-			if member.UUID != uuid.Nil {
-				existingMemberDetail, err = t.transactionMemberDetailRepository.GetTransactionMemberDetail(member)
-				if err != nil {
-					return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
-				}
-			}
-			member.TransactionDetailId = transactionDetailData.ID
-			transactionMemberDetailData = SaveTransactionMemberDetail(existingMemberDetail, member)
-			err = tx.Save(&transactionMemberDetailData).Error
-			if err != nil {
-				tx.Rollback()
-				return transaction.TransactionDto{}, errors.ERR_SAVE_TRANSACTION_MEMBER_DETAIL
-			}
-			data.TransactionDetail[i].TransactionMemberDetail[j] = *transactionmemberdetail.ConvertModelToDto(transactionMemberDetailData)
-			data.TransactionDetail[i].TransactionMemberDetail[j].TransactionDetailUUID = data.TransactionDetail[i].UUID
-		}
-	}
+	// // // var transactionDetailData transactiondetail.TransactionDetail
+	// // // var transactionMemberDetailData transactionmemberdetail.TransactionMemberDetail
+	// // // var existingDetail transactiondetail.TransactionDetailDto
+	// // // // var existingMemberDetail transactionmemberdetail.TransactionMemberDetailDto
+	// // // for i, detail := range input.TransactionDetail {
+	// // // 	detail.TransactionId = transactionData.ID
+	// // // 	if detail.UUID != uuid.Nil {
+	// // // 		existingDetail, err = t.transactionDetailRepository.GetTransactionDetail(detail)
+	// // // 		if err != nil {
+	// // // 			return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+	// // // 		}
+	// // // 	}
+	// // // 	transactionDetailData = SaveTransactionDetail(existingDetail, detail)
+	// // // 	err = tx.Save(&transactionDetailData).Error
+	// // // 	if err != nil {
+	// // // 		tx.RollbackTo("transaction")
+	// // // 		err = errors.ERR_CREATE_TRANSACTION_DETAIL
+	// // // 		return transaction.TransactionDto{}, err
+	// // // 	}
+	// // // 	data.TransactionDetail[i] = *transactiondetail.ConvertModelToDto(transactionDetailData)
+	// // // 	// save transaction detail member
+	// // // 	for j, member := range detail.TransactionMemberDetail {
+	// // // 		if member.UUID != uuid.Nil {
+	// // // 			existingMemberDetail, err = t.transactionMemberDetailRepository.GetTransactionMemberDetail(member)
+	// // // 			if err != nil {
+	// // // 				return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+	// // // 			}
+	// // // 		}
+	// // // 		member.TransactionDetailId = transactionDetailData.ID
+	// // // 		// transactionMemberDetailData = SaveTransactionMemberDetail(existingMemberDetail, member)
+	// // // 		err = tx.Save(&transactionMemberDetailData).Error
+	// // // 		if err != nil {
+	// // // 			tx.Rollback()
+	// // // 			return transaction.TransactionDto{}, errors.ERR_SAVE_TRANSACTION_MEMBER_DETAIL
+	// // // 		}
+	// // 		data.TransactionDetail[i].TransactionMemberDetail[j] = *transactionmemberdetail.ConvertModelToDto(transactionMemberDetailData)
+	// // 		data.TransactionDetail[i].TransactionMemberDetail[j].TransactionDetailUUID = data.TransactionDetail[i].UUID
+	// // 	}
+	// }
 
 	tx.Commit()
 	return data, nil
@@ -174,11 +173,14 @@ func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDt
 	existing.MembershipPlan = input.MembershipPlan
 	existing.TransactionMemberDetail = input.TransactionMemberDetail
 	data = *transactiondetail.ConvertDtoToModel(existing)
-	if input.UUID == uuid.Nil {
+	if existing.UUID == uuid.Nil {
 		data.UUID = uuid.NewV4()
 	}
 	if input.TransactionId != 0 {
 		data.TransactionId = input.TransactionId
+	}
+	if input.Price != 0 {
+		data.Price = input.Price
 	}
 	if input.MembershipPlanId != 0 {
 		data.MembershipPlanId = input.MembershipPlanId
@@ -192,7 +194,7 @@ func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDt
 func SaveTransactionMemberDetail(existing, input transactionmemberdetail.TransactionMemberDetailDto) transactionmemberdetail.TransactionMemberDetail {
 	var data transactionmemberdetail.TransactionMemberDetail
 	data = *transactionmemberdetail.ConvertDtoToModel(existing)
-	if input.UUID == uuid.Nil {
+	if existing.UUID == uuid.Nil {
 		data.UUID = uuid.NewV4()
 	}
 	if input.TransactionDetailId != 0 {
