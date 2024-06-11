@@ -13,6 +13,7 @@ import Profile from './pages/profile/Index.jsx';
 import Help from './pages/user/help/Index.jsx';
 import MembershipEditor from './pages/superAdmin/membership/Editor.jsx';
 import { useUserData } from './utils/jwt/UserData.jsx';
+import { ConfigProvider } from 'antd';
 
 function App() {
   const { userData } = useUserData();
@@ -20,17 +21,32 @@ function App() {
   return (
     <Router>
       <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/authentication" element={<Authentication />} />
-          <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
-          <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />
-          <Route path="/transaction/editor" element={userData && userData.role === 'admin' ? <TransactionEditorForAdmin /> : <></>} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
-          <Route path="/membership/editor" element={<MembershipEditor />} />
-          <Route path="/help" element={<Help />} />
-        </Routes>
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                headerBg: '#1f2124',
+                headerColor: '#d8cdb9',
+                colorBgContainer: '#43454e',
+                colorText: '#d8cdb9',
+                borderColor: '#6e6f73',
+                fontWeightStrong: 600
+              }
+            },
+          }}
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/authentication" element={<Authentication />} />
+            <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
+            <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />
+            <Route path="/transaction/editor" element={userData && userData.role === 'admin' ? <TransactionEditorForAdmin /> : <></>} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
+            <Route path="/membership/editor" element={<MembershipEditor />} />
+            <Route path="/help" element={<Help />} />
+          </Routes>
+        </ConfigProvider>
       </div>
     </Router>
   );

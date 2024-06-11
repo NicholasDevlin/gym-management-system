@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from '../../../layout/MainLayout/Layout.jsx'
-import Card from '../../../components/general/card/Card.jsx'
 import Button from '../../../components/general/button/Button.jsx'
 import Styles from './Transaction.module.css'
 import { API_URLS } from '../../../apiConfig.js'
 import { Link } from 'react-router-dom'
 import { useAlert } from "react-alert";
+import { Table } from "antd";
+import { column } from "./config.jsx";
 
 function Transaction() {
   const alert = useAlert()
@@ -17,7 +18,7 @@ function Transaction() {
 
   async function getTransaction() {
     try {
-      const response = await fetch(`${API_URLS.MEMBERSHIP_PLAN}`, {
+      const response = await fetch(`${API_URLS.TRANSACTION}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -39,14 +40,19 @@ function Transaction() {
       alert.error(`Error: ${error}`);
     }
   }
+
   return (
     <Layout>
       <div className={Styles.Container}>
         <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
       </div>
-      {/* {transactionData.map((plan, index) => (
-
-        ))} */}
+      <div>
+        <Table
+          columns={column}
+          dataSource={transactionData}
+          className="h-100 m-3"
+        />
+      </div>
     </Layout>
   );
 }
