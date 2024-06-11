@@ -128,7 +128,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 		}
 
 		for j, member := range transactionDetailDto.TransactionMemberDetail {
-			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member)
+			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member, transactionDetailDto.MembershipPlan.Duration)
 			if err != nil {
 				return transaction.TransactionRes{}, err
 			}
@@ -226,7 +226,7 @@ func SaveTransactionDetail(t *transactionService, input transactiondetail.Transa
 	return existing, nil
 }
 
-func SaveTransactionDetailMember(t *transactionService, input transactionmemberdetail.TransactionMemberDetailDto) (transactionmemberdetail.TransactionMemberDetailDto, error) {
+func SaveTransactionDetailMember(t *transactionService, input transactionmemberdetail.TransactionMemberDetailDto, duration int) (transactionmemberdetail.TransactionMemberDetailDto, error) {
 	var existing transactionmemberdetail.TransactionMemberDetailDto
 
 	if input.UUID == uuid.Nil {
@@ -243,6 +243,14 @@ func SaveTransactionDetailMember(t *transactionService, input transactionmemberd
 	if err != nil {
 		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
 	}
+
+	if user.SubscriptionExpirationDate != nil && !user.SubscriptionExpirationDate.IsZero() {
+		user.SubscriptionExpirationDate.AddDate(0,0, duration)
+	} else {
+		membershipDuration := time.Now().AddDate(0,0, duration)
+		user.SubscriptionExpirationDate = &membershipDuration
+	}
+
 	existing.User = user
 	existing.UserId = user.Id
 

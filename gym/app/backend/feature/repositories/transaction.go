@@ -104,13 +104,27 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 		tx.Rollback()
 		if data.Id != 0 {
 			err = errors.ERR_UPDATE_TRANSACTION
-			// tx.SavePoint("transaction")
+			tx.SavePoint("transaction")
 		} else {
 			err = errors.ERR_CREATE_TRANSACTION
 		}
 		return transaction.TransactionDto{}, err
 	}
 	data = *transaction.ConvertModelToDto(transactionData)
+
+	for _, detail := range transactionData.TransactionDetail {
+		for _, member := range detail.TransactionMemberDetail {
+			if err := tx.Save(&member.User).Error; err != nil {
+				tx.RollbackTo("transaction")
+				if data.Id != 0 {
+					err = errors.ERR_UPDATE_TRANSACTION
+				} else {
+					err = errors.ERR_CREATE_TRANSACTION
+				}
+				return transaction.TransactionDto{}, err
+			}
+		}
+	}
 
 	// save transaction detail
 	// // // var transactionDetailData transactiondetail.TransactionDetail
