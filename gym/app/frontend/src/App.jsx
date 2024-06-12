@@ -38,12 +38,19 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/authentication" element={<Authentication />} />
+            {userData && userData.role === 'admin'? 
+            <>
+              <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
+              <Route path="/membership/editor" element={<MembershipEditor />} />
+              <Route path="/transaction/editor" element={<TransactionEditorForAdmin />} />
+              <Route path="/transaction/editor/:uuid" element={<TransactionEditorForAdmin />} />
+            </>  
+            :
+            <></>
+            }
             <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
             <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />
-            <Route path="/transaction/editor" element={userData && userData.role === 'admin' ? <TransactionEditorForAdmin /> : <></>} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
-            <Route path="/membership/editor" element={<MembershipEditor />} />
             <Route path="/help" element={<Help />} />
           </Routes>
         </ConfigProvider>

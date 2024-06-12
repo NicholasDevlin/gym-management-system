@@ -178,7 +178,7 @@ func (t *transactionService) DeleteTransaction(id uuid.UUID) (transaction.Transa
 
 func generateTransactionNo() string {
 	var TransactionNo string
-	now := time.Now().Format("020106-150405")
+	now := time.Now().Format("020106")
 	randomNumber := strconv.Itoa(rand.Intn(8999) + 1000)
 	TransactionNo = randomNumber + "/" + now + "/GYM"
 	return TransactionNo

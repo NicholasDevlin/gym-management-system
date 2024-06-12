@@ -1,6 +1,6 @@
 import React from 'react'
 import Styles from './Button.module.css'
-function Button({ text, bgColor, onClick }) {
+export default function Button({ text, bgColor, onClick }) {
   const buttonStyle = {
     backgroundColor: bgColor
   }
@@ -9,9 +9,13 @@ function Button({ text, bgColor, onClick }) {
   );
 }
 
+export function DangerButton({text, onClick}) {
+  return (
+    <button className={Styles.dangerButton} onClick={onClick} >{text}</button>
+  );
+}
+
 Button.defaultProps = {
   text: "submit",
   bgColor: "#d8cdb9"
 }
-
-export default Button

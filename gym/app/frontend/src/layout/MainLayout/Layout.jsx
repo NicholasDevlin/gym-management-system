@@ -7,7 +7,7 @@ function MainLayout({ children }) {
   return (
     <div className={Styles.parent}>
       <div className={Styles.content}>
-        <Navbar title="home" />
+        <Navbar />
         {children}
       </div>
       <div className={Styles.footer}>

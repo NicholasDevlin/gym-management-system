@@ -91,7 +91,7 @@ function TransactionEditor() {
       const responseData = await response.json();
       if (responseData.success) {
         setTransactionData(responseData.data);
-        setDetails(response.data.transactionDetail);
+        setDetails(responseData.data.transactionDetail);
       } else {
         alert.error('Get data unsuccessful');
       }
@@ -110,7 +110,6 @@ function TransactionEditor() {
   };
 
   async function saveTransaction() {
-    debugger
     try {
       const apiUrl = uuid ? `${API_URLS.TRANSACTION}/${uuid}` : API_URLS.TRANSACTION;
       const method = uuid ? 'PUT' : 'POST';

@@ -1,5 +1,5 @@
 .content {
-  height: 90%;
+  min-height: 100vh;
   background-color: #35373d;
 }
 

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { useAlert } from "react-alert";
 import { Table } from "antd";
 import { column } from "./config.jsx";
+import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
 
 function Transaction() {
   const alert = useAlert()
@@ -43,7 +44,18 @@ function Transaction() {
 
   return (
     <Layout>
-      <div className={Styles.Container}>
+      <div className={Styles.container}>
+        <div className="row w-100">
+          <div className="col-3">
+            <DatetimePicker label="From" />
+          </div>
+          <div className="col-3">
+            <DatetimePicker label="To" />
+          </div>
+          <div className="col-3 d-flex align-items-center">
+            <Button text="Filter" />
+          </div>
+        </div>
         <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
       </div>
       <div>

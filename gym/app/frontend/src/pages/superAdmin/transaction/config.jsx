@@ -1,5 +1,7 @@
-import { Tag } from "antd";
+import { Popconfirm, Tag } from "antd";
 import { NumericFormat } from 'react-number-format';
+import Button, { DangerButton } from '../../../components/general/button/Button.jsx'
+import { Link } from "react-router-dom";
 
 export const column = [
   {
@@ -56,11 +58,17 @@ export const column = [
     dataIndex: 'action',
     key: 'action',
     width: '20%',
-    render: (_, record) => (
-      <div className="d-flex justify-content-between">
-        <button>Update</button>
-        <button>Delete</button>
-      </div>
-    ),
+    render: (_, record) => {
+      return (
+        <div className="d-flex justify-content-between">
+          <Link to={`/transaction/editor/${record.uuid}`}>
+            <Button text="Update" />
+          </Link>
+          <Popconfirm title="Sure to Delete?">
+            <DangerButton text="Delete" />
+          </Popconfirm>
+        </div>
+      );
+    },
   },
 ]
