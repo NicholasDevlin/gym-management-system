@@ -40,4 +40,5 @@ var (
 	ERR_MEMBERSHIP_DURATION_EMPTY           = errors.New("Membership duration is empty")
 	ERR_MEMBERSHIP_PRICE_EMPTY              = errors.New("Membership price is empty")
 	ERR_UNAUTHORIZE                         = errors.New("Unauthorize user")
+	ERR_COMPLETED_TRANSACTION               = errors.New("Completed transaction can't be change")
 )

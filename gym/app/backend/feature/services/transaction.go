@@ -120,6 +120,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 
 	dto := *transaction.ConvertReqToDto(input)
 	var transactionDetailDto transactiondetail.TransactionDetailDto
+	isComplete := input.Status == consts.COMPLETE
 	for i := range dto.TransactionDetail {
 		transactionDetailDto = dto.TransactionDetail[i]
 		transactionDetailDto, err = SaveTransactionDetail(t, transactionDetailDto)
@@ -128,7 +129,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 		}
 
 		for j, member := range transactionDetailDto.TransactionMemberDetail {
-			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member, transactionDetailDto.MembershipPlan.Duration)
+			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member, transactionDetailDto.MembershipPlan.Duration, isComplete)
 			if err != nil {
 				return transaction.TransactionRes{}, err
 			}
@@ -138,13 +139,18 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 
 	if input.UUID != uuid.Nil {
 		data, err = t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(input))
+		if data.Status == consts.COMPLETE {
+			return transaction.TransactionRes{}, errors.ERR_COMPLETED_TRANSACTION
+		}
 		if err != nil {
 			return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 		}
 	} else {
 		data.TransactionNo = generateTransactionNo()
 		data.TransactionDate = time.Now()
-		data.Status = consts.WAITING_FOR_PAYMENT
+		if input.Status == "" {
+			data.Status = consts.WAITING_FOR_PAYMENT
+		}
 		data.UUID = uuid.NewV4()
 		data.TransactionDetail = dto.TransactionDetail
 	}
@@ -168,7 +174,10 @@ func (t *transactionService) DeleteTransaction(id uuid.UUID) (transaction.Transa
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
-
+	isComplete := res.Status == consts.COMPLETE
+	if isComplete {
+		return transaction.TransactionRes{}, errors.ERR_COMPLETED_TRANSACTION
+	}
 	res, err = t.transactionRepository.DeleteTransaction(id.String())
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_DELETE_TRANSACTION
@@ -226,7 +235,7 @@ func SaveTransactionDetail(t *transactionService, input transactiondetail.Transa
 	return existing, nil
 }
 
-func SaveTransactionDetailMember(t *transactionService, input transactionmemberdetail.TransactionMemberDetailDto, duration int) (transactionmemberdetail.TransactionMemberDetailDto, error) {
+func SaveTransactionDetailMember(t *transactionService, input transactionmemberdetail.TransactionMemberDetailDto, duration int, isComplete bool) (transactionmemberdetail.TransactionMemberDetailDto, error) {
 	var existing transactionmemberdetail.TransactionMemberDetailDto
 
 	if input.UUID == uuid.Nil {
@@ -244,11 +253,13 @@ func SaveTransactionDetailMember(t *transactionService, input transactionmemberd
 		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
 	}
 
-	if user.SubscriptionExpirationDate != nil && !user.SubscriptionExpirationDate.IsZero() {
-		user.SubscriptionExpirationDate.AddDate(0,0, duration)
-	} else {
-		membershipDuration := time.Now().AddDate(0,0, duration)
-		user.SubscriptionExpirationDate = &membershipDuration
+	if !isComplete {
+		if user.SubscriptionExpirationDate != nil && !user.SubscriptionExpirationDate.IsZero() {
+			user.SubscriptionExpirationDate.AddDate(0,0, duration)
+		} else {
+			membershipDuration := time.Now().AddDate(0,0, duration)
+			user.SubscriptionExpirationDate = &membershipDuration
+		}
 	}
 
 	existing.User = user
