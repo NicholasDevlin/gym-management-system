@@ -6,8 +6,10 @@ import Styles from './Layout.module.css'
 function MainLayout({ children }) {
   return (
     <div className={Styles.parent}>
-      <div className={Styles.content}>
+      <div className={Styles.navbar}>
         <Navbar />
+      </div>
+      <div className={Styles.content}>
         {children}
       </div>
       <div className={Styles.footer}>

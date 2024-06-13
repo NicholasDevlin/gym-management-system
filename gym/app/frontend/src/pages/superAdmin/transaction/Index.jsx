@@ -6,7 +6,7 @@ import { API_URLS } from '../../../apiConfig.js'
 import { Link } from 'react-router-dom'
 import { useAlert } from "react-alert";
 import { Table } from "antd";
-import { column } from "./config.jsx";
+import column from "./config.jsx";
 import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
 
 function Transaction() {
@@ -15,7 +15,7 @@ function Transaction() {
 
   useEffect(() => {
     getTransaction();
-  }, []);
+  });
 
   async function getTransaction() {
     try {
@@ -33,6 +33,7 @@ function Transaction() {
 
       const responseData = await response.json();
       if (responseData.success) {
+        debugger
         setTransaction(responseData.data);
       } else {
         alert.error("Get data unsuccessful");
@@ -42,17 +43,45 @@ function Transaction() {
     }
   }
 
+
+  async function deleteTransaction(uuid) {
+    try {
+      const response = await fetch(`${API_URLS.TRANSACTION}/${uuid}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem('authToken')
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}\n${response.message}`);
+      }
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        const newData = transactionData.filter((item) => item.uuid !== uuid);
+        setTransaction(newData);
+        alert.success("Delete Successful!");
+      } else {
+        alert.error("Delete Transaction unsuccessful");
+      }
+    } catch (error) {
+      alert.error(`Error: ${error}`);
+    }
+  }
+
   return (
     <Layout>
       <div className={Styles.container}>
-        <div className="row w-100">
-          <div className="col-3">
+        <div className="d-flex w-100">
+          <div className="me-3">
             <DatetimePicker label="From" />
           </div>
-          <div className="col-3">
+          <div className="me-3">
             <DatetimePicker label="To" />
           </div>
-          <div className="col-3 d-flex align-items-center">
+          <div className="me-3 d-flex align-items-center mt-2">
             <Button text="Filter" />
           </div>
         </div>
@@ -60,7 +89,7 @@ function Transaction() {
       </div>
       <div>
         <Table
-          columns={column}
+          columns={column(deleteTransaction)}
           dataSource={transactionData}
           className="h-100 m-3"
         />

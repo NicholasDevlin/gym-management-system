@@ -3,7 +3,8 @@ import { NumericFormat } from 'react-number-format';
 import Button, { DangerButton } from '../../../components/general/button/Button.jsx'
 import { Link } from "react-router-dom";
 
-export const column = [
+const column = (handleDelete) => {
+  return ([
   {
     title: 'Transaction No',
     dataIndex: 'transactionNo',
@@ -64,11 +65,13 @@ export const column = [
           <Link to={`/transaction/editor/${record.uuid}`}>
             <Button text="Update" />
           </Link>
-          <Popconfirm title="Sure to Delete?">
+          <Popconfirm title="Sure to Delete?" onConfirm={() => handleDelete(record.uuid)}>
             <DangerButton text="Delete" />
           </Popconfirm>
         </div>
       );
     },
   },
-]
+])}
+
+export default column;
