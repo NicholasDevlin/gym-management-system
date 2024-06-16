@@ -8,10 +8,10 @@ import PrefixSuffixNumericField from '../general/input/inputNumericField/PrefixS
 
 export default function TransactionDetailCollapse({ detail, index, setDetail, userOptions, membershipPlan }) {
   const detailRef = useRef(null);
-  const [detailMembers, setDetailMembers] = useState([]);
+  const [detailMembers, setDetailMembers] = useState(detail.transactionMemberDetail || []);
   const [isCollapse, setIsCollapse] = useState(true);
   const [qty, setQty] = useState(detail.qty || 0);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(detail.price || 0);
   const [membershipPlanOptions, setMembershipPlanOptions] = useState([]);
 
   const handleDelete = () => {
@@ -19,7 +19,7 @@ export default function TransactionDetailCollapse({ detail, index, setDetail, us
       detailRef.current.classList.add("d-none");
       setDetail(prevItems => {
         const newItems = [...prevItems];
-        newItems[index] = { ...newItems[index], deleted: true };
+        newItems[index] = { ...newItems[index], deleted: 1 };
         return newItems;
       });
     }
@@ -45,15 +45,19 @@ export default function TransactionDetailCollapse({ detail, index, setDetail, us
   }, [membershipPlan])
 
   useEffect(() => {
+    let tempSubtotal = qty * price;
+    detailMembers.map((value) => {
+      tempSubtotal += value.additionalPrice;
+    })
     setDetail(prevItems => {
       const newItems = [...prevItems];
-      newItems[index] = { ...newItems[index], price: price, qty: qty, transactionMemberDetail: detailMembers };
+      newItems[index] = { ...newItems[index], price: price, qty: qty, transactionMemberDetail: detailMembers, subtotal: tempSubtotal };
       return newItems;
     });
   }, [detailMembers, qty, price]);
 
   const addQty = () => {
-    setDetailMembers([...detailMembers, {}]);
+    setDetailMembers([...detailMembers, {additionalPrice: 0}]);
     setIsCollapse(false);
   }
 
@@ -84,12 +88,12 @@ export default function TransactionDetailCollapse({ detail, index, setDetail, us
       <div className={`${'card bg-dark p-0'} ${Styles.card}`}>
         <div className="card-header row pe-1">
           <div className="col-md-3 col-sm-12">
-            <Select label={"Membership Plan"} options={membershipPlanOptions} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} onSelect={handleMembershipOnSelect} />
+            <Select label={"Membership Plan"} options={membershipPlanOptions} name={"membershipPlanUUID"} placeholder={"Choose Membership Plan..."} value={detail.membershipPlanUUID} onSelect={handleMembershipOnSelect} />
           </div>
           <div className="col-md-5 col-sm-6">
             <div className="row">
               <div className="col-md-4">
-                <NumericField id={"price"} label={"Price"} value={price} onChange={(e) => {
+                <NumericField id={"price"} label={"Price"} disabled={true} value={price} onChange={(e) => {
                   setPrice(e.target.value);
                   handleInputChange(e);
                 }} />
@@ -98,7 +102,7 @@ export default function TransactionDetailCollapse({ detail, index, setDetail, us
                 <PrefixSuffixNumericField id={"qty"} label={"Qty"} onChange={handleQtyChange} value={qty} prefixOnClick={substracQty} suffixOnClick={addQty} />
               </div>
               <div className="col-md-4">
-                <NumericField id={"subtotal"} label={"Subtotal"} disabled={true} />
+                <NumericField id={"subtotal"} label={"Subtotal"} disabled={true} value={detail.subtotal} />
               </div>
             </div>
           </div>
@@ -128,7 +132,7 @@ const Member = ({ qty, setQty, userOptions, setDetailMember, detailMember, index
       setQty(qty - 1);
       setDetailMember(prevItems => {
         const newItems = [...prevItems];
-        newItems[index].deleted = true;
+        newItems[index].deleted = 1;
         return newItems;
       });
     }
@@ -156,7 +160,7 @@ const Member = ({ qty, setQty, userOptions, setDetailMember, detailMember, index
     <div ref={memberRef} className="row">
       <div className="col-3">
         <div className='row'>
-          <Select label={"Member"} options={userOptions} onSelect={handleOnSelect} name={"userUUID"} placeholder={"Choose Member"} />
+          <Select label={"Member"} options={userOptions} onSelect={handleOnSelect} value={detailMember.userUUID} name={"userUUID"} placeholder={"Choose Member"} />
         </div>
       </div>
       <div className='col-5'>

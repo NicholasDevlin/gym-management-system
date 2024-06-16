@@ -10,11 +10,12 @@ function DatetimePicker({ id, onChange, label, value, className }) {
 
   return (
     <div className={Styles.formItem}>
-      {label? <label htmlFor={id}>{label}</label> : <></>}
+      {label ? <label htmlFor={id}>{label}</label> : <></>}
       <div className={Styles.inputWrapper}>
         <Datetime
-          dateFormat="DD MMM YYYY" timeFormat={false}
-          value={value}
+          dateFormat="DD MMM YYYY"
+          timeFormat={false}
+          value={value ? new Date(value) : new Date()}
           initialValue={new Date()}
           className={`${Styles.datetimePicker} ${className}`}
           inputProps={{ id: id }}

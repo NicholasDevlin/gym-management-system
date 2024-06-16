@@ -24,7 +24,7 @@ function TransactionEditor() {
     transactionNo: "",
     transactionDate: new Date(),
     status: "",
-    total: "",
+    total: 0,
     transactionDetail: []
   });
 
@@ -72,6 +72,14 @@ function TransactionEditor() {
       ...prevData,
       transactionDetail: [...details]
     }));
+    let total = 0;
+    details.map((value) => {
+      total += value.subtotal;
+    });
+    setTransactionData((prevData) => ({
+      ...prevData,
+      total: total,
+    }));
   }, [details])
 
   async function getTransaction() {
@@ -91,7 +99,7 @@ function TransactionEditor() {
       const responseData = await response.json();
       if (responseData.success) {
         setTransactionData(responseData.data);
-        setDetails(responseData.data.transactionDetail);
+        setDetails(responseData.data.transactionDetail || []);
       } else {
         alert.error('Get data unsuccessful');
       }
@@ -113,7 +121,6 @@ function TransactionEditor() {
     try {
       const apiUrl = uuid ? `${API_URLS.TRANSACTION}/${uuid}` : API_URLS.TRANSACTION;
       const method = uuid ? 'PUT' : 'POST';
-
       const response = await fetch(apiUrl, {
         method: method,
         headers: {
@@ -123,24 +130,27 @@ function TransactionEditor() {
         body: JSON.stringify(transactionData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const responseData = await response.json();
 
       if (responseData.success) {
         alert.success(uuid ? 'Transaction updated successfully' : 'Transaction created successfully');
       } else {
-        alert.error('Save unsuccessful');
+        throw new Error(`${responseData.message}`);
       }
     } catch (error) {
-      alert.error(`Error: ${error}`);
+      alert.error(`Warning: ${error}`);
     }
   }
 
   const addTransactionDetail = () => {
     setDetails([...details, {}]);
+  }
+
+  const handleStatucChange = (e) => {
+    setTransactionData((prevData) => ({
+      ...prevData,
+      status: e,
+    }));
   }
 
   return (
@@ -156,14 +166,14 @@ function TransactionEditor() {
           <div className="col-6">
             <p className="text-end mb-0">Transaction Date</p>
             <div className="d-flex justify-content-end">
-              <DatetimePicker onChange={handleInputChange} id="transactionDate" className={Styles.textEnd} />
+              <DatetimePicker onChange={handleInputChange} id="transactionDate" className={Styles.textEnd} value={transactionData.transactionDate} />
             </div>
           </div>
         </div>
         <div className="row">
           <div className="col-6">
             <p className="text-start mb-0">Status</p>
-            <Select options={statusOptions} />
+            <Select options={statusOptions} onSelect={handleStatucChange} value={transactionData.status} />
           </div>
           <div className="col-6">
             <p className="text-end mb-0">Total</p>

@@ -36,10 +36,12 @@ func (t *transactionController) CreateTransaction(e echo.Context) error {
 }
 
 func (t *transactionController) GetAllTransaction(e echo.Context) error {
-	var input transaction.TransactionReq
-	// input.TransactionDate.Date() = e.QueryParam("TransactionDate")
+	var filter transaction.TransactionFilter
+	if err := e.Bind(&filter); err != nil {
+		return err
+	}
 
-	res, err := t.transactionService.GetAllTransaction(input)
+	res, err := t.transactionService.GetAllTransaction(filter)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
@@ -48,7 +50,7 @@ func (t *transactionController) GetAllTransaction(e echo.Context) error {
 }
 
 func (t *transactionController) GetTransaction(e echo.Context) error {
-	var input transaction.TransactionReq
+	var input transaction.TransactionFilter
 
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {

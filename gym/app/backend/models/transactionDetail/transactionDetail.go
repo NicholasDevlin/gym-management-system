@@ -6,6 +6,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 type TransactionDetail struct {
@@ -17,4 +18,5 @@ type TransactionDetail struct {
 	Price                   int
 	MembershipPlan          membershipplan.MembershipPlan                     `gorm:"foreignKey:MembershipPlanId"`
 	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetail `gorm:"foreignKey:TransactionDetailId"`
+	IsDel     soft_delete.DeletedAt `gorm:"softDelete:flag,DeletedAtField:DeletedAt"`
 }

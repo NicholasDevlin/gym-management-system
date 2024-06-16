@@ -12,14 +12,19 @@ import DatetimePicker from "../../../components/general/input/datetimePicker/Dat
 function Transaction() {
   const alert = useAlert()
   const [transactionData, setTransaction] = useState([]);
+  const [filter, setFilter] = useState({
+    transactionDateFrom: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+    transactionDateTo: new Date().toISOString()
+  });
 
   useEffect(() => {
     getTransaction();
-  });
+  }, []);
 
   async function getTransaction() {
     try {
-      const response = await fetch(`${API_URLS.TRANSACTION}`, {
+      const queryParams = new URLSearchParams(filter);
+      const response = await fetch(`${API_URLS.TRANSACTION}?${queryParams.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -27,22 +32,33 @@ function Transaction() {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const responseData = await response.json();
       if (responseData.success) {
-        debugger
         setTransaction(responseData.data);
       } else {
-        alert.error("Get data unsuccessful");
+        throw new Error(responseData.message);
       }
     } catch (error) {
       alert.error(`Error: ${error}`);
     }
   }
 
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || e || {};
+    const originalDate = new Date(value.toString());
+    const modifiedTime = new Date(
+      originalDate.getFullYear(),
+      originalDate.getMonth(),
+      originalDate.getDate(),
+      12,
+      0,
+      0
+    );
+    setFilter((prevData) => ({
+      ...prevData,
+      [id]: modifiedTime.toISOString(),
+    }));
+  };
 
   async function deleteTransaction(uuid) {
     try {
@@ -76,13 +92,13 @@ function Transaction() {
       <div className={Styles.container}>
         <div className="d-flex w-100">
           <div className="me-3">
-            <DatetimePicker label="From" />
+            <DatetimePicker label="From" id="transactionDateFrom" onChange={handleInputChange} value={filter.transactionDateFrom} />
           </div>
           <div className="me-3">
-            <DatetimePicker label="To" />
+            <DatetimePicker label="To" id="transactionDateTo" onChange={handleInputChange} value={filter.transactionDateTo} />
           </div>
           <div className="me-3 d-flex align-items-center mt-2">
-            <Button text="Filter" />
+            <Button text="Filter" onClick={() => getTransaction()} />
           </div>
         </div>
         <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>

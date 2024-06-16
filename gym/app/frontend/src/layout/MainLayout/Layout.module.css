@@ -1,12 +1,13 @@
 .content {
-  height: 90vh;
+  min-height: 93vh;
+  height: 100%;
   width: 100vw;
   background-color: #35373d;
 }
 
 .navbar {
   width: 100vw;
-  height: 10vh;
+  height: 7vh;
 }
 
 .parent {
@@ -16,15 +17,14 @@
   min-height: 100vh;
   flex-direction: column;
   background-color: #343740;
-  position: relative;
   display: flex;
   align-items: normal;
 }
 
-.footer {
+/* .footer {
   background-color: #35373d;
   height: 30px;
   bottom: 0;
   position: absolute;
   width: 100%;
-}
+} */

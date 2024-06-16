@@ -18,8 +18,8 @@ import (
 
 type ITransactionService interface {
 	CreateTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error)
-	GetAllTransaction(filter transaction.TransactionReq) ([]transaction.TransactionRes, error)
-	GetTransaction(filter transaction.TransactionReq) (transaction.TransactionRes, error)
+	GetAllTransaction(filter transaction.TransactionFilter) ([]transaction.TransactionRes, error)
+	GetTransaction(filter transaction.TransactionFilter) (transaction.TransactionRes, error)
 	SaveTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error)
 	DeleteTransaction(id uuid.UUID) (transaction.TransactionRes, error)
 }
@@ -33,18 +33,18 @@ type transactionService struct {
 }
 
 func NewTransactionService(
-	repo repositories.ITransactionRepository, 
-	userRepo repositories.IUserRepository, 
-	membershipPlanRepo repositories.IMembershipPlanRepository, 
+	repo repositories.ITransactionRepository,
+	userRepo repositories.IUserRepository,
+	membershipPlanRepo repositories.IMembershipPlanRepository,
 	transactionDetailRepo repositories.ITransactionDetailRepository,
 	transactionDetailMember repositories.ITransactionMemberDetailRepository,
-	) *transactionService {
+) *transactionService {
 	return &transactionService{
 		transactionRepository:       repo,
 		userRepository:              userRepo,
 		membershipPlanRepository:    membershipPlanRepo,
 		transactionDetailRepository: transactionDetailRepo,
-		transactionDetailMember: transactionDetailMember,
+		transactionDetailMember:     transactionDetailMember,
 	}
 }
 
@@ -92,8 +92,8 @@ func (t *transactionService) CreateTransaction(input transaction.TransactionReq)
 	return *transaction.ConvertDtoToRes(res), nil
 }
 
-func (t *transactionService) GetAllTransaction(filter transaction.TransactionReq) ([]transaction.TransactionRes, error) {
-	res, err := t.transactionRepository.GetAllTransaction(*transaction.ConvertReqToDto(filter))
+func (t *transactionService) GetAllTransaction(filter transaction.TransactionFilter) ([]transaction.TransactionRes, error) {
+	res, err := t.transactionRepository.GetAllTransaction(filter)
 	if err != nil {
 		return nil, errors.ERR_GET_DATA
 	}
@@ -105,30 +105,35 @@ func (t *transactionService) GetAllTransaction(filter transaction.TransactionReq
 	return resTransaction, nil
 }
 
-func (t *transactionService) GetTransaction(filter transaction.TransactionReq) (transaction.TransactionRes, error) {
-	res, err := t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(filter))
+func (t *transactionService) GetTransaction(filter transaction.TransactionFilter) (transaction.TransactionRes, error) {
+	res, err := t.transactionRepository.GetTransaction(filter)
 
-	if err != nil || (filter.Id == 0 && filter.UUID == uuid.Nil) {
+	if err != nil || (filter.TransactionId == 0 && filter.UUID == uuid.Nil) {
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
 	return *transaction.ConvertDtoToRes(res), nil
 }
 
 func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (transaction.TransactionRes, error) {
-	var data transaction.TransactionDto
 	var err error
-
+	var data transaction.TransactionDto
 	dto := *transaction.ConvertReqToDto(input)
 	var transactionDetailDto transactiondetail.TransactionDetailDto
 	isComplete := input.Status == consts.COMPLETE
 	for i := range dto.TransactionDetail {
 		transactionDetailDto = dto.TransactionDetail[i]
+		if transactionDetailDto.Deleted != 0 && transactionDetailDto.UUID == uuid.Nil {
+			continue
+		}
 		transactionDetailDto, err = SaveTransactionDetail(t, transactionDetailDto)
 		if err != nil {
 			return transaction.TransactionRes{}, err
 		}
 
 		for j, member := range transactionDetailDto.TransactionMemberDetail {
+			if member.Deleted != 0 && member.UUID == uuid.Nil {
+				continue
+			}
 			transactionDetailDto.TransactionMemberDetail[j], err = SaveTransactionDetailMember(t, member, transactionDetailDto.MembershipPlan.Duration, isComplete)
 			if err != nil {
 				return transaction.TransactionRes{}, err
@@ -138,12 +143,18 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 	}
 
 	if input.UUID != uuid.Nil {
-		data, err = t.transactionRepository.GetTransaction(*transaction.ConvertReqToDto(input))
+		data, err = t.transactionRepository.GetTransaction(*&transaction.TransactionFilter{UUID: input.UUID})
 		if data.Status == consts.COMPLETE {
 			return transaction.TransactionRes{}, errors.ERR_COMPLETED_TRANSACTION
 		}
 		if err != nil {
 			return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
+		}
+		if !input.TransactionDate.IsZero() {
+			data.TransactionDate = input.TransactionDate
+		}
+		if input.Status != "" {
+			data.Status = input.Status
 		}
 	} else {
 		data.TransactionNo = generateTransactionNo()
@@ -152,8 +163,8 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 			data.Status = consts.WAITING_FOR_PAYMENT
 		}
 		data.UUID = uuid.NewV4()
-		data.TransactionDetail = dto.TransactionDetail
 	}
+	data.TransactionDetail = dto.TransactionDetail
 
 	resUser, err := t.userRepository.GetUser(*&transaction.ConvertReqToDto(input).User)
 	if err != nil {
@@ -162,7 +173,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 	data.UserId = resUser.Id
 	data.User = resUser
 
-	res, err := t.transactionRepository.SaveTransaction(data, dto)
+	res, err := t.transactionRepository.SaveTransaction(data)
 	if err != nil {
 		return transaction.TransactionRes{}, err
 	}
@@ -170,7 +181,7 @@ func (t *transactionService) SaveTransaction(input transaction.TransactionReq) (
 }
 
 func (t *transactionService) DeleteTransaction(id uuid.UUID) (transaction.TransactionRes, error) {
-	res, err := t.transactionRepository.GetTransaction(transaction.TransactionDto{UUID: id})
+	res, err := t.transactionRepository.GetTransaction(transaction.TransactionFilter{UUID: id})
 	if err != nil {
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
@@ -202,31 +213,32 @@ func transactionDetailValidation(input transactiondetail.TransactionDetailDto) b
 
 func SaveTransactionDetail(t *transactionService, input transactiondetail.TransactionDetailDto) (transactiondetail.TransactionDetailDto, error) {
 	var existing transactiondetail.TransactionDetailDto
-	if input.Quantity != len(input.TransactionMemberDetail) {
-		return transactiondetail.TransactionDetailDto{}, errors.ERR_TRANSACTION_MEMBER_EMPTY
-	}
-
-	if input.Quantity == 0 {
-		return transactiondetail.TransactionDetailDto{}, errors.ERR_QTY_EMPTY
-	}
-
 	if input.UUID == uuid.Nil {
 		existing.UUID = uuid.NewV4()
 	} else {
 		existing, _ = t.transactionDetailRepository.GetTransactionDetail(input)
 	}
 
-	membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: existing.MembershipPlanUUID})
+	if input.Quantity == 0 {
+		return transactiondetail.TransactionDetailDto{}, errors.ERR_QTY_EMPTY
+	}
+
+	membershipPlan, err := t.membershipPlanRepository.GetMembershipPlan(membershipplan.MembershipPlanDto{UUID: input.MembershipPlanUUID})
 
 	if err != nil {
 		return transactiondetail.TransactionDetailDto{}, errors.ERR_MEMBERSHIP_PLAN_NOT_FOUND
 	}
 	if input.Quantity != 0 {
-		existing.Quantity = input.Quantity
+		qty := len(input.TransactionMemberDetail)
+		if qty != input.Quantity {
+			qty = input.Quantity
+		}
+		existing.Quantity = qty
 	}
 	if input.Price != 0 {
 		existing.Price = input.Price
 	}
+	existing.Deleted = input.Deleted
 	existing.MembershipPlanId = membershipPlan.Id
 	existing.MembershipPlan = membershipPlan
 	existing.Price = int(membershipPlan.Price)
@@ -253,15 +265,22 @@ func SaveTransactionDetailMember(t *transactionService, input transactionmemberd
 		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
 	}
 
-	if !isComplete {
+	if isComplete {
 		if user.SubscriptionExpirationDate != nil && !user.SubscriptionExpirationDate.IsZero() {
-			user.SubscriptionExpirationDate.AddDate(0,0, duration)
+			membershipDuration := user.SubscriptionExpirationDate.AddDate(0, 0, duration)
+			if user.SubscriptionExpirationDate.Before(time.Now()) {
+				membershipDuration = time.Now().AddDate(0, 0, duration)
+			}
+			user.SubscriptionExpirationDate = &membershipDuration
 		} else {
-			membershipDuration := time.Now().AddDate(0,0, duration)
+			membershipDuration := time.Now().AddDate(0, 0, duration)
 			user.SubscriptionExpirationDate = &membershipDuration
 		}
 	}
-
+	if input.AdditionalPrice != 0 {
+		existing.AdditionalPrice = input.AdditionalPrice
+	}
+	existing.Deleted = input.Deleted
 	existing.User = user
 	existing.UserId = user.Id
 

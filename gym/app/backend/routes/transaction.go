@@ -23,6 +23,6 @@ func TransactionRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	eJwt.POST("/transaction", controller.SaveTransaction)
 	eJwt.GET("/transaction", controller.GetAllTransaction)
 	eJwt.GET("/transaction/:id", controller.GetTransaction)
-	eJwt.POST("/transaction/:id", controller.SaveTransaction)
+	eJwt.PUT("/transaction/:id", controller.SaveTransaction)
 	eJwt.DELETE("/transaction/:id", controller.DeleteTransaction)
 }

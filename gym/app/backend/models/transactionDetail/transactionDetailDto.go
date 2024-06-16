@@ -9,15 +9,16 @@ import (
 )
 
 type TransactionDetailDto struct {
-	Id                 uint
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	UUID               uuid.UUID
-	TransactionId      uint
-	MembershipPlanId   uint
-	MembershipPlanUUID uuid.UUID
-	Quantity           int
-	Price           int
-	MembershipPlan     membershipplan.MembershipPlanDto
+	Id                      uint
+	CreatedAt               time.Time
+	UpdatedAt               time.Time
+	UUID                    uuid.UUID
+	TransactionId           uint
+	MembershipPlanId        uint
+	MembershipPlanUUID      uuid.UUID
+	Quantity                int
+	Price                   int
+	Deleted                 int
+	MembershipPlan          membershipplan.MembershipPlanDto
 	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailDto
 }

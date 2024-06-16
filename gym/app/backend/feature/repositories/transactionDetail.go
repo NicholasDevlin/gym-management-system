@@ -81,7 +81,7 @@ func (td *transactionDetailRepository) GetTransactionDetail(filter transactionde
 		query = query.Where("uuid = ?", filter.UUID)
 	}
 
-	err := query.Preload("User").First(&model).Error
+	err := query.First(&model).Error
 	if err != nil {
 		return transactiondetail.TransactionDetailDto{}, err
 	}

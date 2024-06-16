@@ -15,4 +15,5 @@ type TransactionDetailReq struct {
 	Price                   int                                                  `json:"price" form:"price"`
 	MembershipPlan          membershipplan.MembershipPlanReq                     `json:"membershipPlan" form:"membershipPlan"`
 	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailReq `json:"transactionMemberDetail" form:"transactionMemberDetail"`
+	Deleted                 int                                                  `json:"deleted" form:"deleted"`
 }

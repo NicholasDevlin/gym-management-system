@@ -1,7 +1,7 @@
 import SelectSearch from 'react-select-search';
 import 'react-select-search/style.css';
 import Styles from '../Input.module.css';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function Select({ options, name, placeholder, label, value, getOptions, onSelect }) {
   const [selected, setSelected] = useState(value);
@@ -24,9 +24,15 @@ function Select({ options, name, placeholder, label, value, getOptions, onSelect
     }
   }
 
+  useEffect(() => {
+    if (value) {
+      setSelected(value)
+    }
+  }, [options, value])
+
   return (
     <div className={Styles.formItem}>
-      {label ?  <label htmlFor={name}>{label}</label> : <></>}
+      {label ? <label htmlFor={name}>{label}</label> : <></>}
       <div className={Styles.inputWrapper}>
         <SelectSearch ref={selectRef} onFocus={onFocus} className={`${placement} select-search`} options={options} name={name} onChange={onChange} getOptions={getOptions} value={selected} search="true" placeholder={placeholder} />
       </div>
