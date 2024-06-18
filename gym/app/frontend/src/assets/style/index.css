@@ -133,3 +133,7 @@ input::-webkit-inner-spin-button {
     top: auto !important;
     margin-bottom: 2px;
 }
+
+.rc-virtual-list-holder{
+    background-color: var(--coalBlack);
+}

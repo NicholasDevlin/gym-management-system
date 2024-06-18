@@ -32,5 +32,6 @@ func ConvertModelToDto(input Role) *RoleDto {
 func ConvertDtoToRes(input RoleDto) *RoleRes {
 	return &RoleRes{
 		Role: input.Role,
+		Id: input.Id,
 	}
 }

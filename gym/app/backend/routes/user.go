@@ -19,6 +19,7 @@ func UserRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	e.POST("/user/login", controller.LoginUser)
 
 	eJwt.GET("/user", controller.GetAllUser)
+	eJwt.GET("/user-total", controller.GetUserCount)
 	eJwt.GET("/user/:id", controller.GetUser)
 	eJwt.PUT("/user/:id", controller.UpdateUser)
 	eJwt.DELETE("/user/:id", controller.DeleteUser)

@@ -8,6 +8,8 @@ import Transaction from './pages/user/transaction/Index.jsx';
 import TransactionForAdmin from './pages/superAdmin/transaction/Index.jsx';
 // import TransactionEditor from './pages/user/transaction/Editor.jsx';
 import TransactionEditorForAdmin from './pages/superAdmin/transaction/Editor.jsx';
+import Absensi from './pages/superAdmin/absensi/Index.jsx';
+import User from './pages/superAdmin/user/Index.jsx';
 import Authentication from './pages/authentication/Index.jsx';
 import Profile from './pages/profile/Index.jsx';
 import Help from './pages/user/help/Index.jsx';
@@ -31,6 +33,11 @@ function App() {
                 colorText: '#d8cdb9',
                 borderColor: '#6e6f73',
                 fontWeightStrong: 600
+              },
+              Select: {
+                selectorBg: '#1f2124',
+                multipleItemBg: '#1f2124',
+                optionSelectedBg: '#35373d'
               }
             },
           }}
@@ -38,15 +45,17 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/authentication" element={<Authentication />} />
-            {userData && userData.role === 'admin'? 
-            <>
-              <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
-              <Route path="/membership/editor" element={<MembershipEditor />} />
-              <Route path="/transaction/editor" element={<TransactionEditorForAdmin />} />
-              <Route path="/transaction/editor/:uuid" element={<TransactionEditorForAdmin />} />
-            </>  
-            :
-            <></>
+            {userData && userData.role === 'admin' ?
+              <>
+                <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
+                <Route path="/membership/editor" element={<MembershipEditor />} />
+                <Route path="/transaction/editor" element={<TransactionEditorForAdmin />} />
+                <Route path="/transaction/editor/:uuid" element={<TransactionEditorForAdmin />} />
+                <Route path="/absensi" element={<Absensi />} />
+                <Route path="/user" element={<User />} />
+              </>
+              :
+              <></>
             }
             <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
             <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />

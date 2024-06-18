@@ -25,7 +25,7 @@ function Select({ options, name, placeholder, label, value, getOptions, onSelect
   }
 
   useEffect(() => {
-    if (value) {
+    if (value !== undefined) {
       setSelected(value)
     }
   }, [options, value])

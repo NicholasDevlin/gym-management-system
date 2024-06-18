@@ -1,10 +1,12 @@
 package repositories
 
 import (
+	"gym/app/backend/models/role"
 	"gym/app/backend/models/user"
 	"gym/app/backend/utils/bcrypt"
 	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -13,7 +15,7 @@ import (
 type IUserRepository interface {
 	RegisterUser(data user.UserDto) (user.UserDto, error)
 	LoginUser(data user.UserDto) (user.UserDto, error)
-	GetAllUser(filter user.UserDto, page, pageSize int) ([]user.UserDto, int, error)
+	GetAllUser(filter user.UserFilter) ([]user.UserDto, error)
 	GetUser(filter user.UserDto) (user.UserDto, error)
 	UpdateUser(data, input user.UserDto) (user.UserDto, error)
 	DeleteUser(id string) (user.UserDto, error)
@@ -56,11 +58,11 @@ func (u *userRepository) LoginUser(data user.UserDto) (user.UserDto, error) {
 	return *user.ConvertModelToDto(*dataUser), nil
 }
 
-func (u *userRepository) GetAllUser(filter user.UserDto, page, pageSize int) ([]user.UserDto, int, error) {
+func (u *userRepository) GetAllUser(filter user.UserFilter) ([]user.UserDto, error) {
 	var allUser []user.User
 	var resAllUser []user.UserDto
 
-	query := u.db.Preload("Role")
+	query := u.db.Joins("Role")
 	if filter.DisplayName != "" {
 		query = query.Where("display_name LIKE ? ", "%"+filter.DisplayName+"%")
 	}
@@ -73,13 +75,30 @@ func (u *userRepository) GetAllUser(filter user.UserDto, page, pageSize int) ([]
 	if filter.Email != "" {
 		query = query.Where("email = ?", filter.Email)
 	}
-
-	offset := (page - 1) * pageSize
-	query = query.Limit(pageSize).Offset(offset)
+	if filter.Active != nil {
+		if *filter.Active {
+			today := time.Now() 
+			date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
+			query = query.Where("subscription_expiration_date >= ?", date)
+		}
+		if !*filter.Active {
+			today := time.Now() 
+			date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
+			query = query.Where("subscription_expiration_date < ?", date)
+		}
+	}
+	if filter.Role != "" {
+		query = query.Joins("Role", query.Where("role = ?", filter.Role))
+	}
+	if filter.LastDayActive {
+		today := time.Now() 
+		date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
+		query = query.Where("subscription_expiration_date >= ? AND subscription_expiration_date < ?", date, date.AddDate(0,0,1))
+	}
 
 	err := query.Find(&allUser).Error
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
 	for i := 0; i < len(allUser); i++ {
@@ -87,10 +106,7 @@ func (u *userRepository) GetAllUser(filter user.UserDto, page, pageSize int) ([]
 		resAllUser = append(resAllUser, *user)
 	}
 
-	var allItems int64
-	query.Count(&allItems)
-
-	return resAllUser, int(allItems), nil
+	return resAllUser,  nil
 }
 
 func (u *userRepository) GetUser(filter user.UserDto) (user.UserDto, error) {
@@ -138,6 +154,12 @@ func (u *userRepository) UpdateUser(data, input user.UserDto) (user.UserDto, err
 	}
 	if input.RoleId != 0 {
 		userData.RoleId = input.RoleId
+		userData.Role = role.Role{
+			Role: input.Role.Role,
+			Model: gorm.Model{
+				ID: input.RoleId,
+			},
+		}
 	}
 
 	if err := u.db.Save(&userData).Error; err != nil {

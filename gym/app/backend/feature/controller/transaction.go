@@ -5,7 +5,9 @@ import (
 	"gym/app/backend/models/transaction"
 	baseresponse "gym/app/backend/utils/baseResponse"
 	"gym/app/backend/utils/consts"
+	customtimeformat "gym/app/backend/utils/customTimeFormat"
 	"gym/app/backend/utils/middleware"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	uuid "github.com/satori/go.uuid"
@@ -47,6 +49,23 @@ func (t *transactionController) GetAllTransaction(e echo.Context) error {
 	}
 
 	return baseresponse.NewSuccessResponse(e, res)
+}
+
+func (t *transactionController) GetTransactionThisMonth(e echo.Context) error {
+	var filter transaction.TransactionFilter
+
+	now := time.Now()
+	firstOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	filter.TransactionDateFrom = customtimeformat.CustomTime{firstOfMonth}
+
+	filter.TransactionDateTo = customtimeformat.CustomTime{now}
+
+	res, err := t.transactionService.GetAllTransaction(filter)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	return baseresponse.NewSuccessResponse(e, len(res))
 }
 
 func (t *transactionController) GetTransaction(e echo.Context) error {
