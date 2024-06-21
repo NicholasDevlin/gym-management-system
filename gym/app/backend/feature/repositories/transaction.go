@@ -52,12 +52,13 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 	if filter.TransactionNo != "" {
 		query = query.Where("transaction_no LIKE ?", "%"+filter.TransactionNo+"%")
 	}
-	if !filter.TransactionDateFrom.IsZero() {
-		query = query.Where("transaction_date >= ?", filter.TransactionDateFrom.Time)
-	}
 	if !filter.TransactionDateTo.IsZero() {
 		query = query.Where("transaction_date <= ?", filter.TransactionDateTo.Time)
 	}
+	if !filter.TransactionDateFrom.IsZero() {
+		query = query.Where("transaction_date >= ?", filter.TransactionDateFrom.Time)
+	}
+	query = query.Order("transaction_date desc")
 
 	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Preload("TransactionDetail.TransactionMemberDetail").Preload("TransactionDetail.TransactionMemberDetail.User").Find(&allTransaction).Error
 	if err != nil {
@@ -121,30 +122,30 @@ func (t *transactionRepository) SaveTransaction(data transaction.TransactionDto)
 		} else if detail.ID != 0 {
 			if err := tx.Save(&detail).Error; err != nil {
 				tx.RollbackTo("transaction")
-			 }
-			 for _, member := range detail.TransactionMemberDetail {
-				 if member.IsDel != 0 {
-					 if err := tx.Delete(&member, member.ID).Error; err != nil {
-						 tx.RollbackTo("transaction")
-					 }
-				 } else if member.ID != 0 {
-					 if err := tx.Save(&member).Error; err != nil {
-						 tx.RollbackTo("transaction")
-					 }
-				 }
-				 if transactionData.Status != consts.COMPLETE {
-					 continue
-				 }
-				 if err := tx.Save(&member.User).Error; err != nil {
-					 tx.RollbackTo("transaction")
-					 if data.Id != 0 {
-						 err = errors.ERR_UPDATE_TRANSACTION
-					 } else {
-						 err = errors.ERR_CREATE_TRANSACTION
-					 }
-					 return transaction.TransactionDto{}, err
-				 }
-			 }
+			}
+			for _, member := range detail.TransactionMemberDetail {
+				if member.IsDel != 0 {
+					if err := tx.Delete(&member, member.ID).Error; err != nil {
+						tx.RollbackTo("transaction")
+					}
+				} else if member.ID != 0 {
+					if err := tx.Save(&member).Error; err != nil {
+						tx.RollbackTo("transaction")
+					}
+				}
+				if transactionData.Status != consts.COMPLETE {
+					continue
+				}
+				if err := tx.Save(&member.User).Error; err != nil {
+					tx.RollbackTo("transaction")
+					if data.Id != 0 {
+						err = errors.ERR_UPDATE_TRANSACTION
+					} else {
+						err = errors.ERR_CREATE_TRANSACTION
+					}
+					return transaction.TransactionDto{}, err
+				}
+			}
 		}
 	}
 

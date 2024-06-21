@@ -96,7 +96,7 @@ function Home() {
 
       const responseData = await response.json();
       if (responseData.success) {
-        setTodayExpired(responseData.data);
+        setTodayExpired(responseData.data ?? []);
       } else {
         throw new Error(responseData.message);
       }

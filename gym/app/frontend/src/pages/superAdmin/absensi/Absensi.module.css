@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px 0 20px;
+  align-items: center;
+}
+
+.dataHeader {
+  font-weight: 600;
+}
+
+.textEnd input {
+  text-align: end;
+}

@@ -3,6 +3,7 @@ package services
 import (
 	"gym/app/backend/feature/repositories"
 	"gym/app/backend/models/absensi"
+	"gym/app/backend/models/user"
 	"gym/app/backend/utils/errors"
 	"time"
 
@@ -10,11 +11,11 @@ import (
 )
 
 type IAbsensiService interface {
-	CreateAbsensi(input absensi.AbsensiReq) (absensi.AbsensiRes, error)
-	// GetAllRole(filter absensi.AbsensiReq) ([]absensi.AbsensiRes, error)
+	SaveAbsensi(input absensi.AbsensiReq) (absensi.AbsensiRes, error)
+	GetAllAbsensi(filter absensi.AbsensiFilter) ([]absensi.AbsensiRes, error)
 	// GetRole(filter absensi.AbsensiReq) (absensi.AbsensiRes, error)
 	// UpdateRole(input absensi.AbsensiReq) (absensi.AbsensiRes, error)
-	// DeleteRole(id uint) (absensi.AbsensiRes, error)
+	DeleteAbsensi(id uuid.UUID) error
 }
 
 type absensiService struct {
@@ -29,7 +30,7 @@ func NewAbsensiService(repo repositories.IAbsensiRepository, userRepo repositori
 	}
 }
 
-func (a *absensiService) CreateAbsensi(input absensi.AbsensiReq) (absensi.AbsensiRes, error) {
+func (a *absensiService) SaveAbsensi(input absensi.AbsensiReq) (absensi.AbsensiRes, error) {
 	if input.UserUUID == uuid.Nil {
 		return absensi.AbsensiRes{}, errors.ERR_USER_NOT_FOUND
 	}
@@ -38,30 +39,40 @@ func (a *absensiService) CreateAbsensi(input absensi.AbsensiReq) (absensi.Absens
 	}
 	var err error
 	dto := absensi.ConvertReqToDto(input)
-	dto.User, err = a.userRepository.GetUser(dto.User)
+	
+	var existing absensi.AbsensiDto
+	if (input.UUID != uuid.Nil) {
+		existing, err = a.absensiRepository.GetAbsensi(*dto)
+		if err != nil {
+			return absensi.AbsensiRes{}, errors.ERR_CREATE_ABSENSI
+		}
+	}
+	existing.UserUUID = dto.UserUUID
+	existing.Date = dto.Date
+	existing.User, err = a.userRepository.GetUser(user.UserDto{UUID: input.UserUUID})
 	if err != nil {
 		return absensi.AbsensiRes{}, errors.ERR_USER_NOT_FOUND
 	}
-	
-	err = a.absensiRepository.CreateAbsensi(dto)
+
+	err = a.absensiRepository.SaveAbsensi(&existing)
 	if err != nil {
 		return absensi.AbsensiRes{}, errors.ERR_CREATE_ABSENSI
 	}
 	return *absensi.ConvertDtoToRes(*dto), nil
 }
 
-// func (r *absensiService) GetAllRole(filter absensi.AbsensiReq) ([]absensi.AbsensiRes, error) {
-// 	res, err := r.roleRepository.GetAllRole(*absensi.ConvertReqToDto(filter))
-// 	if err != nil {
-// 		return nil, errors.ERR_GET_DATA
-// 	}
-// 	var resRole []absensi.AbsensiRes
-// 	for i := 0; i < len(res); i++ {
-// 		roleVm := absensi.ConvertDtoToRes(res[i])
-// 		resRole = append(resRole, *roleVm)
-// 	}
-// 	return resRole, nil
-// }
+func (a *absensiService) GetAllAbsensi(filter absensi.AbsensiFilter) ([]absensi.AbsensiRes, error) {
+	res, err := a.absensiRepository.GetAllAbsensi(filter)
+	if err != nil {
+		return nil, errors.ERR_GET_DATA
+	}
+	var resRole []absensi.AbsensiRes
+	for i := 0; i < len(res); i++ {
+		roleVm := absensi.ConvertDtoToRes(res[i])
+		resRole = append(resRole, *roleVm)
+	}
+	return resRole, nil
+}
 
 // func (r *absensiService) GetRole(filter absensi.AbsensiReq) (absensi.AbsensiRes, error) {
 // 	res, err := r.roleRepository.GetRole(*absensi.ConvertReqToDto(filter))
@@ -84,15 +95,15 @@ func (a *absensiService) CreateAbsensi(input absensi.AbsensiReq) (absensi.Absens
 // 	return *absensi.ConvertDtoToRes(res), nil
 // }
 
-// func (r *absensiService) DeleteRole(id uint) (absensi.AbsensiRes, error) {
-// 	res, err := r.roleRepository.GetRole(absensi.RoleDto{Id: id})
-// 	if err != nil {
-// 		return absensi.AbsensiRes{}, errors.ERR_NOT_FOUND
-// 	}
+func (a *absensiService) DeleteAbsensi(id uuid.UUID) error {
+	res, err := a.absensiRepository.GetAbsensi(absensi.AbsensiDto{UUID: id})
+	if err != nil {
+		return errors.ERR_NOT_FOUND
+	}
 
-// 	res, err = r.roleRepository.DeleteRole(fmt.Sprint(id))
-// 	if err != nil {
-// 		return absensi.AbsensiRes{}, errors.ERR_DELETE_ROLE
-// 	}
-// 	return *absensi.ConvertDtoToRes(res), nil
-// }
+	err = a.absensiRepository.DeleteAbsensi(res.Id)
+	if err != nil {
+		return errors.ERR_DELETE_ROLE
+	}
+	return nil
+}

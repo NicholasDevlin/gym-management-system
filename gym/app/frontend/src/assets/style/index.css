@@ -134,6 +134,10 @@ input::-webkit-inner-spin-button {
     margin-bottom: 2px;
 }
 
-.rc-virtual-list-holder{
+.rc-virtual-list-holder {
     background-color: var(--coalBlack);
+}
+
+.ant-modal-content {
+    background-color: #35373d !important;
 }

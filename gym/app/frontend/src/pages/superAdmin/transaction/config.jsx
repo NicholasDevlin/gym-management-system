@@ -17,7 +17,7 @@ const column = (handleDelete) => {
     key: 'transactionDate',
     width: '20%',
     render: ((text) => {
-      let options = { day: 'numeric', month: 'long', year: 'numeric' };
+      let options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
       let date = new Date(text);
       return (
         <>

@@ -73,7 +73,7 @@ func (r *roleController) UpdateRole(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-func (r *roleController) DeleteUser(e echo.Context) error {
+func (r *roleController) DeleteRole(e echo.Context) error {
 	id, err := strconv.ParseUint(e.Param("id"), 10, 64)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)

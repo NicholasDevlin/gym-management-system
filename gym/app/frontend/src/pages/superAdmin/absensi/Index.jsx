@@ -1,30 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Layout from '../../../layout/MainLayout/Layout.jsx'
 import Button from '../../../components/general/button/Button.jsx'
 import Styles from './Absensi.module.css'
 import { API_URLS } from '../../../apiConfig.js'
-import { Link } from 'react-router-dom'
 import { useAlert } from "react-alert";
 import { Table } from "antd";
 import column from "./Config.jsx";
 import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
+import AbsensiModal from "./AbsensiModal.jsx";
+import { GetUsers } from "../../../controller/UserController.js";
 
 function Transaction() {
   const alert = useAlert()
-  const [transactionData, setTransaction] = useState([]);
+  const [absensiData, setAbsensi] = useState([]);
+  const [userOptions, setUserOptions] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [isOpen, setOpen] = useState(false);
   const [filter, setFilter] = useState({
-    transactionDateFrom: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-    transactionDateTo: new Date().toISOString()
+    dateFrom: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+    dateTo: new Date().toISOString()
   });
 
   useEffect(() => {
-    getTransaction();
+    getAbsensi();
+    fetchUsersOptions();
   }, []);
 
-  async function getTransaction() {
+  const fetchUsersOptions = useCallback(async () => {
+    const result = await GetUsers();
+    if (result) {
+      setUserOptions(
+        [
+          { name: "Please Select Member", value: "" },
+          ...result.map((data) => ({
+            name: ` ${data.name} (${data.phoneNumber})`,
+            value: data.uuid,
+          }))
+        ]
+      );
+    }
+  }, []);
+
+  async function getAbsensi() {
     try {
       const queryParams = new URLSearchParams(filter);
-      const response = await fetch(`${API_URLS.TRANSACTION}?${queryParams.toString()}`, {
+      const response = await fetch(`${API_URLS.ABSENSI}?${queryParams.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -34,12 +54,12 @@ function Transaction() {
 
       const responseData = await response.json();
       if (responseData.success) {
-        setTransaction(responseData.data);
+        setAbsensi(responseData.data);
       } else {
         throw new Error(responseData.message);
       }
     } catch (error) {
-      alert.error(`Error: ${error}`);
+      alert.error(`${error}`);
     }
   }
 
@@ -60,9 +80,9 @@ function Transaction() {
     }));
   };
 
-  async function deleteTransaction(uuid) {
+  async function deleteAbsensi(uuid) {
     try {
-      const response = await fetch(`${API_URLS.TRANSACTION}/${uuid}`, {
+      const response = await fetch(`${API_URLS.ABSENSI}/${uuid}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -70,43 +90,52 @@ function Transaction() {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}\n${response.message}`);
-      }
-
       const responseData = await response.json();
       if (responseData.success) {
-        const newData = transactionData.filter((item) => item.uuid !== uuid);
-        setTransaction(newData);
+        const newData = absensiData.filter((item) => item.uuid !== uuid);
+        setAbsensi(newData);
         alert.success("Delete Successful!");
       } else {
-        alert.error("Delete Transaction unsuccessful");
+        alert.error("Delete Absensi unsuccessful");
       }
     } catch (error) {
-      alert.error(`Error: ${error}`);
+      alert.error(`${error}`);
     }
   }
 
+  const closeModal = () => {
+    setOpen(false);
+    getAbsensi();
+    setSelected(null);
+  }
+
+  useEffect(() => {
+    if (selected) {
+      setOpen(true);
+    }
+  }, [selected])
+
   return (
     <Layout>
+      <AbsensiModal userOptions={userOptions} closeModal={closeModal} isOpen={isOpen} absensiData={selected} />
       <div className={Styles.container}>
         <div className="d-flex w-100">
           <div className="me-3">
-            <DatetimePicker label="From" id="transactionDateFrom" onChange={handleInputChange} value={filter.transactionDateFrom} />
+            <DatetimePicker label="From" id="dateFrom" onChange={handleInputChange} value={filter.dateFrom} />
           </div>
           <div className="me-3">
-            <DatetimePicker label="To" id="transactionDateTo" onChange={handleInputChange} value={filter.transactionDateTo} />
+            <DatetimePicker label="To" id="dateTo" onChange={handleInputChange} value={filter.dateTo} />
           </div>
           <div className="me-3 d-flex align-items-center mt-2">
-            <Button text="Filter" onClick={() => getTransaction()} />
+            <Button text="Filter" onClick={() => getAbsensi()} />
           </div>
         </div>
-        <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
+        <Button text={"Check in"} onClick={() => setOpen(true)} />
       </div>
       <div>
         <Table
-          columns={column(deleteTransaction)}
-          dataSource={transactionData}
+          columns={column(deleteAbsensi, setSelected)}
+          dataSource={absensiData}
           className="h-100 m-3"
         />
       </div>

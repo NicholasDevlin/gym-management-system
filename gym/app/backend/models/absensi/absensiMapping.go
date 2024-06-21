@@ -21,6 +21,7 @@ func ConvertDtoToModel(input AbsensiDto) *Absensi {
 			CreatedAt: input.CreatedAt,
 			UpdatedAt: input.UpdatedAt,
 		},
+		UUID: input.UUID,
 		Date:   input.Date,
 		UserId: input.User.Id,
 		User:   *user.ConvertDtoToModel(input.User),
@@ -30,6 +31,7 @@ func ConvertDtoToModel(input AbsensiDto) *Absensi {
 func ConvertModelToDto(input Absensi) *AbsensiDto {
 	return &AbsensiDto{
 		Id:        input.ID,
+		UUID:      input.UUID,
 		Date:      input.Date,
 		CreatedAt: input.CreatedAt,
 		UpdatedAt: input.UpdatedAt,
@@ -40,6 +42,7 @@ func ConvertModelToDto(input Absensi) *AbsensiDto {
 
 func ConvertDtoToRes(input AbsensiDto) *AbsensiRes {
 	return &AbsensiRes{
+		UUID:     input.UUID,
 		Date:     input.Date,
 		UserUUID: input.UserUUID,
 		User:     *user.ConvertDtoToRes(input.User),

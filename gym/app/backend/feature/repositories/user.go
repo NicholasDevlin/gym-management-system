@@ -77,12 +77,12 @@ func (u *userRepository) GetAllUser(filter user.UserFilter) ([]user.UserDto, err
 	}
 	if filter.Active != nil {
 		if *filter.Active {
-			today := time.Now() 
+			today := time.Now()
 			date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
 			query = query.Where("subscription_expiration_date >= ?", date)
 		}
 		if !*filter.Active {
-			today := time.Now() 
+			today := time.Now()
 			date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
 			query = query.Where("subscription_expiration_date < ?", date)
 		}
@@ -91,10 +91,11 @@ func (u *userRepository) GetAllUser(filter user.UserFilter) ([]user.UserDto, err
 		query = query.Joins("Role", query.Where("role = ?", filter.Role))
 	}
 	if filter.LastDayActive {
-		today := time.Now() 
+		today := time.Now()
 		date := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
-		query = query.Where("subscription_expiration_date >= ? AND subscription_expiration_date < ?", date, date.AddDate(0,0,1))
+		query = query.Where("subscription_expiration_date >= ? AND subscription_expiration_date < ?", date, date.AddDate(0, 0, 1))
 	}
+	query = query.Order("display_name")
 
 	err := query.Find(&allUser).Error
 	if err != nil {
@@ -106,7 +107,7 @@ func (u *userRepository) GetAllUser(filter user.UserFilter) ([]user.UserDto, err
 		resAllUser = append(resAllUser, *user)
 	}
 
-	return resAllUser,  nil
+	return resAllUser, nil
 }
 
 func (u *userRepository) GetUser(filter user.UserDto) (user.UserDto, error) {
@@ -178,20 +179,3 @@ func (u *userRepository) DeleteUser(id string) (user.UserDto, error) {
 
 	return *user.ConvertModelToDto(userData), nil
 }
-
-// func (u *userRepository) FindByEmail(email string) (*models.Users, error) {
-// 	user := models.Users{}
-// 	res := u.db.Where("email = ?", email).First(&user).Error
-// 	if res != nil {
-// 		return nil, res
-// 	}
-// 	return &user, nil
-// }
-
-// func (u *userRepository) CreateUser(user *models.Users) (*models.Users, error) {
-// 	result := u.db.Create(&user)
-// 	if result.Error != nil {
-// 		return nil, result.Error
-// 	}
-// 	return user, nil
-// }

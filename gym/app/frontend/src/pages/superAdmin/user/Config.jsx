@@ -75,7 +75,6 @@ const column = (handleDelete, roleOptions, updateUser) => {
       width: 150,
       render: ((_, value) => {
         const onSelect = (selected) => {
-          debugger
           value.role.role = roleOptions.find(x=> x.value === selected).label;
           updateUser(value);
         }

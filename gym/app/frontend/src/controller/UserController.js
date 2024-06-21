@@ -2,7 +2,8 @@ import { API_URLS } from "../apiConfig";
 
 export async function GetUsers() {
   try {
-    const response = await fetch(`${API_URLS.USER}`, {
+    const queryParams = new URLSearchParams({role: "user"});
+    const response = await fetch(`${API_URLS.USER}?${queryParams.toString()}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -11,7 +12,7 @@ export async function GetUsers() {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}\n${response.message}`);
+      throw new Error(`${response.status}\n${response.message}`);
     }
     const responseData = await response.json();
     return responseData.data;

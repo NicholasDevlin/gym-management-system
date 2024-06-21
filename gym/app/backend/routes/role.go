@@ -18,5 +18,5 @@ func RoleRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 	eJwt.GET("/role", controller.GetAllRole)
 	eJwt.GET("/role/:id", controller.GetRole)
 	eJwt.PUT("/role/:id", controller.UpdateRole)
-	eJwt.DELETE("/role/:id", controller.DeleteUser)
+	eJwt.DELETE("/role/:id", controller.DeleteRole)
 }
