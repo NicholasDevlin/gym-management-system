@@ -12,7 +12,6 @@ type IAbsensiRepository interface {
 	SaveAbsensi(input *absensi.AbsensiDto) error
 	GetAllAbsensi(filter absensi.AbsensiFilter) ([]absensi.AbsensiDto, error)
 	GetAbsensi(filter absensi.AbsensiDto) (absensi.AbsensiDto, error) 
-	// UpdateRole(data, input *absensi.AbsensiDto) error
 	DeleteAbsensi(id uint) error
 }
 
@@ -48,9 +47,12 @@ func (a *absensiRepository) GetAllAbsensi(filter absensi.AbsensiFilter) ([]absen
     query = query.Where("date >= ?", dateOnly)
 	}
 	if !filter.DateTo.IsZero() {
-		dateOnly := time.Date(filter.DateFrom.Year(), filter.DateFrom.Month(), filter.DateFrom.Day(), 0, 0, 0, 0, filter.DateFrom.Location())
+		dateOnly := time.Date(filter.DateTo.Year(), filter.DateTo.Month(), filter.DateTo.Day(), 0, 0, 0, 0, filter.DateTo.Location())
 		dateOnly = dateOnly.Add(24 * time.Hour)
 		query = query.Where("date <= ?", dateOnly)
+	}
+	if filter.UserUUID != uuid.Nil{
+		query = query.Joins("User", query.Where("User.uuid = ?", filter.UserUUID))
 	}
 
 	query = query.Order("date desc")
@@ -83,19 +85,6 @@ func (a *absensiRepository) GetAbsensi(filter absensi.AbsensiDto) (absensi.Absen
 	}
 	return *absensi.ConvertModelToDto(model), nil
 }
-
-// func (r *absensiRepository) UpdateRole(data, input absensi.AbsensiDto) error {
-// 	roleData := *absensi.ConvertDtoToModel(data)
-
-// 	if input.Role != "" {
-// 		roleData.Role = input.Role
-// 	}
-
-// 	if err := r.db.Save(&roleData).Error; err != nil {
-// 		return absensi.AbsensiDto{}, err
-// 	}
-// 	return *absensi.ConvertModelToDto(roleData), nil
-// }
 
 func (r *absensiRepository) DeleteAbsensi(id uint) error {
 	err := r.db.Delete(&absensi.Absensi{}, "id = ?", id).Error

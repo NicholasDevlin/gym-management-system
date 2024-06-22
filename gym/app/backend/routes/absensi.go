@@ -17,7 +17,7 @@ func AbsensiRoute(e *echo.Echo, db *gorm.DB, eJwt *echo.Group) {
 
 	eJwt.POST("/absensi", controller.CreateAbsensi)
 	eJwt.GET("/absensi", controller.GetAllAbsensi)
-	// eJwt.GET("/role/:id", controller.GetRole)
+	eJwt.GET("/absensi/my-absensi", controller.GetMyAbsensi)
 	eJwt.PUT("/absensi/:id", controller.UpdateAbsensi)
 	eJwt.DELETE("/absensi/:id", controller.DeleteAbsensi)
 }

@@ -39,9 +39,9 @@ func (a *absensiService) SaveAbsensi(input absensi.AbsensiReq) (absensi.AbsensiR
 	}
 	var err error
 	dto := absensi.ConvertReqToDto(input)
-	
+
 	var existing absensi.AbsensiDto
-	if (input.UUID != uuid.Nil) {
+	if input.UUID != uuid.Nil {
 		existing, err = a.absensiRepository.GetAbsensi(*dto)
 		if err != nil {
 			return absensi.AbsensiRes{}, errors.ERR_CREATE_ABSENSI

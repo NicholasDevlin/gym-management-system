@@ -18,13 +18,18 @@ function Navbar() {
       <ul className={Styles.ul}>
         <Link to='/'><li className={Styles.li}>Home</li></Link>
         <Link to='/membership'><li className={Styles.li}>Membership Plan</li></Link>
-        <Link to='/transaction'><li className={Styles.li}>Transaction</li></Link>
-        {userData && userData.role === "admin" ? 
+        {userData ?
+          <>
+            <Link to='/transaction'><li className={Styles.li}>Transaction</li></Link>
+          </>
+          :
+          <></>}
+        {userData && userData.role === "admin" ?
           <>
             <Link to='/absensi'><li className={Styles.li}>Check in</li></Link>
             <Link to='/user'><li className={Styles.li}>User</li></Link>
-          </>  
-          : 
+          </>
+          :
           <></>
         }
         <li className={Styles.li} onClick={toggleProfileMenu}>
@@ -32,9 +37,10 @@ function Navbar() {
           {isProfileMenuOpen && (
             <div className={Styles.profileMenu}>
               <ul>
-                <Link to='/profile'><li>Profile</li></Link>
-                {userData ? (
+                {userData ? (<>
+                  <Link to='/profile'><li>Profile</li></Link>
                   <Link to="/authentication"><li onClick={handleLogout}>Sign out</li></Link>
+                </>
                 ) : (
                   <Link to="/authentication"><li>Sign in</li></Link>
                 )}

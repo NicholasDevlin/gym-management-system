@@ -21,7 +21,9 @@ func NewAbsensiController(absensiService services.IAbsensiService) *absensiContr
 
 func (a *absensiController) CreateAbsensi(e echo.Context) error {
 	var input absensi.AbsensiReq
-	e.Bind(&input)
+	if err := e.Bind(&input); err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
 
 	res, err := a.absensiService.SaveAbsensi(input)
 	if err != nil {
@@ -45,25 +47,25 @@ func (a *absensiController) GetAllAbsensi(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
-// func (r *absensiController) GetRole(e echo.Context) error {
-// 	var input role.RoleReq
+func (a *absensiController) GetMyAbsensi(e echo.Context) error {
+	var input absensi.AbsensiFilter
+	if err := e.Bind(&input); err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	UUID, _, err := middleware.ExtractToken(e)
+	input.UserUUID = UUID
 
-// 	id, err := strconv.ParseUint(e.Param("id"), 10, 64)
-// 	if err != nil {
-// 		return baseresponse.NewErrorResponse(e, err)
-// 	}
-// 	input.Id = uint(id)
-// 	res, err := r.absensiService.GetRole(input)
-// 	if err != nil {
-// 		return baseresponse.NewErrorResponse(e, err)
-// 	}
+	res, err := a.absensiService.GetAllAbsensi(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
 
-// 	return baseresponse.NewSuccessResponse(e, res)
-// }
+	return baseresponse.NewSuccessResponse(e, res)
+}
 
 func (a *absensiController) UpdateAbsensi(e echo.Context) error {
 	var input absensi.AbsensiReq
-	
+
 	if err := e.Bind(&input); err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}

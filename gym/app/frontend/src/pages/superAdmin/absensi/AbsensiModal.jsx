@@ -11,16 +11,18 @@ export default function AbsensiModal({ isOpen, closeModal, userOptions, absensiD
   const alert = useAlert();
 
   useEffect(() => {
-      setAbsensi({uuid: absensiData != null ? absensiData.uuid : "",
-      userUUID: absensiData != null ? absensiData.userUUID : "",
-      date: absensiData != null ? absensiData.date : new Date()})  
+    setAbsensi({
+      uuid: absensiData != null ? absensiData.uuid : null,
+      userUUID: absensiData != null ? absensiData.userUUID : null,
+      date: absensiData != null ? absensiData.date : new Date()
+    })
   }, [absensiData])
 
   async function saveAbsensi() {
     try {
+      debugger
       const apiUrl = absensiData ? `${API_URLS.ABSENSI}/${absensiData.uuid}` : API_URLS.ABSENSI;
       const method = absensiData ? 'PUT' : 'POST';
-      debugger
       const response = await fetch(apiUrl, {
         method: method,
         headers: {

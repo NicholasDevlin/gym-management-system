@@ -16,7 +16,7 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
     <div className={Styles.card}>
       <div className={Styles.content}>
         <div className={Styles.buttonContainer}>
-          {userData.role === 'admin' && (
+          {userData && userData.role === 'admin' && (
             <button className={Styles.button} onClick={toggleCardMenu}>
               <Icon icon="fluent:more-vertical-20-filled" width="1.5rem" height="1.5rem" />
             </button>

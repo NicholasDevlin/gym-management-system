@@ -141,3 +141,11 @@ input::-webkit-inner-spin-button {
 .ant-modal-content {
     background-color: #35373d !important;
 }
+
+.ant-picker-calendar-date-value {
+    color: #3f3f3f;
+}
+
+.ant-picker-content thead tr th {
+    font-size: large;
+}

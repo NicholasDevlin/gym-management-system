@@ -1,7 +1,7 @@
 import React from 'react'
 import Styles from './Card.module.css'
 
-function Card({ title, body, button: Button }) {
+function Card({ title, body }) {
   return (
     <div className={Styles.card}>
       <div className={Styles.title}>
@@ -12,7 +12,6 @@ function Card({ title, body, button: Button }) {
           <div>{body}</div>
         </div>
         <div className={Styles.button}>
-          <Button />
         </div>
       </div>
     </div>

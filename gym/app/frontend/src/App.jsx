@@ -1,12 +1,13 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/superAdmin/home/Index.jsx';
+import HomeForAdmin from './pages/superAdmin/home/Index.jsx';
+import HomeForMember from './pages/user/home/Index.jsx';
+import Home from './pages/home/Index.jsx';
 import Membership from './pages/user/membership/Index.jsx';
 import MembershipForAdmin from './pages/superAdmin/membership/Index.jsx';
 import Transaction from './pages/user/transaction/Index.jsx';
 import TransactionForAdmin from './pages/superAdmin/transaction/Index.jsx';
-// import TransactionEditor from './pages/user/transaction/Editor.jsx';
 import TransactionEditorForAdmin from './pages/superAdmin/transaction/Editor.jsx';
 import Absensi from './pages/superAdmin/absensi/Index.jsx';
 import User from './pages/superAdmin/user/Index.jsx';
@@ -38,26 +39,47 @@ function App() {
                 selectorBg: '#1f2124',
                 multipleItemBg: '#1f2124',
                 optionSelectedBg: '#35373d'
+              },
+              Calendar: {
+                colorFillSecondary: '#000',
+                colorBgContainer: '#f0f0f0'
               }
             },
           }}
         >
           <Routes>
-            <Route path="/" element={<Home />} />
+            {!userData ?
+              <>
+                <Route path="/" element={<Home />} />
+                <Route path="/membership" element={<Membership />} />
+              </>
+              :
+              <></>
+            }
             <Route path="/authentication" element={<Authentication />} />
             {userData && userData.role === 'admin' ?
               <>
+                <Route path="/" element={<HomeForAdmin />} />
                 <Route path="/membership/editor/:uuid" element={<MembershipEditor />} />
                 <Route path="/membership/editor" element={<MembershipEditor />} />
                 <Route path="/transaction/editor" element={<TransactionEditorForAdmin />} />
                 <Route path="/transaction/editor/:uuid" element={<TransactionEditorForAdmin />} />
                 <Route path="/absensi" element={<Absensi />} />
                 <Route path="/user" element={<User />} />
+                <Route path="/membership" element={<MembershipForAdmin />} />
               </>
               :
               <></>
             }
-            <Route path="/membership" element={userData && userData.role === 'admin' ? <MembershipForAdmin /> : <Membership />} />
+            {userData && userData.role === 'user' ?
+              <>
+                <Route path="/" element={<HomeForMember />} />
+                <Route path="/membership" element={<Membership />} />
+              </>
+              :
+              <>
+              </>
+            }
             <Route path="/transaction" element={userData && userData.role === 'admin' ? <TransactionForAdmin /> : <Transaction />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/help" element={<Help />} />

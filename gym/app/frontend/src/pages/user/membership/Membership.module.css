@@ -1,9 +1,3 @@
-.container {
-  display: flex;
-  justify-content: center;
-  padding-top: 2%;
-}
-
 .cardHolder {
   display: flex;
   flex-wrap: wrap;
