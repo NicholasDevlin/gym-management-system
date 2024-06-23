@@ -1,0 +1,18 @@
+.images {
+  max-width: 500px;
+}
+
+.imageHolder {
+  background-color: #fff;
+  display: flex !important;
+  justify-content: center;
+  width: 100%;
+}
+
+.container {
+  height: 100%;
+}
+
+.content {
+  color: #000;
+}

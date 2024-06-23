@@ -5,11 +5,11 @@ function Card({ title, body }) {
   return (
     <div className={Styles.card}>
       <div className={Styles.title}>
-        <h2>{title}</h2>
+        {title}
       </div>
       <div className={Styles.body}>
         <div className={Styles.content}>
-          <div>{body}</div>
+          {body}
         </div>
         <div className={Styles.button}>
         </div>

@@ -14,7 +14,7 @@ function Navbar() {
 
   return (
     <nav className={Styles.navbar}>
-      <div className={Styles.logo}><p>LOGO</p></div>
+      <div className={Styles.logo}><p className={Styles.bfc}>Brayan Fitness Centre</p><p className={Styles.smallBfc}>BFC</p></div>
       <ul className={Styles.ul}>
         <Link to='/'><li className={Styles.li}>Home</li></Link>
         <Link to='/membership'><li className={Styles.li}>Membership Plan</li></Link>

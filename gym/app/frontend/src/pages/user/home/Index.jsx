@@ -5,11 +5,12 @@ import { API_URLS } from '../../../apiConfig.js'
 import { useAlert } from "react-alert";
 import { Badge, Calendar } from 'antd';
 import Card from '../../../components/general/card/Card.jsx';
+import { useUserData } from '../../../utils/jwt/UserData.jsx';
 
 function Home() {
   const alert = useAlert();
   const [absensi, setAbsensi] = useState();
-
+  const { userData } = useUserData();
   useEffect(() => {
     getAbsensi();
   }, [])
@@ -76,15 +77,40 @@ function Home() {
     return info.originNode;
   };
 
+  const CardTitle = (<>
+    <h4 className='ps-2 pt-2'>{`Hi welcome back, ${userData.name}`}</h4>
+  </>);
+
+  const CardBody = (<>
+    <div className='d-flex mt-2 justify-content-between'>
+      <div>
+        <h6>
+          Active Membership Plan
+        </h6>
+        <h3>
+          test
+        </h3>
+      </div>
+      <div>
+        <h6 className='text-end'>
+          Active until
+        </h6>
+        <h3 className='text-end'>
+          test
+        </h3>
+      </div>
+    </div>
+  </>);
+
   return (
     <Layout>
       <div className='container-fluid h-75'>
         <div className={Styles.container}>
-          <Card title={"test"} body={"loremmmm "} />
+          <Card title={CardTitle} body={CardBody} />
         </div>
         <div className={Styles.container}>
-          <div className='w-100 mx-3'>
-            <div className={`w-50 h-100 ${Styles.Calendar}`}>
+          <div className='w-100 row mx-3'>
+            <div className={`col-md-6 col-sm-12 h-100 ${Styles.Calendar}`}>
               <Calendar
                 fullscreen={false}
                 cellRender={cellRender}
