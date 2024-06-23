@@ -84,6 +84,19 @@ func (t *transactionController) GetTransaction(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
+func (t *transactionController) GetMemberTransaction(e echo.Context) error {
+	var input transaction.TransactionFilter
+	if err := e.Bind(&input); err != nil {
+		return err
+	}
+
+	res, err := t.transactionService.GetTransaction(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
 func (t *transactionController) SaveTransaction(e echo.Context) error {
 	var input transaction.TransactionReq
 	

@@ -58,6 +58,12 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 	if !filter.TransactionDateFrom.IsZero() {
 		query = query.Where("transaction_date >= ?", filter.TransactionDateFrom.Time)
 	}
+	if filter.MemberUUID != uuid.Nil {
+		query = query.Joins("JOIN transaction_details ON transaction_details.transaction_id = transactions.id").
+			Joins("JOIN transaction_member_details ON transaction_member_details.transaction_detail_id = transaction_details.id").
+			Joins("JOIN users ON users.id = transaction_member_details.user_id").
+			Where("users.uuid = ? ", filter.MemberUUID).Where("transaction_member_details.deleted_at IS NULL")
+	}
 	query = query.Order("transaction_date desc")
 
 	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Preload("TransactionDetail.TransactionMemberDetail").Preload("TransactionDetail.TransactionMemberDetail.User").Find(&allTransaction).Error
@@ -80,6 +86,16 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionFil
 	}
 	if filter.UUID != uuid.Nil {
 		query = query.Where("uuid = ?", filter.UUID)
+	}
+	if filter.IsComplete {
+		query = query.Where("status = ?", consts.COMPLETE)
+	}
+	if filter.MemberUUID != uuid.Nil {
+		query = query.Joins("JOIN transaction_details ON transaction_details.transaction_id = transactions.id").
+			Joins("JOIN transaction_member_details ON transaction_member_details.transaction_detail_id = transaction_details.id").
+			Joins("JOIN users ON users.id = transaction_member_details.user_id").
+			Where("users.uuid = ? ", filter.MemberUUID).Where("transaction_member_details.deleted_at IS NULL")
+		query = query.Order("transaction_date desc")
 	}
 
 	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Preload("TransactionDetail.TransactionMemberDetail").Preload("TransactionDetail.TransactionMemberDetail.User").First(&model).Error

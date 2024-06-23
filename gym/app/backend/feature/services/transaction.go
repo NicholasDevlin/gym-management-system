@@ -108,7 +108,7 @@ func (t *transactionService) GetAllTransaction(filter transaction.TransactionFil
 func (t *transactionService) GetTransaction(filter transaction.TransactionFilter) (transaction.TransactionRes, error) {
 	res, err := t.transactionRepository.GetTransaction(filter)
 
-	if err != nil || (filter.TransactionId == 0 && filter.UUID == uuid.Nil) {
+	if err != nil || (filter.TransactionId == 0 && filter.UUID == uuid.Nil && filter.MemberUUID == uuid.Nil) {
 		return transaction.TransactionRes{}, errors.ERR_NOT_FOUND
 	}
 	return *transaction.ConvertDtoToRes(res), nil

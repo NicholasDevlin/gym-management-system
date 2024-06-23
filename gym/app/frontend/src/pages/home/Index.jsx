@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Layout from '../../layout/MainLayout/Layout.jsx'
 import Styles from './Home.module.css'
 import { Carousel } from 'antd';
 import gymInside from '../../assets/images/inside-gym.jpg'
 import bfc from '../../assets/images/brayan-fitness-centre.jpeg'
-import gymOutside from '../../assets/images/gym-outside.png'
+import gymOutside from '../../assets/images/outside-gym.png'
 
 function Home() {
 

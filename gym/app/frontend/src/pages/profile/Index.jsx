@@ -49,7 +49,7 @@ function Profile() {
 
   async function saveUserProfile() {
     try {
-      const response = await fetch(`${API_URLS.USER}/${userData.uuid}`, {
+      const response = await fetch(`${API_URLS.USER}/${profileData.uuid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -57,10 +57,6 @@ function Profile() {
         },
         body: JSON.stringify(profileData),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
 
       const responseData = await response.json();
 
@@ -70,7 +66,7 @@ function Profile() {
         alert.error("Save unsuccessful. Response:", responseData);
       }
     } catch (error) {
-      alert.error("Error:", error);
+      alert.error(error);
     }
   }
 
@@ -99,7 +95,7 @@ function Profile() {
         alert.error("Get data unsuccessful");
       }
     } catch (error) {
-      alert.error(`Error: ${error}`);
+      alert.error(`${error}`);
     }
   }
 

@@ -83,7 +83,7 @@ function Transaction() {
         alert.error("Delete Transaction unsuccessful");
       }
     } catch (error) {
-      alert.error(`Error: ${error}`);
+      alert.error(`${error}`);
     }
   }
 
