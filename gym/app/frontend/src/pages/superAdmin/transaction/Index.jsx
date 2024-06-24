@@ -87,6 +87,19 @@ function Transaction() {
     }
   }
 
+  const exportToCsv = () => {
+    let data = [["Transaction No", "Transaction Date", "Status", "Total"]];
+    transactionData.map((value) => {
+      data.push([value.transactionNo, value.transactionDate, value.status, value.total])
+    });
+    const csvContent = data.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "transaction.csv";
+    link.click();
+  }
+
   return (
     <Layout>
       <div className={Styles.container}>
@@ -101,7 +114,10 @@ function Transaction() {
             <Button text="Filter" onClick={() => getTransaction()} />
           </div>
         </div>
-        <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
+        <div className="d-flex">
+          <Button className="me-2 px-3" onClick={exportToCsv} text={"Export to Excel"} />
+          <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
+        </div>
       </div>
       <div>
         <Table

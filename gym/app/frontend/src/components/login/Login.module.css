@@ -15,6 +15,8 @@
     place-items: center;
     height: 100vh;
     background: var(--bgColor);
+    display: flex;
+    justify-content: space-around;
 
     &.showPassword {
         --bgColor: black;

@@ -55,7 +55,7 @@ function Transaction() {
     let getTransactionDetail = getTransactionByUserUUID(data, userData.uuid);
     let getAdditionalPrice = getTransactionDetail.transactionMemberDetail.find(x => x.userUUID === userData.uuid);
     return (<>
-      <div className="d-flex justify-content-between">
+      <div className="d-flex mx-3 justify-content-between">
         <div>
           <h6>Transaction No</h6>
           <h5>{data.transactionNo}</h5>
@@ -65,7 +65,7 @@ function Transaction() {
           <h5 className="text-end">{date.toLocaleDateString("id-ID", options)}</h5>
         </div>
       </div>
-      <div className="d-flex mt-3 justify-content-between">
+      <div className="d-flex mx-3 mt-3 justify-content-between">
         <div>
           <h6>Membership Plan</h6>
           <h5>{getTransactionDetail.membershipPlan.name}</h5>

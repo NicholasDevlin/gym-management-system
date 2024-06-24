@@ -65,7 +65,7 @@ const column = (handleDelete) => {
           <Link to={`/transaction/editor/${record.uuid}`}>
             <Button text="Update" />
           </Link>
-          <Popconfirm title="Sure to Delete?" onConfirm={() => handleDelete(record.uuid)}>
+          <Popconfirm title="Sure to Delete?" onConfirm={() => handleDelete && handleDelete(record.uuid)}>
             <DangerButton text="Delete" />
           </Popconfirm>
         </div>
