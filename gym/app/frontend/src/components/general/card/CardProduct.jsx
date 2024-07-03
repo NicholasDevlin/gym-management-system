@@ -25,7 +25,7 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
             <div className={Styles.cardMenu}>
               <ul>
                 <Link to={detail}><li>Edit</li></Link>
-                <li onClick={deleteProduct} >Delete</li>
+                {/* <li onClick={deleteProduct} >Delete</li> */}
               </ul>
             </div>
           )}

@@ -48,7 +48,7 @@ const column = (handleDelete, roleOptions, updateUser) => {
         let date = new Date(text);
         return (
           <>
-            {date.toLocaleDateString("id-ID", options)}
+            {text ? date.toLocaleDateString("id-ID", options) : "-"}
           </>
         )
       })
@@ -63,7 +63,7 @@ const column = (handleDelete, roleOptions, updateUser) => {
         let date = new Date(text);
         return (
           <>
-            {date.toLocaleDateString("id-ID", options)}
+            {text ? date.toLocaleDateString("id-ID", options) : "-"}
           </>
         )
       })
@@ -75,31 +75,31 @@ const column = (handleDelete, roleOptions, updateUser) => {
       width: 150,
       render: ((_, value) => {
         const onSelect = (selected) => {
-          value.role.role = roleOptions.find(x=> x.value === selected).label;
+          value.role.role = roleOptions.find(x => x.value === selected).label;
           updateUser(value);
         }
         return (
           <>
-            <Select style={{ selectorBg: '#1f2124', color: "#000"}} onSelect={onSelect} className="w-100" defaultValue={value.role.id} options={roleOptions} />
+            <Select style={{ selectorBg: '#1f2124', color: "#000" }} onSelect={onSelect} className="w-100" defaultValue={value.role.id} options={roleOptions} />
           </>
         );
       })
     },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
-      width: '10%',
-      render: (_, record) => {
-        return (
-          <div className="d-flex justify-content-between">
-            <Popconfirm title="Sure to Delete?" onConfirm={() => handleDelete(record.uuid)}>
-              <DangerButton text="Delete" />
-            </Popconfirm>
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: 'Action',
+    //   dataIndex: 'action',
+    //   key: 'action',
+    //   width: '10%',
+    //   render: (_, record) => {
+    //     return (
+    //       <div className="d-flex justify-content-between">
+    //         <Popconfirm title="Sure to Delete?" onConfirm={() => handleDelete(record.uuid)}>
+    //           <DangerButton text="Delete" />
+    //         </Popconfirm>
+    //       </div>
+    //     );
+    //   },
+    // },
   ])
 }
 

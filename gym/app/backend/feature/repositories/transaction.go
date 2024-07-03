@@ -165,47 +165,6 @@ func (t *transactionRepository) SaveTransaction(data transaction.TransactionDto)
 		}
 	}
 
-	// save transaction detail
-	// // // var transactionDetailData transactiondetail.TransactionDetail
-	// // // var transactionMemberDetailData transactionmemberdetail.TransactionMemberDetail
-	// // // var existingDetail transactiondetail.TransactionDetailDto
-	// // // // var existingMemberDetail transactionmemberdetail.TransactionMemberDetailDto
-	// // // for i, detail := range input.TransactionDetail {
-	// // // 	detail.TransactionId = transactionData.ID
-	// // // 	if detail.UUID != uuid.Nil {
-	// // // 		existingDetail, err = t.transactionDetailRepository.GetTransactionDetail(detail)
-	// // // 		if err != nil {
-	// // // 			return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
-	// // // 		}
-	// // // 	}
-	// // // 	transactionDetailData = SaveTransactionDetail(existingDetail, detail)
-	// // // 	err = tx.Save(&transactionDetailData).Error
-	// // // 	if err != nil {
-	// // // 		tx.RollbackTo("transaction")
-	// // // 		err = errors.ERR_CREATE_TRANSACTION_DETAIL
-	// // // 		return transaction.TransactionDto{}, err
-	// // // 	}
-	// // // 	data.TransactionDetail[i] = *transactiondetail.ConvertModelToDto(transactionDetailData)
-	// // // 	// save transaction detail member
-	// // // 	for j, member := range detail.TransactionMemberDetail {
-	// // // 		if member.UUID != uuid.Nil {
-	// // // 			existingMemberDetail, err = t.transactionMemberDetailRepository.GetTransactionMemberDetail(member)
-	// // // 			if err != nil {
-	// // // 				return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
-	// // // 			}
-	// // // 		}
-	// // // 		member.TransactionDetailId = transactionDetailData.ID
-	// // // 		// transactionMemberDetailData = SaveTransactionMemberDetail(existingMemberDetail, member)
-	// // // 		err = tx.Save(&transactionMemberDetailData).Error
-	// // // 		if err != nil {
-	// // // 			tx.Rollback()
-	// // // 			return transaction.TransactionDto{}, errors.ERR_SAVE_TRANSACTION_MEMBER_DETAIL
-	// // // 		}
-	// // 		data.TransactionDetail[i].TransactionMemberDetail[j] = *transactionmemberdetail.ConvertModelToDto(transactionMemberDetailData)
-	// // 		data.TransactionDetail[i].TransactionMemberDetail[j].TransactionDetailUUID = data.TransactionDetail[i].UUID
-	// // 	}
-	// }
-
 	tx.Commit()
 	return data, err
 }

@@ -45,7 +45,7 @@ function Membership() {
             <CardProduct
               key={index}
               title={plan.name}
-              duration={plan.duration}
+              duration={plan.duration + " Days"}
               price={plan.price}
               description={plan.description}
             />

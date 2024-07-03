@@ -27,7 +27,7 @@ function Navbar() {
         {userData && userData.role === "admin" ?
           <>
             <Link to='/absensi'><li className={Styles.li}>Check in</li></Link>
-            <Link to='/user'><li className={Styles.li}>User</li></Link>
+            <Link to='/user'><li className={Styles.li}>Users</li></Link>
           </>
           :
           <></>

@@ -8,6 +8,8 @@ import { useAlert } from "react-alert";
 import { Table } from "antd";
 import column from "./config.jsx";
 import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
+import { formatDateTime, formatNumberWithCommas } from "../../../utils/CurrencyFormat/CurrencyFormat.jsx";
+import * as XLSX from 'xlsx';
 
 function Transaction() {
   const alert = useAlert()
@@ -34,7 +36,7 @@ function Transaction() {
 
       const responseData = await response.json();
       if (responseData.success) {
-        setTransaction(responseData.data);
+        setTransaction(responseData.data ?? []);
       } else {
         throw new Error(responseData.message);
       }
@@ -87,18 +89,29 @@ function Transaction() {
     }
   }
 
-  const exportToCsv = () => {
-    let data = [["Transaction No", "Transaction Date", "Status", "Total"]];
-    transactionData.map((value) => {
-      data.push([value.transactionNo, value.transactionDate, value.status, value.total])
+  const exportToExcel = () => {
+    let data = [];
+
+    transactionData.forEach((transaction) => {
+      transaction.transactionDetail?.forEach((detail) => {
+        detail.transactionMemberDetail?.forEach((member) => {
+          data.push({
+            "Transaction No": transaction.transactionNo,
+            "Transaction Date": formatDateTime(transaction.transactionDate),
+            "Status": transaction.status,
+            "Member": member.user.name,
+            "Membership Plan": detail.membershipPlan.name,
+            "Price": formatNumberWithCommas(detail.price + (member.additionalPrice ?? 0)),
+          });
+        });
+      });
     });
-    const csvContent = data.map(row => row.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "transaction.csv";
-    link.click();
-  }
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, "Transaksi.xlsx");
+  };
 
   return (
     <Layout>
@@ -115,7 +128,7 @@ function Transaction() {
           </div>
         </div>
         <div className="d-flex">
-          <Button className="me-2 px-3" onClick={exportToCsv} text={"Export to Excel"} />
+          <Button className="me-2 px-3" onClick={exportToExcel} text={"Export to Excel"} />
           <Link to='/transaction/editor'><Button text={"Add new Transaction"} /></Link>
         </div>
       </div>
