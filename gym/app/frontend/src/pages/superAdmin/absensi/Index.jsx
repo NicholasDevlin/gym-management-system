@@ -9,6 +9,8 @@ import column from "./Config.jsx";
 import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
 import AbsensiModal from "./AbsensiModal.jsx";
 import { GetUsers } from "../../../controller/UserController.js";
+import { formatDateTime, formatNumberWithCommas } from "../../../utils/CurrencyFormat/CurrencyFormat.jsx";
+import * as XLSX from 'xlsx';
 
 function Transaction() {
   const alert = useAlert()
@@ -27,7 +29,7 @@ function Transaction() {
   }, []);
 
   const fetchUsersOptions = useCallback(async () => {
-    const result = await GetUsers();
+    const result = await GetUsers({active: true});
     if (result) {
       setUserOptions(
         [
@@ -115,6 +117,48 @@ function Transaction() {
     }
   }, [selected])
 
+  async function checkOutAbsensi(data) {
+    try {
+      data.checkOut = new Date();
+      const response = await fetch(`${API_URLS.ABSENSI}/${data.uuid}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        alert.success('Check Out successfully');
+        getAbsensi();
+      } else {
+        throw new Error(`${responseData.message}`);
+      }
+    } catch (error) {
+      alert.error(`${error}`);
+    }
+  }
+
+  const exportToExcel = () => {
+    let data = [];
+
+    absensiData.forEach((absensi) => {
+      data.push({
+        "Member": absensi.user.name,
+        "Check In": formatDateTime(absensi.date),
+        "Check Out": formatDateTime(absensi.checkOut),
+      });
+    });
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, "CheckIn.xlsx");
+  };
+
   return (
     <Layout>
       <AbsensiModal userOptions={userOptions} closeModal={closeModal} isOpen={isOpen} absensiData={selected} />
@@ -130,11 +174,12 @@ function Transaction() {
             <Button text="Filter" onClick={() => getAbsensi()} />
           </div>
         </div>
+        <Button className="me-2 px-3" onClick={exportToExcel} text={"Export to Excel"} />
         <Button text={"Check in"} onClick={() => setOpen(true)} />
       </div>
       <div>
         <Table
-          columns={column(deleteAbsensi, setSelected)}
+          columns={column(deleteAbsensi, setSelected, checkOutAbsensi)}
           dataSource={absensiData}
           className="h-100 m-3"
         />

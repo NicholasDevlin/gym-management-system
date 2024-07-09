@@ -50,7 +50,7 @@ function App() {
           <Routes>
             {!userData ?
               <>
-                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/membership" element={<Membership />} />
               </>
               :

@@ -9,6 +9,8 @@ import column, { activeOptions } from "./Config.jsx";
 import TextField from "../../../components/general/input/inputTextField/TextField.jsx";
 import Select from "../../../components/general/input/select/Select.jsx";
 import { GetRole } from "../../../controller/UserController.js";
+import { formatDateTime } from "../../../utils/CurrencyFormat/CurrencyFormat.jsx";
+import * as XLSX from 'xlsx';
 
 function Transaction() {
   const alert = useAlert()
@@ -115,6 +117,27 @@ function Transaction() {
     }
   }
 
+  const exportToExcel = () => {
+    let data = [];
+
+    userData.forEach((users) => {
+      data.push({
+        "User": users.name,
+        "Phone Number": users.phoneNumber,
+        "Email": users.email,
+        "Gender": users.gender,
+        "Birth Date": formatDateTime(users.birthDate),
+        "Membership End date": formatDateTime(users.subscriptionDueDate),
+        "Role": users.role.role
+      });
+    });
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, "Users.xlsx");
+  };
+
   return (
     <Layout>
       <div className={Styles.container}>
@@ -133,6 +156,9 @@ function Transaction() {
           <div className="me-3 d-flex align-items-center mt-2">
             <Button text="Filter" onClick={() => getUsers()} />
           </div>
+        </div>
+        <div>
+          <Button className="me-2 px-3" onClick={exportToExcel} text={"Export to Excel"} />
         </div>
       </div>
       <div>

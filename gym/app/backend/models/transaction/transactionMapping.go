@@ -4,6 +4,7 @@ import (
 	transactiondetail "gym/app/backend/models/transactionDetail"
 	"gym/app/backend/models/user"
 
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -90,6 +91,9 @@ func ConvertModelToDtos(input []transactiondetail.TransactionDetail) *[]transact
 func ConvertReqToDtos(input []transactiondetail.TransactionDetailReq) *[]transactiondetail.TransactionDetailDto {
 	var result []transactiondetail.TransactionDetailDto
 	for i := range input {
+		if input[i].Deleted != 0 && input[i].UUID == uuid.Nil {
+			continue
+		}
 		res := *transactiondetail.ConvertReqToDto(input[i])
 		result = append(result, res)
 	}

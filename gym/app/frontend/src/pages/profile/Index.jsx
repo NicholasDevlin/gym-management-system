@@ -10,10 +10,12 @@ import { Icon } from "@iconify/react";
 import { API_URLS } from "../../apiConfig.js";
 import { useUserData } from "../../utils/jwt/UserData.jsx";
 import { useAlert } from "react-alert";
+import PasswordFied from "../../components/login/inputPasswordField/PasswordField.jsx";
 
 function Profile() {
   const alert = useAlert()
   const userData = useUserData();
+  const [password, setPassword] = useState("");
   const [profileData, setprofileData] = useState({
     name: "",
     birthDate: "",
@@ -63,7 +65,8 @@ function Profile() {
       if (responseData.success) {
         alert.success("Save successful");
       } else {
-        alert.error("Save unsuccessful. Response:", responseData);
+        debugger
+        alert.error(responseData.message);
       }
     } catch (error) {
       alert.error(error);
@@ -101,14 +104,14 @@ function Profile() {
 
   return (
     <Layout>
-      <div className="d-flex justify-content-center mt-4">
+      <div className="d-flex justify-content-center mt-4" id="container">
         <div className={Styles.imageContainer}>
           <img
             alt="profile"
             className={`rounded-circle ${Styles.image}`}
             src="https://w7.pngwing.com/pngs/79/184/png-transparent-mannequin-head-dummy-model-face-male-fashion-bold-thumbnail.png"
           />
-          <div className={Styles.iconContainer}>
+          {/* <div className={Styles.iconContainer}>
             <label htmlFor="inputFile">
               <Icon
                 className={Styles.icon}
@@ -118,14 +121,35 @@ function Profile() {
               />
             </label>
             <input id="inputFile" type="file" className="d-none" />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="container">
-        <TextInput id={"name"} label={"Name"} value={profileData.name || ''} onChange={handleInputChange} />
-        <PhoneNumberInput id={"phoneNumber"} value={profileData.phoneNumber || ''} label={"Phone Number"} onChange={handleInputChange} />
-        <DatetimePicker label={"Birthdate"} value={new Date(profileData.birthDate)} id={"birthDate"} onChange={handleInputDateChange} />
+        <div className="row">
+          <div className="col-6">
+            <TextInput id={"name"} label={"Name"} value={profileData.name || ''} onChange={handleInputChange} />
+          </div>
+          <div className="col-6">
+            <TextInput id={"email"} label={"Email"} value={profileData.email || ''} onChange={handleInputChange} />
+          </div>
+        </div>
+        <div className="d-flex w-100 justify-content-between">
+          <PhoneNumberInput id={"phoneNumber"} value={profileData.phoneNumber || ''} label={"Phone Number"} onChange={handleInputChange} />
+          <DatetimePicker label={"Birthdate"} value={new Date(profileData.birthDate)} id={"birthDate"} onChange={handleInputDateChange} />
+        </div>
         <GenderPicker onChange={handleInputChange} value={profileData.gender} id={"gender"} />
+        <div className="row mt-4">
+          <div className="col-6">
+            <TextInput type="password" id={"oldPassword"} label={"Old Password"} onChange={handleInputChange} />
+          </div>
+          <div className="col-6">
+            <PasswordFied label="New Password" id={"password"} value={password} onChange={(e) => {
+              const value = e.target.value;
+              setPassword(value);
+              handleInputChange(e);
+            }} />
+          </div>
+        </div>
         <div className="d-flex justify-content-end">
           <Button onClick={saveUserProfile} text={"Save"} />
         </div>

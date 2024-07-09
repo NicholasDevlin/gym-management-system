@@ -16,7 +16,7 @@ function Navbar() {
     <nav className={Styles.navbar}>
       <div className={Styles.logo}><p className={Styles.bfc}>Brayan Fitness Centre</p><p className={Styles.smallBfc}>BFC</p></div>
       <ul className={Styles.ul}>
-        <Link to='/'><li className={Styles.li}>Home</li></Link>
+        <Link to={userData ? '/' : '/home'}><li className={Styles.li}>Home</li></Link>
         <Link to='/membership'><li className={Styles.li}>Membership Plan</li></Link>
         {userData ?
           <>
@@ -39,7 +39,7 @@ function Navbar() {
               <ul>
                 {userData ? (<>
                   <Link to='/profile'><li>Profile</li></Link>
-                  <Link to="/authentication"><li onClick={handleLogout}>Sign out</li></Link>
+                  <Link to="/home"><li onClick={handleLogout}>Sign out</li></Link>
                 </>
                 ) : (
                   <Link to="/authentication"><li>Sign in</li></Link>

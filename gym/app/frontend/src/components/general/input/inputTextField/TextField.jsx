@@ -1,6 +1,6 @@
 import Styles from "../Input.module.css";
 
-function TextField({ id, onChange, label, value, disabled = false }) {
+function TextField({ id, onChange, label, value, disabled = false, type = "text" }) {
   return (
     <div className={Styles.formItem}>
       {label?<label htmlFor={id}>{label}</label> : <></>}
@@ -8,7 +8,7 @@ function TextField({ id, onChange, label, value, disabled = false }) {
         <input
           id={id}
           onChange={onChange}
-          type="text"
+          type={type}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"

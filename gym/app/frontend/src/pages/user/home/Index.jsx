@@ -88,8 +88,6 @@ function Home() {
       if (responseData.success) {
         setTransaction(responseData.data);
         CardBody();
-      } else {
-        throw new Error(responseData.message);
       }
     } catch (error) {
       alert.error(`${error}`);
@@ -162,7 +160,7 @@ function Home() {
             Active until
           </h6>
           <h4 className='text-end'>
-            {user ? new Date(user.subscriptionDueDate).toLocaleDateString("id-ID", options) : "-"}
+            {user && user.subscriptionDueDate ? new Date(user.subscriptionDueDate).toLocaleDateString("id-ID", options) : "-"}
           </h4>
         </div>
       </div>
@@ -177,19 +175,19 @@ function Home() {
         </div>
         <div className={Styles.container}>
           <div className='w-100 row mx-3'>
-            <div className={`col-md-6 col-sm-12 h-100 card ${Styles.Card}`}>
+            <div className={`col-md-12 col-sm-12 h-100 card ${Styles.Card}`}>
               <Calendar
                 fullscreen={false}
                 cellRender={cellRender}
               />
             </div>
-            <div className={`col-md-6 col-sm-12 card ${Styles.Card}`}>
+            {/* <div className={`col-md-6 col-sm-12 card ${Styles.Card}`}>
               {/* <Bar
                 // options={...}
                 // data={...}
                 // {...props}
-              /> */}
-            </div>
+              /> 
+            </div> */}
           </div>
         </div>
       </div>

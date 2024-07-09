@@ -29,7 +29,7 @@ function Transaction() {
 
       const responseData = await response.json();
       if (responseData.success) {
-        setTransaction(responseData.data);
+        setTransaction(responseData.data || []);
       } else {
         alert.error("Get data unsuccessful");
       }

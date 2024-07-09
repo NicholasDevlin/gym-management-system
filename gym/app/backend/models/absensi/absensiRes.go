@@ -12,4 +12,5 @@ type AbsensiRes struct {
 	UserUUID uuid.UUID    `json:"userUUID" form:"userUUID"`
 	Date     time.Time    `json:"date" form:"date"`
 	User     user.UserRes `json:"user" form:"user"`
+	CheckOut *time.Time   `json:"checkOut" form:"checkOut"`
 }

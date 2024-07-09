@@ -38,26 +38,24 @@ function Login({ registerOnClick }) {
         body: JSON.stringify(loginData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const responseData = await response.json();
       if (responseData.success) {
         localStorage.setItem("authToken", responseData.data.token);
         await fetchData();
         await navigate("/");
-        alert.success("Loggin successfull");
+        alert.success("Login successfull");
+      } else {
+        alert.error(responseData.message)
       }
     } catch (error) {
-      alert.error("Error during login:", error);
+      alert.error("Error during login", error);
     }
   };
 
   return (
     <div className={Styles.container} id="container">
       <div>
-        <img src={Logo} alt="Logo"/>
+        <img src={Logo} alt="Logo" />
       </div>
       <div>
         <form className={Styles.form} onSubmit={handleLoginSubmit}>

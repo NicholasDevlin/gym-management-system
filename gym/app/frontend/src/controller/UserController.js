@@ -1,8 +1,8 @@
 import { API_URLS } from "../apiConfig";
 
-export async function GetUsers() {
+export async function GetUsers(filter) {
   try {
-    const queryParams = new URLSearchParams({role: "user"});
+    const queryParams = new URLSearchParams({ role: "user", ...filter });
     const response = await fetch(`${API_URLS.USER}?${queryParams.toString()}`, {
       method: "GET",
       headers: {

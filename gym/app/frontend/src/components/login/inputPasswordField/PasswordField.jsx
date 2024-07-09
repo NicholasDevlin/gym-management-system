@@ -1,7 +1,7 @@
 import Styles from '../Login.module.css'
 import React, { useEffect } from 'react';
 
-function PasswordFied({id, onChange, value}) {
+function PasswordFied({ id, onChange, value, label = "Password" }) {
   useEffect(() => {
     const root = document.getElementById('container');
     const eye = document.getElementById('eyeball');
@@ -36,7 +36,7 @@ function PasswordFied({id, onChange, value}) {
   }, []);
   return (
     <div className={Styles.formItem}>
-      <label htmlFor={id}>Password</label>
+      <label htmlFor={id}>{label}</label>
       <div className={Styles.inputWrapper}>
         <input
           type="password"

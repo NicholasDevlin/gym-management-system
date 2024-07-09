@@ -11,8 +11,9 @@ import (
 
 type Absensi struct {
 	gorm.Model
-	UUID   uuid.UUID
-	UserId uint
-	Date   time.Time
-	User   user.User `gorm:"foreignKey:UserId"`
+	UUID     uuid.UUID
+	UserId   uint
+	Date     time.Time
+	CheckOut *time.Time
+	User     user.User `gorm:"foreignKey:UserId"`
 }

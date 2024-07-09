@@ -58,6 +58,7 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 	}
 
 	input.RoleId = roleRes.Id
+	input.Role.Id = roleRes.Id
 	input.Password = hashPass
 	res, err := u.userRepository.RegisterUser(*user.ConvertReqToDto(input))
 	if err != nil {
@@ -111,11 +112,28 @@ func (u *userService) UpdateUser(input user.UserReq) (user.UserRes, error) {
 	if err != nil {
 		return user.UserRes{}, errors.ERR_GET_DATA
 	}
+	if input.Password != "" {
+		if input.OldPassword == "" {
+			return user.UserRes{}, errors.ERR_OLD_PASSWORD_IS_EMPTY
+		}
+		err = bcrypt.CheckPassword(input.OldPassword, res.Password)
+		if err != nil {
+			return user.UserRes{}, errors.ERR_WRONG_PASSWORD
+		}
+		err = bcrypt.CheckPassword(input.Password, res.Password)
+		if err == nil {
+			return user.UserRes{}, errors.ERR_SAME_PASSWORD
+		}
+		input.Password, err = bcrypt.HashPassword(input.Password)
+		if err != nil {
+			return user.UserRes{}, errors.ERR_BCRYPT_PASSWORD
+		}
+	}
 
 	input.RoleId = roleRes.Id
 	input.Role = role.RoleReq{
 		Role: roleRes.Role,
-		Id: roleRes.Id,
+		Id:   roleRes.Id,
 	}
 	res, err = u.userRepository.UpdateUser(res, *user.ConvertReqToDto(input))
 	if err != nil {

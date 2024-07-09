@@ -138,7 +138,7 @@ function TransactionEditor() {
         throw new Error(`${responseData.message}`);
       }
     } catch (error) {
-      alert.error(`Warning: ${error}`);
+      alert.error(`${error}`);
     }
   }
 

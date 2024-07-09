@@ -37,6 +37,7 @@ func (a *absensiService) SaveAbsensi(input absensi.AbsensiReq) (absensi.AbsensiR
 	if input.Date.IsZero() {
 		input.Date = time.Now()
 	}
+	
 	var err error
 	dto := absensi.ConvertReqToDto(input)
 
@@ -48,6 +49,7 @@ func (a *absensiService) SaveAbsensi(input absensi.AbsensiReq) (absensi.AbsensiR
 		}
 	}
 	existing.UserUUID = dto.UserUUID
+	existing.CheckOut = dto.CheckOut
 	existing.Date = dto.Date
 	existing.User, err = a.userRepository.GetUser(user.UserDto{UUID: input.UserUUID})
 	if err != nil {
