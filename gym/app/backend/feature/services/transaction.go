@@ -220,6 +220,10 @@ func SaveTransactionDetail(t *transactionService, input transactiondetail.Transa
 	} else {
 		existing, _ = t.transactionDetailRepository.GetTransactionDetail(input)
 	}
+	
+	if input.MembershipPlanUUID == uuid.Nil {
+		return transactiondetail.TransactionDetailDto{}, errors.ERR_MEMBERSHIP_PLAN_NOT_FOUND
+	}
 
 	if input.Quantity == 0 {
 		return transactiondetail.TransactionDetailDto{}, errors.ERR_QTY_EMPTY
@@ -258,7 +262,7 @@ func SaveTransactionDetailMember(t *transactionService, input transactionmemberd
 		existing, _ = t.transactionDetailMember.GetTransactionMemberDetail(input)
 	}
 
-	if input.UserUUID != uuid.Nil {
+	if input.UserUUID == uuid.Nil {
 		return transactionmemberdetail.TransactionMemberDetailDto{}, errors.ERR_USER_NOT_FOUND
 	}
 	user, err := t.userRepository.GetUser(user.UserDto{UUID: input.UserUUID})
