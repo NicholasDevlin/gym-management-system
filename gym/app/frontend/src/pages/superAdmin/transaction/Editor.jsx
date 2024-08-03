@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from 'react-router-dom';
 import Layout from "../../../layout/MainLayout/Layout.jsx";
 import Button from "../../../components/general/button/Button.jsx";
@@ -6,24 +6,81 @@ import { API_URLS } from "../../../apiConfig.js";
 import { useAlert } from "react-alert";
 import Styles from './Transaction.module.css'
 import TransactionDetailCollapse from "../../../components/transaction/TransactionDetailCollapse.jsx";
+import { GetUsers } from "../../../controller/UserController.js";
+import { GetMembershipPlan } from "../../../controller/MembershipPlanController.js";
+import NumericField from "../../../components/general/input/inputNumericField/NumericField.jsx";
+import Select from "../../../components/general/input/select/Select.jsx";
+import DatetimePicker from "../../../components/general/input/datetimePicker/DatetimePicker.jsx";
+import TextField from "../../../components/general/input/inputTextField/TextField.jsx";
 
 function TransactionEditor() {
   const alert = useAlert();
   const { uuid } = useParams();
   const [details, setDetails] = useState([]);
-
+  const [isFetched, setIsFetched] = useState(false);
+  const [userOptions, setUserOptions] = useState([]);
+  const [membershipPlan, setMembershipPlan] = useState([]);
   const [transactionData, setTransactionData] = useState({
-    transactionNo: '',
-    transactionDate: '',
-    status: '',
-    total: ''
+    transactionNo: "",
+    transactionDate: new Date(),
+    status: "",
+    total: 0,
+    transactionDetail: []
   });
+
+  const statusOptions = [
+    {
+      name: "Waiting for payment",
+      value: "Waiting for payment"
+    },
+    {
+      name: "Transaction complete",
+      value: "Transaction complete"
+    }
+  ];
+
+  const fetchUsersOptions = useCallback(async () => {
+    const result = await GetUsers();
+    if (result) {
+      setUserOptions(result.map((data) => ({
+        name: ` ${data.name} (${data.phoneNumber})`,
+        value: data.uuid,
+      })));
+    }
+  }, []);
+
+  const fetchMembershipPlanOptions = useCallback(async () => {
+    const result = await GetMembershipPlan();
+    if (result) {
+      setMembershipPlan(result);
+    }
+  }, []);
 
   useEffect(() => {
     if (uuid) {
       getTransaction();
     }
+    if (!isFetched) {
+      fetchMembershipPlanOptions();
+      fetchUsersOptions();
+      setIsFetched(true);
+    }
   }, [uuid]);
+
+  useEffect(() => {
+    setTransactionData(prevData => ({
+      ...prevData,
+      transactionDetail: [...details]
+    }));
+    let total = 0;
+    details.map((value) => {
+      total += value.subtotal;
+    });
+    setTransactionData((prevData) => ({
+      ...prevData,
+      total: total,
+    }));
+  }, [details])
 
   async function getTransaction() {
     try {
@@ -42,6 +99,7 @@ function TransactionEditor() {
       const responseData = await response.json();
       if (responseData.success) {
         setTransactionData(responseData.data);
+        setDetails(responseData.data.transactionDetail || []);
       } else {
         alert.error('Get data unsuccessful');
       }
@@ -50,47 +108,49 @@ function TransactionEditor() {
     }
   }
 
-  // const handleInputChange = (e) => {
-  //   const { id, value } = e.target || {};
+  const handleInputChange = (e) => {
+    const { id, value } = e.target || {};
 
-  //   setTransactionData((prevData) => ({
-  //     ...prevData,
-  //     [id]: id === 'duration' || id === 'price' ? parseInt(value) : value,
-  //   }));
-  // };
+    setTransactionData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
 
-  // async function saveMembershipPlan() {
-  //   try {
-  //     const apiUrl = uuid ? `${API_URLS.MEMBERSHIP_PLAN}/${uuid}` : API_URLS.MEMBERSHIP_PLAN;
-  //     const method = uuid ? 'PUT' : 'POST';
+  async function saveTransaction() {
+    try {
+      const apiUrl = uuid ? `${API_URLS.TRANSACTION}/${uuid}` : API_URLS.TRANSACTION;
+      const method = uuid ? 'PUT' : 'POST';
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+        body: JSON.stringify(transactionData),
+      });
 
-  //     const response = await fetch(apiUrl, {
-  //       method: method,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-  //       },
-  //       body: JSON.stringify(transactionData),
-  //     });
+      const responseData = await response.json();
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const responseData = await response.json();
-
-  //     if (responseData.success) {
-  //       alert.success(uuid ? 'Membership plan updated successfully' : 'Membership plan created successfully');
-  //     } else {
-  //       alert.error('Save unsuccessful');
-  //     }
-  //   } catch (error) {
-  //     alert.error(`Error: ${error}`);
-  //   }
-  // }
+      if (responseData.success) {
+        alert.success(uuid ? 'Transaction updated successfully' : 'Transaction created successfully');
+      } else {
+        throw new Error(`${responseData.message}`);
+      }
+    } catch (error) {
+      alert.error(`${error}`);
+    }
+  }
 
   const addTransactionDetail = () => {
     setDetails([...details, {}]);
+  }
+
+  const handleStatucChange = (e) => {
+    setTransactionData((prevData) => ({
+      ...prevData,
+      status: e,
+    }));
   }
 
   return (
@@ -99,30 +159,36 @@ function TransactionEditor() {
         <div className="row">
           <div className="col-6">
             <p className="text-start mb-0">Transaction No</p>
-            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.transactionNo} test</h4></p>
+            <div className="d-flex justify-content-start">
+              <TextField value={transactionData.transactionNo} disabled={true} />
+            </div>
           </div>
           <div className="col-6">
             <p className="text-end mb-0">Transaction Date</p>
-            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.transactionDate} test</h4></p>
+            <div className="d-flex justify-content-end">
+              <DatetimePicker onChange={handleInputChange} id="transactionDate" className={Styles.textEnd} value={transactionData.transactionDate} />
+            </div>
           </div>
         </div>
         <div className="row">
           <div className="col-6">
             <p className="text-start mb-0">Status</p>
-            <p className="text-start"><h4 className={Styles.dataHeader}>{transactionData.status} test</h4></p>
+            <Select options={statusOptions} onSelect={handleStatucChange} value={transactionData.status} />
           </div>
           <div className="col-6">
             <p className="text-end mb-0">Total</p>
-            <p className="text-end"><h4 className={Styles.dataHeader}>{transactionData.total} test</h4></p>
+            <div className="d-flex justify-content-end">
+              <NumericField className={`${Styles.dataHeader} text-end`} name="total" value={transactionData.total} disabled={true} />
+            </div>
           </div>
         </div>
-        <div className="d-flex justify-content-between my-2">
+        <div className="d-flex justify-content-between my-3">
           <Button text={"+ Add Transaction Detail"} onClick={addTransactionDetail} />
-          <Button text={"Save"} />
+          <Button text={"Save"} onClick={saveTransaction} />
         </div>
-        <div className="my-3">
-          {details.map((detail) => (
-            <TransactionDetailCollapse />
+        <div className="my-3" id="transaction-details">
+          {details.map((detail, index) => (
+            <TransactionDetailCollapse detail={detail} index={index} setDetail={setDetails} userOptions={userOptions} membershipPlan={membershipPlan} />
           ))}
         </div>
       </div>

@@ -14,7 +14,7 @@ import (
 type IUserService interface {
 	RegisterUser(input user.UserReq) (user.UserRes, error)
 	LoginUser(input user.UserReq) (user.UserRes, error)
-	GetAllUser(filter user.UserReq, page, pageSize int) ([]user.UserRes, int, error)
+	GetAllUser(filter user.UserFilter) ([]user.UserRes, error)
 	GetUser(filter user.UserReq) (user.UserRes, error)
 	UpdateUser(input user.UserReq) (user.UserRes, error)
 	DeleteUser(id uuid.UUID) (user.UserRes, error)
@@ -58,6 +58,7 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 	}
 
 	input.RoleId = roleRes.Id
+	input.Role.Id = roleRes.Id
 	input.Password = hashPass
 	res, err := u.userRepository.RegisterUser(*user.ConvertReqToDto(input))
 	if err != nil {
@@ -66,17 +67,17 @@ func (u *userService) RegisterUser(input user.UserReq) (user.UserRes, error) {
 	return *user.ConvertDtoToRes(res), nil
 }
 
-func (u *userService) GetAllUser(filter user.UserReq, page, pageSize int) ([]user.UserRes, int, error) {
-	res, totalRecord, err := u.userRepository.GetAllUser(*user.ConvertReqToDto(filter), page, pageSize)
+func (u *userService) GetAllUser(filter user.UserFilter) ([]user.UserRes, error) {
+	res, err := u.userRepository.GetAllUser(filter)
 	if err != nil {
-		return nil, 0, errors.ERR_GET_DATA
+		return nil, errors.ERR_GET_DATA
 	}
 	var resUser []user.UserRes
 	for i := 0; i < len(res); i++ {
 		roleVm := user.ConvertDtoToRes(res[i])
 		resUser = append(resUser, *roleVm)
 	}
-	return resUser, totalRecord, nil
+	return resUser, nil
 }
 
 func (u *userService) LoginUser(data user.UserReq) (user.UserRes, error) {
@@ -111,8 +112,29 @@ func (u *userService) UpdateUser(input user.UserReq) (user.UserRes, error) {
 	if err != nil {
 		return user.UserRes{}, errors.ERR_GET_DATA
 	}
+	if input.Password != "" {
+		if input.OldPassword == "" {
+			return user.UserRes{}, errors.ERR_OLD_PASSWORD_IS_EMPTY
+		}
+		err = bcrypt.CheckPassword(input.OldPassword, res.Password)
+		if err != nil {
+			return user.UserRes{}, errors.ERR_WRONG_PASSWORD
+		}
+		err = bcrypt.CheckPassword(input.Password, res.Password)
+		if err == nil {
+			return user.UserRes{}, errors.ERR_SAME_PASSWORD
+		}
+		input.Password, err = bcrypt.HashPassword(input.Password)
+		if err != nil {
+			return user.UserRes{}, errors.ERR_BCRYPT_PASSWORD
+		}
+	}
 
 	input.RoleId = roleRes.Id
+	input.Role = role.RoleReq{
+		Role: roleRes.Role,
+		Id:   roleRes.Id,
+	}
 	res, err = u.userRepository.UpdateUser(res, *user.ConvertReqToDto(input))
 	if err != nil {
 		return user.UserRes{}, errors.ERR_UPDATE_USER

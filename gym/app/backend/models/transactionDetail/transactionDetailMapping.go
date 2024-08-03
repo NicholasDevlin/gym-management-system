@@ -5,14 +5,18 @@ import (
 	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 
 	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 func ConvertReqToDto(input TransactionDetailReq) *TransactionDetailDto {
 	return &TransactionDetailDto{
-		UUID:           input.UUID,
-		TransactionId:  input.TransactionId,
-		Quantity:       input.Quantity,
-		MembershipPlan: *membershipplan.ConvertReqToDto(input.MembershipPlan),
+		UUID:                    input.UUID,
+		TransactionId:           input.TransactionId,
+		Quantity:                input.Quantity,
+		Price:                   input.Price,
+		MembershipPlanUUID:      input.MembershipPlanUUID,
+		Deleted:                 input.Deleted,
+		MembershipPlan:          *membershipplan.ConvertReqToDto(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertReqToDtos(input.TransactionMemberDetail),
 	}
 }
@@ -24,48 +28,54 @@ func ConvertDtoToModel(input TransactionDetailDto) *TransactionDetail {
 			CreatedAt: input.CreatedAt,
 			UpdatedAt: input.UpdatedAt,
 		},
-		UUID:             input.UUID,
-		TransactionId:    input.TransactionId,
-		MembershipPlanId: input.MembershipPlanId,
-		Quantity:         input.Quantity,
-		MembershipPlan:   *membershipplan.ConvertDtoToModel(input.MembershipPlan),
+		IsDel: soft_delete.DeletedAt(input.Deleted),
+		UUID:                    input.UUID,
+		TransactionId:           input.TransactionId,
+		MembershipPlanId:        input.MembershipPlanId,
+		Quantity:                input.Quantity,
+		Price:                   input.Price,
+		MembershipPlan:          *membershipplan.ConvertDtoToModel(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertDtosToModel(input.TransactionMemberDetail),
 	}
 }
 
 func ConvertModelToDto(input TransactionDetail) *TransactionDetailDto {
 	return &TransactionDetailDto{
-		Id:                 input.ID,
-		CreatedAt:          input.CreatedAt,
-		UpdatedAt:          input.UpdatedAt,
-		UUID:               input.UUID,
-		TransactionId:      input.TransactionId,
-		MembershipPlanId:   input.MembershipPlanId,
-		MembershipPlanUUID: input.MembershipPlan.UUID,
-		Quantity:           input.Quantity,
-		MembershipPlan:     *membershipplan.ConvertModelToDto(input.MembershipPlan),
+		Id:                      input.ID,
+		CreatedAt:               input.CreatedAt,
+		UpdatedAt:               input.UpdatedAt,
+		UUID:                    input.UUID,
+		TransactionId:           input.TransactionId,
+		MembershipPlanId:        input.MembershipPlanId,
+		MembershipPlanUUID:      input.MembershipPlan.UUID,
+		Quantity:                input.Quantity,
+		Price:                   input.Price,
+		MembershipPlan:          *membershipplan.ConvertModelToDto(input.MembershipPlan),
 		TransactionMemberDetail: *ConvertModelToDtos(input.TransactionMemberDetail),
 	}
 }
 
 func ConvertDtoToRes(input TransactionDetailDto) *TransactionDetailRes {
+	transactionMember, subtotal := ConvertDtosToRes((input.Quantity * input.Price), input.TransactionMemberDetail)
 	return &TransactionDetailRes{
-		UUID:               input.UUID,
-		Quantity:           input.Quantity,
-		MembershipPlanUUID: input.MembershipPlanUUID,
-		Subtotal:           int64(input.Quantity) * input.MembershipPlan.Price,
-		MembershipPlan:     *membershipplan.ConvertDtoToRes(input.MembershipPlan),
-		TransactionMemberDetail: *ConvertDtosToRes(input.TransactionMemberDetail),
+		UUID:                    input.UUID,
+		Quantity:                input.Quantity,
+		MembershipPlanUUID:      input.MembershipPlanUUID,
+		Price:                   input.Price,
+		Subtotal:                subtotal,
+		MembershipPlan:          *membershipplan.ConvertDtoToRes(input.MembershipPlan),
+		TransactionMemberDetail: *transactionMember,
 	}
 }
 
-func ConvertDtosToRes(input []transactionmemberdetail.TransactionMemberDetailDto) (*[]transactionmemberdetail.TransactionMemberDetailRes) {
+func ConvertDtosToRes(subtotal int, input []transactionmemberdetail.TransactionMemberDetailDto) (*[]transactionmemberdetail.TransactionMemberDetailRes, int) {
 	var result []transactionmemberdetail.TransactionMemberDetailRes
 	for i := range input {
 		res := *transactionmemberdetail.ConvertDtoToRes(input[i])
 		result = append(result, res)
+		subtotal += int(res.AdditionalPrice)
 	}
-	return &result
+	return &result, subtotal
 }
 
 func ConvertModelToDtos(input []transactionmemberdetail.TransactionMemberDetail) *[]transactionmemberdetail.TransactionMemberDetailDto {

@@ -16,7 +16,7 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
     <div className={Styles.card}>
       <div className={Styles.content}>
         <div className={Styles.buttonContainer}>
-          {userData.role === 'admin' && (
+          {userData && userData.role === 'admin' && (
             <button className={Styles.button} onClick={toggleCardMenu}>
               <Icon icon="fluent:more-vertical-20-filled" width="1.5rem" height="1.5rem" />
             </button>
@@ -25,7 +25,7 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
             <div className={Styles.cardMenu}>
               <ul>
                 <Link to={detail}><li>Edit</li></Link>
-                <li onClick={deleteProduct} >Delete</li>
+                {/* <li onClick={deleteProduct} >Delete</li> */}
               </ul>
             </div>
           )}
@@ -44,9 +44,9 @@ function CardProduct({ title, duration, price, description, detail, deleteProduc
           <p>{description}</p>
         </div>
       </div>
-      <div className={Styles.bottom}>
+      {/* <div className={Styles.bottom}>
         <Link className={Styles.btn}>Check it out</Link>
-      </div>
+      </div> */}
     </div>
   )
 }

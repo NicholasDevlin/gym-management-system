@@ -17,4 +17,6 @@ type TransactionMemberDetailDto struct {
 	UserId                uint
 	UserUUID              uuid.UUID
 	User                  user.UserDto
+	AdditionalPrice       int64
+	Deleted               int
 }

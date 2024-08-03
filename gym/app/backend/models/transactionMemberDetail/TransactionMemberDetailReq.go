@@ -11,4 +11,6 @@ type TransactionMemberDetailReq struct {
 	TransactionDetailUUID uuid.UUID    `json:"transactionDetailUUID" form:"transactionDetailUUID"`
 	UserUUID              uuid.UUID    `json:"userUUID" form:"userUUID"`
 	User                  user.UserReq `json:"user" form:"user"`
+	AdditionalPrice       int64        `json:"additionalPrice" form:"additionalPrice"`
+	Deleted               int          `json:"deleted" form:"deleted"`
 }

@@ -1,0 +1,13 @@
+.Card {
+  max-height: 500px;
+  height: 50vh;
+  background-color: #f0f0f0;
+  display: flex;
+  padding-top: 10px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding-top: 2%;
+}

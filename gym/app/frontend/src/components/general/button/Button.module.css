@@ -4,12 +4,12 @@
   background-color: #d8cdb9;
   border-radius: 4px;
   border-width: 0;
-  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#d8cdb9 0 -3px 0 inset;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d8cdb9 0 -3px 0 inset;
   box-sizing: border-box;
   color: #721b29 !important;
   cursor: pointer;
   display: inline-flex;
-  height: 48px;
+  height: 35px;
   justify-content: center;
   line-height: 1;
   list-style: none;
@@ -19,13 +19,13 @@
   position: relative;
   text-align: left;
   text-decoration: none;
-  transition:  box-shadow .20s, background-color .20s, transform .20s;
+  transition: box-shadow .20s, background-color .20s, transform .20s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   white-space: nowrap;
-  will-change: box-shadow,transform, background-color;
-  font-size: 18px;
+  will-change: box-shadow, transform, background-color;
+  font-size: 15px;
 }
 
 .button:hover {
@@ -35,11 +35,49 @@
   transform: translateY(-2px);
 }
 
-/* .button:focus {
-  box-shadow: #721b29 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #721b29 0 -3px 0 inset;
-} */
-
 .button:active {
   box-shadow: #721b29 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+.dangerButton {
+  align-items: center;
+  appearance: none;
+  background-color: #721b29;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #721b29 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #C28c2e !important;
+  cursor: pointer;
+  display: inline-flex;
+  height: 35px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .20s, background-color .20s, transform .20s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow, transform, background-color;
+  font-size: 15px;
+}
+
+.dangerButton:hover {
+  background-color: #d8cdb9 !important;
+  color: #721b29 !important;
+  box-shadow: rgba(114, 27, 41, 0.4) 0 4px 8px, rgba(114, 27, 41, 0.3) 0 7px 13px -3px, #d8cdb9 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.dangerButton:active {
+  box-shadow: #d8cdb9 0 3px 7px inset;
   transform: translateY(2px);
 }

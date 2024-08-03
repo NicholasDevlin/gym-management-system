@@ -8,10 +8,12 @@ import (
 )
 
 type TransactionDetailReq struct {
-	UUID                       uuid.UUID                                          `json:"uuid" form:"uuid"`
-	TransactionId              uint                                               `json:"transactionId" form:"transactionId"`
-	MembershipPlanUUID         uuid.UUID                                          `json:"membershipPlanUUID" form:"membershipPlanUUID"`
-	Quantity                   int                                                `json:"qty" form:"qty"`
-	MembershipPlan             membershipplan.MembershipPlanReq                   `json:"membershipPlan" form:"membershipPlan"`
+	UUID                    uuid.UUID                                            `json:"uuid" form:"uuid"`
+	TransactionId           uint                                                 `json:"transactionId" form:"transactionId"`
+	MembershipPlanUUID      uuid.UUID                                            `json:"membershipPlanUUID" form:"membershipPlanUUID"`
+	Quantity                int                                                  `json:"qty" form:"qty"`
+	Price                   int                                                  `json:"price" form:"price"`
+	MembershipPlan          membershipplan.MembershipPlanReq                     `json:"membershipPlan" form:"membershipPlan"`
 	TransactionMemberDetail []transactionmemberdetail.TransactionMemberDetailReq `json:"transactionMemberDetail" form:"transactionMemberDetail"`
+	Deleted                 int                                                  `json:"deleted" form:"deleted"`
 }

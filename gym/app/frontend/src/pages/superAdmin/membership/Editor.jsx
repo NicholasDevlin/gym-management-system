@@ -52,10 +52,9 @@ function MembershipEditor() {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target || {};
-
     setMembershipPlanData((prevData) => ({
       ...prevData,
-      [id]: id === 'duration' || id === 'price' ? parseInt(value) : value,
+      [id]: value,
     }));
   };
 

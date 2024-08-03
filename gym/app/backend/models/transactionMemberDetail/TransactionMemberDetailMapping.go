@@ -4,6 +4,7 @@ import (
 	"gym/app/backend/models/user"
 
 	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 func ConvertReqToDto(input TransactionMemberDetailReq) *TransactionMemberDetailDto {
@@ -12,6 +13,8 @@ func ConvertReqToDto(input TransactionMemberDetailReq) *TransactionMemberDetailD
 		UserUUID:              input.UserUUID,
 		User:                  *user.ConvertReqToDto(input.User),
 		TransactionDetailUUID: input.TransactionDetailUUID,
+		AdditionalPrice:       input.AdditionalPrice,
+		Deleted:               input.Deleted,
 	}
 }
 
@@ -22,10 +25,12 @@ func ConvertDtoToModel(input TransactionMemberDetailDto) *TransactionMemberDetai
 			CreatedAt: input.CreatedAt,
 			UpdatedAt: input.UpdatedAt,
 		},
+		IsDel:               soft_delete.DeletedAt(input.Deleted),
 		UUID:                input.UUID,
 		UserId:              input.UserId,
 		User:                *user.ConvertDtoToModel(input.User),
 		TransactionDetailId: input.TransactionDetailId,
+		AdditionalPrice:     input.AdditionalPrice,
 	}
 }
 
@@ -39,6 +44,7 @@ func ConvertModelToDto(input TransactionMemberDetail) *TransactionMemberDetailDt
 		User:                *user.ConvertModelToDto(input.User),
 		UserUUID:            input.User.UUID,
 		TransactionDetailId: input.TransactionDetailId,
+		AdditionalPrice:     input.AdditionalPrice,
 	}
 }
 
@@ -48,5 +54,6 @@ func ConvertDtoToRes(input TransactionMemberDetailDto) *TransactionMemberDetailR
 		UserUUID:              input.UserUUID,
 		User:                  *user.ConvertDtoToRes(input.User),
 		TransactionDetailUUID: input.TransactionDetailUUID,
+		AdditionalPrice:       input.AdditionalPrice,
 	}
 }

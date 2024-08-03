@@ -7,10 +7,13 @@ import TextField from "../general/input/inputTextField/TextField.jsx";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "../general/input/phoneNumberInput/PhoneNumberInput.jsx";
 import { useAlert } from "react-alert";
+import { useUserData } from "../../utils/jwt/UserData.jsx";
+import Logo from '../../assets/images/brayan-fitness-centre.jpeg';
 
 function Register({ loginOnClick }) {
   const alert = useAlert();
   const navigate = useNavigate();
+  const { fetchData } = useUserData();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [registerData, setRegisterData] = useState({
     email: "",
@@ -51,16 +54,15 @@ function Register({ loginOnClick }) {
         body: JSON.stringify(registerData),
       });
 
-      if (!response.ok) {
-        alert.error(`HTTP error! Status: ${response.status}`);
-      }
-
       const responseData = await response.json();
       if (responseData.success) {
-        navigate("/");
+        localStorage.setItem("authToken", responseData.data.token);
+        await fetchData();
+        await navigate("/");
+        alert.success("Register successful");
+      } else {
+        alert.error(responseData.message)
       }
-      localStorage.setItem("authToken", responseData.data.token);
-      alert.success("Register successful.");
     } catch (error) {
       alert.error("Error during register:", error);
     }
@@ -68,35 +70,40 @@ function Register({ loginOnClick }) {
 
   return (
     <div className={Styles.container} id="container">
-      <form className={Styles.form} onSubmit={handleLoginSubmit}>
-        <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
-        <PhoneInput
-          id={"phoneNumber"}
-          label={"Phone Number"}
-          onChange={handleInputChange}
-        />
-        <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
-        <PasswordFied id={"password"} onChange={handleInputChange} value={registerData.password} />
-        <div className={Styles.row}>
-          <button className={Styles.button} type="submit" id="submit">
-            Sign up
-          </button>
-        </div>
-        {/* <p className={Styles.textColor}>or register with:</p>
-        <div className={Styles.centerContent}>
-          <GoogleLoginButton />
-        </div> */}
-        <div className={Styles.register}>
-          <span className={Styles.textColor}>Already have an account? </span>
-          <button
-            className={`${Styles.linkButton} ${Styles.textColor}`}
-            type="button"
-            onClick={loginOnClick}
-          >
-            Login
-          </button>
-        </div>
-      </form>
+      <div>
+        <img src={Logo} alt="Logo" />
+      </div>
+      <div>
+        <form className={Styles.form} onSubmit={handleLoginSubmit}>
+          <TextField id={"name"} label={"Name"} onChange={handleInputChange} />
+          <PhoneInput
+            id={"phoneNumber"}
+            label={"Phone Number"}
+            onChange={handleInputChange}
+          />
+          <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
+          <PasswordFied id={"password"} onChange={handleInputChange} value={registerData.password} />
+          <div className={Styles.row}>
+            <button className={Styles.button} type="submit" id="submit">
+              Sign up
+            </button>
+          </div>
+          {/* <p className={Styles.textColor}>or register with:</p>
+          <div className={Styles.centerContent}>
+            <GoogleLoginButton />
+          </div> */}
+          <div className={Styles.register}>
+            <span className={Styles.textColor}>Already have an account? </span>
+            <button
+              className={`${Styles.linkButton} ${Styles.textColor}`}
+              type="button"
+              onClick={loginOnClick}
+            >
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

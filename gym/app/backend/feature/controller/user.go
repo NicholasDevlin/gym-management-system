@@ -4,10 +4,9 @@ import (
 	"gym/app/backend/feature/services"
 	"gym/app/backend/models/user"
 	baseresponse "gym/app/backend/utils/baseResponse"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 	"gym/app/backend/utils/middleware"
-	"gym/app/backend/utils/pagination"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 	uuid "github.com/satori/go.uuid"
@@ -41,27 +40,17 @@ func (u *userController) RegisterUsers(e echo.Context) error {
 }
 
 func (u *userController) GetAllUser(e echo.Context) error {
-	var filter user.UserReq
-	filter.DisplayName = e.QueryParam("name")
-	page, _ := strconv.Atoi(e.QueryParam("page"))
-	pageSize, _ := strconv.Atoi(e.QueryParam("pageSize"))
-
-	if page <= 0 {
-		page = 1
-	}
-	if pageSize <= 0 {
-		pageSize = 10
+	var filter user.UserFilter
+	if err := e.Bind(&filter); err != nil {
+		return err
 	}
 
-	res, totalRecord, err := u.userService.GetAllUser(filter, page, pageSize)
+	res, err := u.userService.GetAllUser(filter)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
-	currentPage := pagination.CurrentPage(page, pageSize, totalRecord)
-	nextPage := pagination.GetNextPage(currentPage, totalRecord)
-	prevPage := pagination.GetPrevPage(currentPage)
 
-	return baseresponse.NewSuccessPaginationResponse(e, res, currentPage, nextPage, prevPage, totalRecord)
+	return baseresponse.NewSuccessResponse(e, res)
 }
 
 func (u *userController) LoginUser(e echo.Context) error {
@@ -83,6 +72,23 @@ func (u *userController) LoginUser(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
+func (u *userController) GetUserCount(e echo.Context) error {
+	var filter user.UserFilter
+	if err := e.Bind(&filter); err != nil {
+		return err
+	}
+
+	res, err := u.userService.GetAllUser(filter)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	// currentPage := pagination.CurrentPage(page, pageSize, totalRecord)
+	// nextPage := pagination.GetNextPage(currentPage, totalRecord)
+	// prevPage := pagination.GetPrevPage(currentPage)
+
+	return baseresponse.NewSuccessResponse(e, len(res))
+}
+
 func (u *userController) GetUser(e echo.Context) error {
 	var input user.UserReq
 
@@ -100,7 +106,7 @@ func (u *userController) GetUser(e echo.Context) error {
 }
 
 func (u *userController) UpdateUser(e echo.Context) error {
-	userId, _, err := middleware.ExtractToken(e)
+	userId, role, err := middleware.ExtractToken(e)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
@@ -108,7 +114,7 @@ func (u *userController) UpdateUser(e echo.Context) error {
 	var input user.UserReq
 	e.Bind(&input)
 	uuid, err := uuid.FromString(e.Param("id"))
-	if userId != uuid {
+	if userId != uuid && role != consts.ADMIN{
 		return baseresponse.NewErrorResponseUnauthorize(e)
 	}
 	if err != nil {

@@ -42,7 +42,6 @@
   display: flex;
   align-items: center;
   margin-left: 20px !important;
-  width: 75px !important;
 }
 
 .profileButton {
@@ -79,7 +78,22 @@
   display: block;
 }
 
-.profileMenu li:hover, .profileMenu li:hover a  {
+.profileMenu li:hover,
+.profileMenu li:hover a {
   background-color: var(--darkerCoalBlack);
   color: var(--gothicGold);
+}
+
+p.smallBfc {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  p.bfc {
+    display: none;
+  }
+
+  p.smallBfc {
+    display: block;
+  }
 }

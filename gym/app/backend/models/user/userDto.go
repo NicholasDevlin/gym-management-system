@@ -12,6 +12,7 @@ type UserDto struct {
 	UUID        uuid.UUID
 	Email       string
 	Password    string
+	OldPassword    string
 	PhoneNumber string
 	Gender      string
 	BirthDate   *time.Time

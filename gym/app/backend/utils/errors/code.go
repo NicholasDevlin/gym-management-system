@@ -80,6 +80,12 @@ func GetCodeError(err error) int {
 		return http.StatusInternalServerError
 	case ERR_CREATE_ABSENSI:
 		return http.StatusInternalServerError
+	case ERR_COMPLETED_TRANSACTION:
+		return http.StatusForbidden
+	case ERR_OLD_PASSWORD_IS_EMPTY:
+		return http.StatusBadRequest
+	case ERR_SAME_PASSWORD:
+		return http.StatusConflict
 	default:
 		return http.StatusInternalServerError
 	}

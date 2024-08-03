@@ -7,6 +7,7 @@ import TextField from "../general/input/inputTextField/TextField.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "react-alert";
 import { useUserData } from "../../utils/jwt/UserData.jsx";
+import Logo from '../../assets/images/brayan-fitness-centre.jpeg';
 
 function Login({ registerOnClick }) {
   const alert = useAlert();
@@ -37,47 +38,50 @@ function Login({ registerOnClick }) {
         body: JSON.stringify(loginData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const responseData = await response.json();
       if (responseData.success) {
         localStorage.setItem("authToken", responseData.data.token);
         await fetchData();
         await navigate("/");
-        alert.success("Loggin successfull");
+        alert.success("Login successfull");
+      } else {
+        alert.error(responseData.message)
       }
     } catch (error) {
-      alert.error("Error during login:", error);
+      alert.error("Error during login", error);
     }
   };
 
   return (
     <div className={Styles.container} id="container">
-      <form className={Styles.form} onSubmit={handleLoginSubmit}>
-        <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
-        <PasswordFied value={loginData.password} id={"password"} onChange={handleInputChange} />
-        <div className={Styles.row}>
-          <button className={Styles.button} type="submit" id="submit">
-            Sign in
-          </button>
-        </div>
-        {/* <p className={Styles.textColor}>or login with:</p>
-        <div className={Styles.centerContent}>
-          <GoogleLoginButton />
-        </div> */}
-        <div className={Styles.register}>
-          <span className={Styles.textColor}>Don't have an account? </span>
-          <button
-            className={`${Styles.linkButton} ${Styles.textColor}`}
-            type="button"
-            onClick={registerOnClick}
-          >
-            Register new account
-          </button>
-        </div>
-      </form>
+      <div>
+        <img src={Logo} alt="Logo" />
+      </div>
+      <div>
+        <form className={Styles.form} onSubmit={handleLoginSubmit}>
+          <TextField id={"email"} label={"Email"} onChange={handleInputChange} />
+          <PasswordFied value={loginData.password} id={"password"} onChange={handleInputChange} />
+          <div className={Styles.row}>
+            <button className={Styles.button} type="submit" id="submit">
+              Sign in
+            </button>
+          </div>
+          {/* <p className={Styles.textColor}>or login with:</p>
+          <div className={Styles.centerContent}>
+            <GoogleLoginButton />
+          </div> */}
+          <div className={Styles.register}>
+            <span className={Styles.textColor}>Don't have an account? </span>
+            <button
+              className={`${Styles.linkButton} ${Styles.textColor}`}
+              type="button"
+              onClick={registerOnClick}
+            >
+              Register new account
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,9 @@ import (
 	"gym/app/backend/models/transaction"
 	baseresponse "gym/app/backend/utils/baseResponse"
 	"gym/app/backend/utils/consts"
+	customtimeformat "gym/app/backend/utils/customTimeFormat"
 	"gym/app/backend/utils/middleware"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	uuid "github.com/satori/go.uuid"
@@ -36,10 +38,12 @@ func (t *transactionController) CreateTransaction(e echo.Context) error {
 }
 
 func (t *transactionController) GetAllTransaction(e echo.Context) error {
-	var input transaction.TransactionReq
-	// input.TransactionDate.Date() = e.QueryParam("TransactionDate")
+	var filter transaction.TransactionFilter
+	if err := e.Bind(&filter); err != nil {
+		return err
+	}
 
-	res, err := t.transactionService.GetAllTransaction(input)
+	res, err := t.transactionService.GetAllTransaction(filter)
 	if err != nil {
 		return baseresponse.NewErrorResponse(e, err)
 	}
@@ -47,8 +51,25 @@ func (t *transactionController) GetAllTransaction(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
+func (t *transactionController) GetTransactionThisMonth(e echo.Context) error {
+	var filter transaction.TransactionFilter
+
+	now := time.Now()
+	firstOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	filter.TransactionDateFrom = customtimeformat.CustomTime{firstOfMonth}
+
+	filter.TransactionDateTo = customtimeformat.CustomTime{now}
+
+	res, err := t.transactionService.GetAllTransaction(filter)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+
+	return baseresponse.NewSuccessResponse(e, len(res))
+}
+
 func (t *transactionController) GetTransaction(e echo.Context) error {
-	var input transaction.TransactionReq
+	var input transaction.TransactionFilter
 
 	uuid, err := uuid.FromString(e.Param("id"))
 	if err != nil {
@@ -63,15 +84,30 @@ func (t *transactionController) GetTransaction(e echo.Context) error {
 	return baseresponse.NewSuccessResponse(e, res)
 }
 
+func (t *transactionController) GetMemberTransaction(e echo.Context) error {
+	var input transaction.TransactionFilter
+	if err := e.Bind(&input); err != nil {
+		return err
+	}
+
+	res, err := t.transactionService.GetTransaction(input)
+	if err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	return baseresponse.NewSuccessResponse(e, res)
+}
+
 func (t *transactionController) SaveTransaction(e echo.Context) error {
-	userUUID, role, err := middleware.ExtractToken(e)
 	var input transaction.TransactionReq
-	e.Bind(&input)
+	
+	if err := e.Bind(&input); err != nil {
+		return baseresponse.NewErrorResponse(e, err)
+	}
+	userUUID, role, err := middleware.ExtractToken(e)
 	if role == consts.USER {
 		input.User.UUID = userUUID
 	}
 
-	e.Bind(&input)
 	if e.Param("id") != "" {
 		input.UUID, _ = uuid.FromString(e.Param("id"))
 	}

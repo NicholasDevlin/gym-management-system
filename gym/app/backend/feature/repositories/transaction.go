@@ -1,11 +1,11 @@
 package repositories
 
 import (
-	"fmt"
 	"gym/app/backend/models/transaction"
 	transactiondetail "gym/app/backend/models/transactionDetail"
 	transactionmemberdetail "gym/app/backend/models/transactionMemberDetail"
 	"gym/app/backend/models/user"
+	"gym/app/backend/utils/consts"
 	"gym/app/backend/utils/errors"
 
 	uuid "github.com/satori/go.uuid"
@@ -14,9 +14,9 @@ import (
 
 type ITransactionRepository interface {
 	CreateTransaction(input transaction.TransactionDto) (transaction.TransactionDto, error)
-	GetAllTransaction(filter transaction.TransactionDto) ([]transaction.TransactionDto, error)
-	GetTransaction(filter transaction.TransactionDto) (transaction.TransactionDto, error)
-	SaveTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error)
+	GetAllTransaction(filter transaction.TransactionFilter) ([]transaction.TransactionDto, error)
+	GetTransaction(filter transaction.TransactionFilter) (transaction.TransactionDto, error)
+	SaveTransaction(data transaction.TransactionDto) (transaction.TransactionDto, error)
 	DeleteTransaction(id string) (transaction.TransactionDto, error)
 }
 
@@ -44,7 +44,7 @@ func (t *transactionRepository) CreateTransaction(input transaction.TransactionD
 	return *transaction.ConvertModelToDto(*dataTransaction), nil
 }
 
-func (t *transactionRepository) GetAllTransaction(filter transaction.TransactionDto) ([]transaction.TransactionDto, error) {
+func (t *transactionRepository) GetAllTransaction(filter transaction.TransactionFilter) ([]transaction.TransactionDto, error) {
 	var allTransaction []transaction.Transaction
 	var resAllTransaction []transaction.TransactionDto
 
@@ -52,6 +52,19 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 	if filter.TransactionNo != "" {
 		query = query.Where("transaction_no LIKE ?", "%"+filter.TransactionNo+"%")
 	}
+	if !filter.TransactionDateTo.IsZero() {
+		query = query.Where("transaction_date <= ?", filter.TransactionDateTo.Time)
+	}
+	if !filter.TransactionDateFrom.IsZero() {
+		query = query.Where("transaction_date >= ?", filter.TransactionDateFrom.Time)
+	}
+	if filter.MemberUUID != uuid.Nil {
+		query = query.Joins("JOIN transaction_details ON transaction_details.transaction_id = transactions.id").
+			Joins("JOIN transaction_member_details ON transaction_member_details.transaction_detail_id = transaction_details.id").
+			Joins("JOIN users ON users.id = transaction_member_details.user_id").
+			Where("users.uuid = ? ", filter.MemberUUID).Where("transaction_member_details.deleted_at IS NULL")
+	}
+	query = query.Order("transaction_date desc")
 
 	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Preload("TransactionDetail.TransactionMemberDetail").Preload("TransactionDetail.TransactionMemberDetail.User").Find(&allTransaction).Error
 	if err != nil {
@@ -65,14 +78,24 @@ func (t *transactionRepository) GetAllTransaction(filter transaction.Transaction
 	return resAllTransaction, nil
 }
 
-func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto) (transaction.TransactionDto, error) {
+func (t *transactionRepository) GetTransaction(filter transaction.TransactionFilter) (transaction.TransactionDto, error) {
 	var model transaction.Transaction
 	query := t.db.Model(&transaction.Transaction{})
-	if filter.Id != 0 {
-		query = query.Where("id = ?", filter.Id)
+	if filter.TransactionId != 0 {
+		query = query.Where("id = ?", filter.TransactionId)
 	}
 	if filter.UUID != uuid.Nil {
 		query = query.Where("uuid = ?", filter.UUID)
+	}
+	if filter.IsComplete {
+		query = query.Where("status = ?", consts.COMPLETE)
+	}
+	if filter.MemberUUID != uuid.Nil {
+		query = query.Joins("JOIN transaction_details ON transaction_details.transaction_id = transactions.id").
+			Joins("JOIN transaction_member_details ON transaction_member_details.transaction_detail_id = transaction_details.id").
+			Joins("JOIN users ON users.id = transaction_member_details.user_id").
+			Where("users.uuid = ? ", filter.MemberUUID).Where("transaction_member_details.deleted_at IS NULL")
+		query = query.Order("transaction_date desc")
 	}
 
 	err := query.Preload("User").Preload("TransactionDetail").Preload("TransactionDetail.MembershipPlan").Preload("TransactionDetail.TransactionMemberDetail").Preload("TransactionDetail.TransactionMemberDetail.User").First(&model).Error
@@ -82,31 +105,24 @@ func (t *transactionRepository) GetTransaction(filter transaction.TransactionDto
 	return *transaction.ConvertModelToDto(model), nil
 }
 
-func (t *transactionRepository) SaveTransaction(data, input transaction.TransactionDto) (transaction.TransactionDto, error) {
-	var err error
+func (t *transactionRepository) SaveTransaction(data transaction.TransactionDto) (transaction.TransactionDto, error) {
 	tx := t.db.Begin()
+	var err error
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
+			err = errors.ERR_CREATE_TRANSACTION
+			return
 		}
 	}()
 
 	transactionData := *transaction.ConvertDtoToModel(data)
-	if !input.TransactionDate.IsZero() {
-		transactionData.TransactionDate = input.TransactionDate
-	}
-	if input.Status != "" {
-		transactionData.Status = input.Status
-	}
-	if input.UserId != 0 {
-		transactionData.UserId = input.UserId
-	}
 
+	tx.SavePoint("transaction")
 	if err := tx.Save(&transactionData).Error; err != nil {
 		tx.Rollback()
 		if data.Id != 0 {
 			err = errors.ERR_UPDATE_TRANSACTION
-			tx.SavePoint("transaction")
 		} else {
 			err = errors.ERR_CREATE_TRANSACTION
 		}
@@ -114,49 +130,43 @@ func (t *transactionRepository) SaveTransaction(data, input transaction.Transact
 	}
 	data = *transaction.ConvertModelToDto(transactionData)
 
-	// save transaction detail
-	var transactionDetailData transactiondetail.TransactionDetail
-	var transactionMemberDetailData transactionmemberdetail.TransactionMemberDetail
-	var existingDetail transactiondetail.TransactionDetailDto
-	var existingMemberDetail transactionmemberdetail.TransactionMemberDetailDto
-	for i, detail := range input.TransactionDetail {
-		detail.TransactionId = transactionData.ID
-		if detail.UUID != uuid.Nil {
-			existingDetail, err = t.transactionDetailRepository.GetTransactionDetail(detail)
-			if err != nil {
-				return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+	for _, detail := range transactionData.TransactionDetail {
+		if detail.IsDel != 0 {
+			if err := tx.Delete(&detail, detail.ID).Error; err != nil {
+				tx.RollbackTo("transaction")
 			}
-		}
-		transactionDetailData = SaveTransactionDetail(existingDetail, detail)
-		err = tx.Save(&transactionDetailData).Error
-		if err != nil {
-			tx.RollbackTo("transaction")
-			err = errors.ERR_CREATE_TRANSACTION_DETAIL
-			return transaction.TransactionDto{}, err
-		}
-		data.TransactionDetail[i] = *transactiondetail.ConvertModelToDto(transactionDetailData)
-		// save transaction detail member
-		for j, member := range detail.TransactionMemberDetail {
-			if member.UUID != uuid.Nil {
-				existingMemberDetail, err = t.transactionMemberDetailRepository.GetTransactionMemberDetail(member)
-				if err != nil {
-					return transaction.TransactionDto{}, errors.ERR_TRANSACTION_DETAIL_NOT_FOUND
+		} else if detail.ID != 0 {
+			if err := tx.Save(&detail).Error; err != nil {
+				tx.RollbackTo("transaction")
+			}
+			for _, member := range detail.TransactionMemberDetail {
+				if member.IsDel != 0 {
+					if err := tx.Delete(&member, member.ID).Error; err != nil {
+						tx.RollbackTo("transaction")
+					}
+				} else if member.ID != 0 {
+					if err := tx.Save(&member).Error; err != nil {
+						tx.RollbackTo("transaction")
+					}
+				}
+				if transactionData.Status != consts.COMPLETE {
+					continue
+				}
+				if err := tx.Save(&member.User).Error; err != nil {
+					tx.RollbackTo("transaction")
+					if data.Id != 0 {
+						err = errors.ERR_UPDATE_TRANSACTION
+					} else {
+						err = errors.ERR_CREATE_TRANSACTION
+					}
+					return transaction.TransactionDto{}, err
 				}
 			}
-			member.TransactionDetailId = transactionDetailData.ID
-			transactionMemberDetailData = SaveTransactionMemberDetail(existingMemberDetail, member)
-			err = tx.Save(&transactionMemberDetailData).Error
-			if err != nil {
-				tx.Rollback()
-				return transaction.TransactionDto{}, errors.ERR_SAVE_TRANSACTION_MEMBER_DETAIL
-			}
-			data.TransactionDetail[i].TransactionMemberDetail[j] = *transactionmemberdetail.ConvertModelToDto(transactionMemberDetailData)
-			data.TransactionDetail[i].TransactionMemberDetail[j].TransactionDetailUUID = data.TransactionDetail[i].UUID
 		}
 	}
 
 	tx.Commit()
-	return data, nil
+	return data, err
 }
 
 func (t *transactionRepository) DeleteTransaction(id string) (transaction.TransactionDto, error) {
@@ -175,11 +185,14 @@ func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDt
 	existing.MembershipPlan = input.MembershipPlan
 	existing.TransactionMemberDetail = input.TransactionMemberDetail
 	data = *transactiondetail.ConvertDtoToModel(existing)
-	if input.UUID == uuid.Nil {
+	if existing.UUID == uuid.Nil {
 		data.UUID = uuid.NewV4()
 	}
 	if input.TransactionId != 0 {
 		data.TransactionId = input.TransactionId
+	}
+	if input.Price != 0 {
+		data.Price = input.Price
 	}
 	if input.MembershipPlanId != 0 {
 		data.MembershipPlanId = input.MembershipPlanId
@@ -193,7 +206,7 @@ func SaveTransactionDetail(existing, input transactiondetail.TransactionDetailDt
 func SaveTransactionMemberDetail(existing, input transactionmemberdetail.TransactionMemberDetailDto) transactionmemberdetail.TransactionMemberDetail {
 	var data transactionmemberdetail.TransactionMemberDetail
 	data = *transactionmemberdetail.ConvertDtoToModel(existing)
-	if input.UUID == uuid.Nil {
+	if existing.UUID == uuid.Nil {
 		data.UUID = uuid.NewV4()
 	}
 	if input.TransactionDetailId != 0 {
@@ -203,6 +216,5 @@ func SaveTransactionMemberDetail(existing, input transactionmemberdetail.Transac
 		data.UserId = input.UserId
 	}
 	data.User = *user.ConvertDtoToModel(input.User)
-	fmt.Println(data.User)
 	return data
 }

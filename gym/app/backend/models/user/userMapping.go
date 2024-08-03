@@ -19,6 +19,7 @@ func ConvertReqToDto(input UserReq) *UserDto {
 		GoogleID:            input.GoogleID,
 		ProfilePicture:      input.ProfilePicture,
 		IsGoogleUser:        input.IsGoogleUser,
+		OldPassword: input.OldPassword,
 		RoleId:              input.RoleId,
 		SubscriptionExpirationDate: input.SubscriptionExpirationDate,
 		Role:                *role.ConvertReqToDto(input.Role),

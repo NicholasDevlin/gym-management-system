@@ -6,13 +6,15 @@ import Styles from './Layout.module.css'
 function MainLayout({ children }) {
   return (
     <div className={Styles.parent}>
+      <div className={Styles.navbar}>
+        <Navbar />
+      </div>
       <div className={Styles.content}>
-        <Navbar title="home" />
         {children}
       </div>
-      <div className={Styles.footer}>
+      {/* <div className={Styles.footer}>
         <Footer />
-      </div>
+      </div> */}
     </div>
   );
 }
